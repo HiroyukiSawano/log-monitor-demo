@@ -7,7 +7,7 @@
 - [x] 编写全局的 ES SSL 跳过配置，并实例化 ES 客户端。
 
 ## Stage 2: 核心组件开发
-- [ ] 封装针对 ES 日志查询的 Service 层（携带 `@timestamp` 过滤、`size` 和 `timeout` 的防御性校验）。
+- [x] 封装针对 ES 日志查询的 Service 层（携带 `@timestamp` 过滤、`size` 和 `timeout` 的防御性校验）。
 - [ ] MySQL 数据库结构设计与对应 Entity 类的编写。
 - [ ] 编写告警通知人与告警规则管理的 CRUD 接口。
 
