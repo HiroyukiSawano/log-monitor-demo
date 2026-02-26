@@ -1,0 +1,29 @@
+# 上下文与进度管理（最高优先级）
+- 每次回答问题或生成代码前，**必须优先读取工作区根目录下的 `TODO.md` 文件**。
+- 严格按照 `TODO.md` 中标记为“当前阶段”的任务进行开发，绝对不要超前生成下一个阶段的代码。
+
+# 基础设定
+- 总是用中文回答，并为所有代码（Java/TypeScript/Vue等）添加清晰的中文注释。
+
+# 后端技术栈约束 (Java)
+- 必须使用 JDK 8 (Java 1.8) 的语法。
+- 框架强制使用 Spring Boot 2.7.x 系列。
+- Elasticsearch 客户端强制使用新版的 `co.elastic.clients:elasticsearch-java`，绝对禁止使用已废弃的 `RestHighLevelClient`。
+- 关系型数据库使用 MySQL 8.0。
+- ORM 框架强制使用 [MyBatis-Plus / Spring Data JPA]，禁止手写 JDBC。
+- 允许并鼓励使用 Lombok（@Data, @Slf4j 等）来减少样板代码。
+
+# 代码规范
+- **API 响应风格**：所有 Controller 接口必须返回统一的结构（例如 `Result<T>`，包含 code, message, data），禁止直接返回裸对象或字符串。
+- **异常处理**：强制使用 `@RestControllerAdvice` 和 `@ExceptionHandler` 进行全局异常拦截，不要在业务代码中到处写 `try-catch` 返回错误码。
+
+# 防御性编程准则
+- **ES 查询限制**：任何针对 ES 的查询请求，**必须显式设置合理的 `size` 上限和 `timeout` 时间**，严禁使用不带条件和 limit 的全量查询。
+- **时间范围限制**：查询日志必须携带基于 `@timestamp` 或业务时间字段的精准范围过滤（Range Query），禁止全表扫描。
+
+
+# 业务上下文与架构架构准则
+- 这是一个独立的日志监控与告警平台。
+- 核心数据流为：Filebeat 采集日志 -> 直连写入 Elasticsearch -> Java 后台定时查询并处理告警。
+- **架构红线：严禁在任何方案或代码中引入、推荐使用 Logstash。**
+- 公司测试环境的 ES 使用 HTTPS 但没有正规证书，因此所有 Java 后台连接 ES 的代码，必须显式包含跳过 SSL 证书验证的底层逻辑。
