@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor Debug Console</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --surface2: #22263a;
+            --border: #2d3250;
+            --text: #e1e4ed;
+            --text2: #8b8fa3;
+            --accent: #6c5ce7;
+            --green: #00b894;
+            --yellow: #fdcb6e;
+            --red: #e17055;
+            --blue: #74b9ff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--red);
+            transition: background 0.3s;
+        }
+
+        .status-dot.connected {
+            background: var(--green);
+            box-shadow: 0 0 8px var(--green);
+        }
+
+        .status-text {
+            font-size: 13px;
+            color: var(--text2);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto 1fr;
+            gap: 16px;
+            padding: 16px;
+            height: calc(100vh - 60px);
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text2);
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-body {
+            padding: 16px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* Connection Panel */
+        .conn-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        label {
+            font-size: 12px;
+            color: var(--text2);
+            min-width: 60px;
+        }
+
+        input,
+        select,
+        textarea {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            flex: 1;
+            font-family: inherit;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+            font-family: 'Consolas', monospace;
+            font-size: 12px;
+        }
+
+        .btn {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #7c6cf7;
+        }
+
+        .btn-success {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            background: #00d2a0;
+        }
+
+        .btn-danger {
+            background: var(--red);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #f07060;
+        }
+
+        .btn-warning {
+            background: var(--yellow);
+            color: #333;
+        }
+
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 11px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        /* Log Console */
+        .log-console {
+            background: #0a0c10;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            padding: 12px;
+            flex: 1;
+            overflow-y: auto;
+            max-height: 100%;
+        }
+
+        .log-entry {
+            margin-bottom: 2px;
+            word-break: break-all;
+        }
+
+        .log-entry .time {
+            color: var(--text2);
+        }
+
+        .log-entry.sent .dir {
+            color: var(--blue);
+        }
+
+        .log-entry.recv .dir {
+            color: var(--green);
+        }
+
+        .log-entry.info .dir {
+            color: var(--yellow);
+        }
+
+        .log-entry.error .dir {
+            color: var(--red);
+        }
+
+        /* Rules Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th {
+            text-align: left;
+            padding: 8px;
+            color: var(--text2);
+            border-bottom: 1px solid var(--border);
+            font-weight: 500;
+        }
+
+        td {
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: rgba(108, 92, 231, 0.05);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .tag-critical {
+            background: rgba(225, 112, 85, 0.2);
+            color: var(--red);
+        }
+
+        .tag-exclude {
+            background: rgba(0, 184, 148, 0.2);
+            color: var(--green);
+        }
+
+        .tag-basic {
+            background: rgba(253, 203, 110, 0.2);
+            color: var(--yellow);
+        }
+
+        /* Quick Send / Test Log */
+        .quick-btns {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .test-section {
+            margin-top: 12px;
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+        }
+
+        .test-section h4 {
+            font-size: 12px;
+            color: var(--text2);
+            margin-bottom: 8px;
+        }
+
+        /* Rule Form (inline) */
+        .rule-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .rule-form .full {
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>🔧 Monitor Debug Console</h1>
+        <div class="status-dot" id="statusDot"></div>
+        <span class="status-text" id="statusText">未连接</span>
+    </header>
+
+    <div class="container">
+        <!-- 左上: 连接控制 + 快速发送 -->
+        <div class="panel">
+            <div class="panel-header">🔌 WebSocket 连接 & 消息发送</div>
+            <div class="panel-body">
+                <div class="conn-form">
+                    <div class="form-row">
+                        <label>Host</label>
+                        <input type="text" id="wsHost" value="" placeholder="192.168.x.x:8080" style="max-width:180px">
+                        <label>AgentId</label>
+                        <input type="text" id="agentId" value="debug-agent-01">
+                    </div>
+                    <div class="form-row">
+                        <label>Token</label>
+                        <input type="text" id="token" value="default-pre-shared-key">
+                        <button class="btn btn-success" id="btnConnect" onclick="connectWS()">连接</button>
+                        <button class="btn btn-danger" id="btnDisconnect" onclick="disconnectWS()" disabled>断开</button>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h4>⚡ 快速发送</h4>
+                    <div class="quick-btns">
+                        <button class="btn btn-primary btn-sm" onclick="sendHeartbeat()">💓 心跳</button>
+                        <button class="btn btn-primary btn-sm" onclick="sendMetrics()">📊 指标</button>
+                        <button class="btn btn-primary btn-sm" onclick="sendNormalLog()">📝 普通日志</button>
+                        <button class="btn btn-warning btn-sm" onclick="sendErrorLog()">⚠️ ERROR 日志</button>
+                        <button class="btn btn-danger btn-sm" onclick="sendCriticalLog()">🔴 强关注日志</button>
+                        <button class="btn btn-success btn-sm" onclick="sendExcludeLog()">✅ 排除日志</button>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h4>📨 自定义日志行</h4>
+                    <div class="form-row">
+                        <input type="text" id="appName" value="payment-service" placeholder="appName"
+                            style="max-width:130px">
+                        <input type="text" id="customLog" placeholder="输入日志内容…" style="flex:3">
+                        <button class="btn btn-primary btn-sm" onclick="sendCustomLog()">发送</button>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h4>📦 原始 JSON 发送</h4>
+                    <textarea id="rawJson" rows="3"
+                        placeholder='{"type":"HEARTBEAT","agentId":"...","timestamp":0,"payload":{}}'></textarea>
+                    <div style="margin-top:6px">
+                        <button class="btn btn-primary btn-sm" onclick="sendRaw()">发送 JSON</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右上: 规则管理 -->
+        <div class="panel">
+            <div class="panel-header">
+                📋 过滤规则管理
+                <div class="btn-group">
+                    <button class="btn btn-primary btn-sm" onclick="loadRules()">刷新</button>
+                    <button class="btn btn-warning btn-sm" onclick="rebuildMatchers()">重建匹配器</button>
+                </div>
+            </div>
+            <div class="panel-body">
+                <!-- Add Rule Form -->
+                <div class="rule-form" id="ruleForm">
+                    <select id="ruleType">
+                        <option value="CRITICAL">CRITICAL 强关注</option>
+                        <option value="EXCLUDE">EXCLUDE 排除</option>
+                    </select>
+                    <input type="text" id="ruleName" placeholder="规则名称">
+                    <input type="text" id="ruleKeyword" placeholder="匹配关键字" class="full">
+                    <select id="matchMode">
+                        <option value="CONTAINS">CONTAINS 包含</option>
+                        <option value="REGEX">REGEX 正则</option>
+                        <option value="STARTS_WITH">STARTS_WITH</option>
+                        <option value="ENDS_WITH">ENDS_WITH</option>
+                    </select>
+                    <div>
+                        <button class="btn btn-success btn-sm" onclick="addRule()">＋ 添加规则</button>
+                    </div>
+                </div>
+                <!-- Rules Table -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>类型</th>
+                            <th>名称</th>
+                            <th>关键字</th>
+                            <th>模式</th>
+                            <th>启用</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rulesTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 左下 + 右下合并: 通信日志 -->
+        <div class="panel" style="grid-column: 1 / -1;">
+            <div class="panel-header">
+                📜 通信日志
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-danger" onclick="clearLog()">清空</button>
+                </div>
+            </div>
+            <div class="log-console" id="logConsole"></div>
+        </div>
+    </div>
+
+    <script>
+        let ws = null;
+        const logEl = document.getElementById('logConsole');
+
+        function ts() { return new Date().toLocaleTimeString('zh-CN', { hour12: false }) + '.' + String(Date.now() % 1000).padStart(3, '0'); }
+
+        function addLog(type, dir, msg) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + type;
+            entry.innerHTML = `<span class="time">[${ts()}]</span> <span class="dir">[${dir}]</span> ${escapeHtml(msg)}`;
+            logEl.appendChild(entry);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function escapeHtml(s) {
+            return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function setConnected(connected) {
+            document.getElementById('statusDot').className = 'status-dot' + (connected ? ' connected' : '');
+            document.getElementById('statusText').textContent = connected ? '已连接' : '未连接';
+            document.getElementById('btnConnect').disabled = connected;
+            document.getElementById('btnDisconnect').disabled = !connected;
+        }
+
+        // ========== WebSocket ==========
+        function connectWS() {
+            const host = document.getElementById('wsHost').value;
+            const agentId = document.getElementById('agentId').value;
+            const token = document.getElementById('token').value;
+            const url = `ws://${host}/ws/agent?agentId=${encodeURIComponent(agentId)}&token=${encodeURIComponent(token)}`;
+
+            addLog('info', 'SYS', `正在连接 ${url} ...`);
+            try {
+                ws = new WebSocket(url);
+            } catch (e) {
+                addLog('error', 'ERR', `创建连接失败: ${e.message}`);
+                return;
+            }
+
+            ws.onopen = function () {
+                setConnected(true);
+                addLog('info', 'SYS', '✅ WebSocket 连接成功!');
+            };
+            ws.onmessage = function (e) {
+                try {
+                    const msg = JSON.parse(e.data);
+                    if (msg.type === 'FILTER_RESULT') {
+                        const p = msg.payload;
+                        const icons = { CRITICAL: '🔴', UNKNOWN_ERROR: '🟡', EXCLUDED: '✅', NORMAL: '⚪' };
+                        const icon = icons[p.level] || '❓';
+                        const detail = p.matched
+                            ? `规则="${p.matchedRuleName}" 关键字="${p.matchedKeyword}"`
+                            : '无匹配';
+                        addLog(p.level === 'CRITICAL' ? 'error' : p.level === 'UNKNOWN_ERROR' ? 'info' : 'recv',
+                            `${icon} ${p.level}`, `${detail} | ${p.logSnippet || ''}`);
+                        return;
+                    }
+                } catch (_) { }
+                addLog('recv', '◀ RECV', e.data);
+            };
+            ws.onerror = function () {
+                addLog('error', 'ERR', '❌ WebSocket 错误');
+            };
+            ws.onclose = function (e) {
+                setConnected(false);
+                addLog('info', 'SYS', `🔌 连接关闭 code=${e.code} reason=${e.reason || 'N/A'}`);
+                ws = null;
+            };
+        }
+
+        function disconnectWS() {
+            if (ws) { ws.close(1000, 'user-close'); }
+        }
+
+        function wsSend(obj) {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                addLog('error', 'ERR', '未连接，请先连接 WebSocket');
+                return;
+            }
+            const json = JSON.stringify(obj);
+            ws.send(json);
+            addLog('sent', '▶ SENT', json);
+        }
+
+        function getAgentId() { return document.getElementById('agentId').value; }
+
+        // ========== Quick Send ==========
+        function sendHeartbeat() {
+            wsSend({ type: 'HEARTBEAT', agentId: getAgentId(), timestamp: Date.now(), payload: {} });
+        }
+
+        function sendMetrics() {
+            wsSend({
+                type: 'METRICS', agentId: getAgentId(), timestamp: Date.now(),
+                payload: {
+                    cpu: { usagePercent: +(Math.random() * 100).toFixed(1), coreCount: 8 },
+                    memory: { totalMB: 16384, usedMB: Math.floor(Math.random() * 16384), usagePercent: +(Math.random() * 100).toFixed(1) },
+                    disk: { totalGB: 500, usedGB: Math.floor(Math.random() * 500), usagePercent: +(Math.random() * 100).toFixed(1) },
+                    network: { bytesSentPerSec: Math.floor(Math.random() * 500000), bytesRecvPerSec: Math.floor(Math.random() * 500000) }
+                }
+            });
+        }
+
+        function sendLogLine(line) {
+            wsSend({
+                type: 'LOG_LINE', agentId: getAgentId(), timestamp: Date.now(),
+                payload: { appName: document.getElementById('appName').value, logPath: '/opt/logs/app.log', line: line }
+            });
+        }
+
+        function sendNormalLog() { sendLogLine(`${new Date().toISOString()} INFO com.app.Main - Application running normally`); }
+        function sendErrorLog() { sendLogLine(`${new Date().toISOString()} ERROR com.app.Service - NullPointerException at line 42`); }
+        function sendCriticalLog() { sendLogLine(`${new Date().toISOString()} ERROR com.pay.Service - 调用第三方接口超时！traceId=abc123`); }
+        function sendExcludeLog() { sendLogLine(`${new Date().toISOString()} INFO com.app.Health - HealthCheck OK`); }
+        function sendCustomLog() { sendLogLine(document.getElementById('customLog').value); }
+
+        function sendRaw() {
+            try {
+                const obj = JSON.parse(document.getElementById('rawJson').value);
+                wsSend(obj);
+            } catch (e) {
+                addLog('error', 'ERR', `JSON 解析失败: ${e.message}`);
+            }
+        }
+
+        function clearLog() { logEl.innerHTML = ''; }
+
+        // ========== Rules API ==========
+        function getApiBase() { return `http://${document.getElementById('wsHost').value}/api/rules`; }
+
+        async function loadRules() {
+            try {
+                const resp = await fetch(getApiBase());
+                const result = await resp.json();
+                const rules = result.data || [];
+                const tbody = document.getElementById('rulesTable');
+                tbody.innerHTML = '';
+                rules.forEach(r => {
+                    const typeClass = r.ruleType === 'CRITICAL' ? 'tag-critical' : r.ruleType === 'EXCLUDE' ? 'tag-exclude' : 'tag-basic';
+                    tbody.innerHTML += `<tr>
+                        <td>${r.id}</td>
+                        <td><span class="tag ${typeClass}">${r.ruleType}</span></td>
+                        <td>${r.ruleName || ''}</td>
+                        <td style="font-family:monospace;font-size:11px">${escapeHtml(r.keyword || '')}</td>
+                        <td>${r.matchMode || ''}</td>
+                        <td>${r.enabled ? '✅' : '❌'}</td>
+                        <td><button class="btn btn-danger btn-sm" onclick="deleteRule(${r.id})">删除</button></td>
+                    </tr>`;
+                });
+                addLog('info', 'API', `已加载 ${rules.length} 条规则`);
+            } catch (e) {
+                addLog('error', 'API', `加载规则失败: ${e.message}`);
+            }
+        }
+
+        async function addRule() {
+            const rule = {
+                ruleType: document.getElementById('ruleType').value,
+                ruleName: document.getElementById('ruleName').value,
+                keyword: document.getElementById('ruleKeyword').value,
+                matchMode: document.getElementById('matchMode').value,
+                enabled: true,
+                priority: 0
+            };
+            if (!rule.ruleName || !rule.keyword) { addLog('error', 'API', '规则名称和关键字不能为空'); return; }
+            try {
+                const resp = await fetch(getApiBase(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(rule) });
+                const result = await resp.json();
+                addLog('info', 'API', `规则已添加: id=${result.data?.id}`);
+                document.getElementById('ruleName').value = '';
+                document.getElementById('ruleKeyword').value = '';
+                loadRules();
+            } catch (e) {
+                addLog('error', 'API', `添加规则失败: ${e.message}`);
+            }
+        }
+
+        async function deleteRule(id) {
+            try {
+                await fetch(`${getApiBase()}/${id}`, { method: 'DELETE' });
+                addLog('info', 'API', `规则 #${id} 已删除`);
+                loadRules();
+            } catch (e) {
+                addLog('error', 'API', `删除规则失败: ${e.message}`);
+            }
+        }
+
+        async function rebuildMatchers() {
+            try {
+                const resp = await fetch(`${getApiBase()}/rebuild`, { method: 'POST' });
+                const result = await resp.json();
+                addLog('info', 'API', `匹配器重建: ${result.data}`);
+            } catch (e) {
+                addLog('error', 'API', `重建失败: ${e.message}`);
+            }
+        }
+
+        // Auto-detect host from current page URL, fallback to localhost
+        (function () {
+            const hostInput = document.getElementById('wsHost');
+            if (location.protocol === 'file:') {
+                hostInput.value = 'localhost:8080';
+            } else {
+                hostInput.value = location.host || 'localhost:8080';
+            }
+            loadRules();
+        })();
+    </script>
+</body>
+
+</html>

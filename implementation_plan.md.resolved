@@ -1,0 +1,550 @@
+# 轻量级服务器与日志集中监控系统 — 架构设计文档
+
+## 一、全局背景与重构方向
+
+现有项目基于 **Filebeat → Elasticsearch → Java 定时查询** 的重型架构。本次重构将彻底转换为：
+
+> **C# 采集端 (Agent)** ──── WebSocket (WS) 长连接 ────▶ **Java 运维端 (Server)**
+
+**核心变更**：
+- ❌ 移除 Elasticsearch 客户端依赖及相关代码
+- ❌ 移除 Filebeat 相关逻辑
+- ✅ 新增 WebSocket 服务端（Spring Boot WebSocket）
+- ✅ 新增内存级三级日志规则引擎
+- ✅ 新增服务器健康状态评估模型
+
+**保留不变**：`Result<T>` 统一响应、[GlobalExceptionHandler](file:///c:/Users/zzh/Desktop/anti/demo/src/main/java/com/example/demo/common/exception/GlobalExceptionHandler.java#12-34)、Lombok、MyBatis-Plus、MySQL、Spring Boot 2.7.18 + JDK 8
+
+---
+
+## 二、WebSocket 通信协议设计
+
+### 2.1 连接机制
+
+| 项目 | 说明 |
+|------|------|
+| 协议 | `ws://` (内网环境，无需 TLS) |
+| 端点 | `ws://{server}:{port}/ws/agent` |
+| 认证 | 连接时 URL 携带 `?agentId={唯一标识}&token={预共享密钥}` |
+| 心跳 | Agent 每 **30秒** 发送心跳帧，Server 超时 **90秒** 未收到则判定下线 |
+| 重连 | Agent 断线后按 **指数退避** (2s → 4s → 8s → 最大 60s) 自动重连 |
+
+### 2.2 文本帧统一信封格式
+
+所有 JSON 文本帧遵循统一的 **信封 (Envelope)** 结构：
+
+```json
+{
+  "type": "消息类型标识",
+  "agentId": "采集端唯一ID",
+  "timestamp": 1709100000000,
+  "payload": { ... }
+}
+```
+
+### 2.3 Agent → Server 上报消息类型
+
+#### 2.3.1 `HEARTBEAT` — 心跳
+
+```json
+{
+  "type": "HEARTBEAT",
+  "agentId": "server-prod-01",
+  "timestamp": 1709100000000,
+  "payload": {}
+}
+```
+
+#### 2.3.2 `METRICS` — 系统指标上报
+
+```json
+{
+  "type": "METRICS",
+  "agentId": "server-prod-01",
+  "timestamp": 1709100000000,
+  "payload": {
+    "cpu": {
+      "usagePercent": 45.2,
+      "coreCount": 8
+    },
+    "memory": {
+      "totalMB": 16384,
+      "usedMB": 12000,
+      "usagePercent": 73.2
+    },
+    "disk": {
+      "totalGB": 500,
+      "usedGB": 320,
+      "usagePercent": 64.0
+    },
+    "network": {
+      "bytesSentPerSec": 102400,
+      "bytesRecvPerSec": 204800
+    }
+  }
+}
+```
+
+#### 2.3.3 `LOG_LINE` — 单行日志上报
+
+```json
+{
+  "type": "LOG_LINE",
+  "agentId": "server-prod-01",
+  "timestamp": 1709100000000,
+  "payload": {
+    "appName": "payment-service",
+    "logPath": "/opt/logs/payment/app.log",
+    "line": "2026-02-28 10:30:00 ERROR com.pay.Service - 调用第三方接口超时！traceId=abc123"
+  }
+}
+```
+
+> [!IMPORTANT]
+> Agent 端**不做任何过滤**，每读到一行 `\n` 分隔的新内容就立刻上报。所有过滤逻辑由 Server 完成。
+
+#### 2.3.4 `CMD_RESPONSE` — Agent 对 Server 指令的响应
+
+```json
+{
+  "type": "CMD_RESPONSE",
+  "agentId": "server-prod-01",
+  "timestamp": 1709100000000,
+  "payload": {
+    "cmdId": "cmd-uuid-001",
+    "success": true,
+    "data": { ... },
+    "errorMsg": null
+  }
+}
+```
+
+### 2.4 Server → Agent 下发消息类型
+
+#### 2.4.1 `CMD_REQUEST` — 控制指令
+
+```json
+{
+  "type": "CMD_REQUEST",
+  "agentId": "server-prod-01",
+  "timestamp": 1709100000000,
+  "payload": {
+    "cmdId": "cmd-uuid-001",
+    "action": "GET_METRICS | LIST_DIR | READ_FILE | WRITE_FILE | RESTART_APP | EXEC_CMD | START_LOG_WATCH | STOP_LOG_WATCH",
+    "params": {
+      "path": "/opt/logs/",
+      "content": "...",
+      "appName": "payment-service",
+      "command": "systemctl restart payment"
+    }
+  }
+}
+```
+
+**支持的 `action` 枚举**：
+
+| action | 说明 | params 示例 |
+|--------|------|-------------|
+| `GET_METRICS` | 立即获取系统指标 | `{}` |
+| `LIST_DIR` | 浏览指定目录 | `{"path": "/opt/logs/"}` |
+| `READ_FILE` | 读取配置文件内容 | `{"path": "/opt/app/config.yml"}` |
+| `WRITE_FILE` | 写入/修改配置文件 | `{"path": "...", "content": "..."}` |
+| `RESTART_APP` | 重启应用进程 | `{"appName": "payment-service"}` |
+| `EXEC_CMD` | 执行 Shell/CMD 命令 | `{"command": "systemctl status nginx"}` |
+| `START_LOG_WATCH` | 开始监听指定日志文件 | `{"appName": "...", "logPath": "/opt/logs/app.log"}` |
+| `STOP_LOG_WATCH` | 停止监听指定日志文件 | `{"appName": "...", "logPath": "/opt/logs/app.log"}` |
+
+#### 2.4.2 `CONFIG_PUSH` — 规则/配置推送
+
+```json
+{
+  "type": "CONFIG_PUSH",
+  "agentId": "server-prod-01",
+  "timestamp": 1709100000000,
+  "payload": {
+    "watchTargets": [
+      {
+        "appName": "payment-service",
+        "logPaths": ["/opt/logs/payment/app.log", "/opt/logs/payment/error.log"]
+      }
+    ]
+  }
+}
+```
+
+### 2.5 二进制帧（文件传输）协议
+
+文件上传/下载通过 WS **二进制帧**实现。每个二进制帧结构：
+
+```
+[Header: 固定 64 字节]
+┌─────────────┬───────────┬──────────┬──────────┬──────────┬─────────────┐
+│ transferId  │ direction │ fileName │ chunkIdx │ totalIdx │ isLastChunk │
+│ (36 bytes)  │ (1 byte)  │(variable)│ (4 bytes)│ (4 bytes)│  (1 byte)   │
+└─────────────┴───────────┴──────────┴──────────┴──────────┴─────────────┘
+[Body: 文件数据块, 建议每块 64KB]
+```
+
+> 传输发起前，先通过 `CMD_REQUEST` 文本帧协商文件名、大小等元信息，获得 `transferId`。之后所有二进制帧均携带此 ID，Server/Agent 两端各自按 chunkIdx 重组文件。
+
+---
+
+## 三、日志规则引擎设计（核心）
+
+### 3.1 三级过滤链流程
+
+```mermaid
+flowchart TD
+    A["接收 LOG_LINE"] --> B{"第一步: 强关注规则匹配"}
+    B -- 命中 --> C["判定: 系统异常\n立即告警 🔴"]
+    B -- 未命中 --> D{"第二步: 排除规则匹配"}
+    D -- 命中 --> E["判定: 正常业务日志\n直接丢弃 ✅"]
+    D -- 未命中 --> F{"第三步: 基础特征匹配\nERROR / Exception"}
+    F -- 命中 --> G["判定: 未知系统错误\n记录并告警 🟡"]
+    F -- 未命中 --> H["判定: 普通 INFO 日志\n直接丢弃 ✅"]
+```
+
+### 3.2 核心接口设计
+
+```java
+/**
+ * 日志过滤链节点接口 — 责任链模式
+ * 每个过滤器决定：命中则终止链路，未命中则传递给下一节点。
+ */
+public interface LogFilter {
+
+    /**
+     * 处理单行日志
+     * @param context 日志上下文（包含原始行、来源应用、agentId等）
+     * @return FilterResult 过滤结果（命中/跳过 + 判定级别 + 原因描述）
+     */
+    FilterResult doFilter(LogContext context);
+
+    /**
+     * 过滤器优先级，数值越小越先执行
+     */
+    int getOrder();
+}
+```
+
+```java
+/**
+ * 过滤链编排器 — 按 order 排序后依次执行
+ */
+public class LogFilterChain {
+
+    private final List<LogFilter> filters; // 按 order 排序
+
+    /**
+     * 执行链式过滤，首个命中的 filter 决定最终结果
+     */
+    public FilterResult execute(LogContext context) {
+        for (LogFilter filter : filters) {
+            FilterResult result = filter.doFilter(context);
+            if (result.isMatched()) {
+                return result; // 命中即终止
+            }
+        }
+        // 全部未命中 → 普通日志，丢弃
+        return FilterResult.normalLog();
+    }
+}
+```
+
+### 3.3 核心实体类设计
+
+#### 3.3.1 日志上下文 `LogContext`
+
+```java
+@Data
+@Builder
+public class LogContext {
+    /** 来源采集端 ID */
+    private String agentId;
+    /** 应用名称 */
+    private String appName;
+    /** 日志文件路径 */
+    private String logPath;
+    /** 原始日志行文本（全量，不做截断） */
+    private String rawLine;
+    /** Agent 上报时间戳 */
+    private long timestamp;
+}
+```
+
+#### 3.3.2 过滤结果 `FilterResult`
+
+```java
+@Data
+@Builder
+public class FilterResult {
+    /** 是否命中了某条规则 */
+    private boolean matched;
+    /** 判定级别：CRITICAL / EXCLUDED / UNKNOWN_ERROR / NORMAL */
+    private LogLevel level;
+    /** 命中的规则名称/描述（用于前端展示异常原因） */
+    private String matchedRuleName;
+    /** 命中的关键字内容 */
+    private String matchedKeyword;
+
+    public static FilterResult normalLog() {
+        return FilterResult.builder()
+            .matched(false)
+            .level(LogLevel.NORMAL)
+            .build();
+    }
+}
+```
+
+#### 3.3.3 日志判定级别 `LogLevel`
+
+```java
+public enum LogLevel {
+    /** 强关注命中 — 立即告警 */
+    CRITICAL,
+    /** 排除规则命中 — 正常业务 */
+    EXCLUDED,
+    /** 基础特征命中 — 未知系统错误 */
+    UNKNOWN_ERROR,
+    /** 全链未命中 — 普通日志 */
+    NORMAL
+}
+```
+
+#### 3.3.4 规则定义实体 `FilterRule`（对应 DB 持久化）
+
+```java
+@Data
+@TableName("t_filter_rule")
+public class FilterRule {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+
+    /** 规则类型：CRITICAL(强关注) / EXCLUDE(排除) / BASIC(基础特征) */
+    private String ruleType;
+
+    /** 规则名称（人类可读），如 "第三方接口超时" */
+    private String ruleName;
+
+    /** 匹配关键字，如 "调用第三方接口超时" */
+    private String keyword;
+
+    /** 匹配模式：CONTAINS(包含) / REGEX(正则) / STARTS_WITH / ENDS_WITH */
+    private String matchMode;
+
+    /** 所属应用名（为空则全局生效） */
+    private String appName;
+
+    /** 是否启用 */
+    private Boolean enabled;
+
+    /** 优先级（同类型内排序用） */
+    private Integer priority;
+
+    private Date createTime;
+    private Date updateTime;
+}
+```
+
+### 3.4 高并发字符串匹配策略
+
+> [!IMPORTANT]
+> 这是系统的**性能热点**——每秒可能有成百上千行日志需要逐一匹配数十至数百条规则。
+
+**分层策略**：
+
+| 策略 | 适用场景 | 实现 |
+|------|---------|------|
+| **Aho-Corasick 多模式匹配** | **CONTAINS 模式**的关键字（占绝大多数） | 将同一 `ruleType` 的所有关键字构建为一棵 AC 自动机，一次扫描即可匹配所有关键字。时间复杂度 O(n + m) |
+| **预编译正则表达式缓存** | **REGEX 模式**的规则 | 启动时或规则变更时 `Pattern.compile()` 编译并缓存，避免运行时重复编译 |
+| **规则热加载** | 运维人员在前端修改规则后实时生效 | 规则变更时重建 AC 自动机 + 清除正则缓存，使用 **读写锁** (`ReentrantReadWriteLock`) 保护，读（匹配）不阻塞，仅写（重建）时短暂互斥 |
+
+**核心匹配器伪代码**：
+
+```java
+public class AhoCorasickMatcher {
+    private volatile AhoCorasickAutomaton automaton;  // AC 自动机实例
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
+
+    /**
+     * 根据关键字列表重建 AC 自动机（写操作，规则变更时调用）
+     */
+    public void rebuild(List<String> keywords) {
+        Lock writeLock = lock.writeLock();
+        writeLock.lock();
+        try {
+            this.automaton = AhoCorasickAutomaton.build(keywords);
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    /**
+     * 对单行日志执行多模式匹配（读操作，高并发安全）
+     * @return 命中的关键字列表（可能为空）
+     */
+    public List<String> match(String logLine) {
+        Lock readLock = lock.readLock();
+        readLock.lock();
+        try {
+            return automaton.search(logLine);
+        } finally {
+            readLock.unlock();
+        }
+    }
+}
+```
+
+### 3.5 三个过滤器实现概要
+
+```java
+// 第一步：强关注规则过滤器 (order = 10)
+public class CriticalRuleFilter implements LogFilter {
+    private final AhoCorasickMatcher criticalMatcher;
+    // 命中 → FilterResult(matched=true, level=CRITICAL)
+}
+
+// 第二步：排除规则过滤器 (order = 20)
+public class ExcludeRuleFilter implements LogFilter {
+    private final AhoCorasickMatcher excludeMatcher;
+    // 命中 → FilterResult(matched=true, level=EXCLUDED)
+}
+
+// 第三步：基础特征过滤器 (order = 30)
+public class BasicFeatureFilter implements LogFilter {
+    // 硬编码检查 "ERROR" / "Exception" 等标识
+    // 命中 → FilterResult(matched=true, level=UNKNOWN_ERROR)
+}
+```
+
+---
+
+## 四、服务器健康状态评估模型
+
+### 4.1 状态枚举
+
+```java
+public enum HealthStatus {
+    GREEN,   // 正常
+    YELLOW,  // 警告
+    RED      // 危险
+}
+```
+
+### 4.2 综合评估规则
+
+```java
+@Data
+public class ServerHealthState {
+    private String agentId;
+    private HealthStatus status;
+    private String reason;            // 原因描述
+    private double cpuUsage;
+    private double diskUsage;
+    private long cpuHighSinceMs;      // CPU > 80% 的持续起始时间 (0 = 未持续)
+    private List<String> criticalLogs; // 最近命中的强关注日志片段
+}
+```
+
+**状态判定优先级**：
+
+```
+🔴 RED 条件（任一满足即红）：
+  - CPU 持续 > 80% 超过 10 分钟
+  - 出现"强关注规则"命中日志 (CRITICAL)
+
+🟡 YELLOW 条件：
+  - CPU 在 30% ~ 80% 之间
+  - 出现 UNKNOWN_ERROR 级别日志
+
+🟢 GREEN 条件（以下全部满足）：
+  - 无 CRITICAL / UNKNOWN_ERROR 日志
+  - CPU < 30%
+  - 磁盘 < 70%
+```
+
+---
+
+## 五、重构后项目包结构
+
+```
+com.example.demo
+├── DemoApplication.java                      # 启动类（保留）
+├── common
+│   ├── result/Result.java                    # 统一响应体（保留）
+│   ├── exception/GlobalExceptionHandler.java # 全局异常处理（保留）
+│   └── enums/                                # [NEW] 枚举包
+│       ├── LogLevel.java
+│       ├── HealthStatus.java
+│       ├── MessageType.java                  # WS 消息类型枚举
+│       └── CommandAction.java                # 控制指令动作枚举
+├── config
+│   └── WebSocketConfig.java                  # [NEW] 替代 ElasticsearchConfig
+├── websocket
+│   ├── handler/AgentWebSocketHandler.java    # [NEW] WS 连接处理器
+│   ├── session/AgentSessionManager.java      # [NEW] 会话管理器
+│   └── protocol/                             # [NEW] 协议解析
+│       ├── WsMessage.java                    # 统一信封实体
+│       ├── MessageDispatcher.java            # 消息类型路由分发
+│       └── BinaryFrameHandler.java           # 二进制帧处理
+├── engine
+│   ├── filter/                               # [NEW] 规则引擎
+│   │   ├── LogFilter.java                    # 过滤器接口
+│   │   ├── LogFilterChain.java               # 过滤链编排
+│   │   ├── CriticalRuleFilter.java           # 强关注过滤器
+│   │   ├── ExcludeRuleFilter.java            # 排除过滤器
+│   │   └── BasicFeatureFilter.java           # 基础特征过滤器
+│   ├── matcher/                              # [NEW] 匹配器
+│   │   ├── AhoCorasickMatcher.java           # AC 自动机封装
+│   │   └── RegexMatcherCache.java            # 正则缓存
+│   └── model/                                # [NEW] 引擎实体
+│       ├── LogContext.java
+│       └── FilterResult.java
+├── monitor
+│   ├── health/                               # [NEW] 健康评估
+│   │   ├── ServerHealthState.java
+│   │   ├── HealthEvaluator.java              # 状态计算器
+│   │   └── HealthStateStore.java             # 全局状态存储 (ConcurrentHashMap)
+│   └── alert/                                # [NEW] 告警触发
+│       └── AlertService.java
+└── module
+    └── rule/                                 # [NEW] 规则管理 CRUD
+        ├── entity/FilterRule.java
+        ├── mapper/FilterRuleMapper.java
+        ├── service/FilterRuleService.java
+        └── controller/FilterRuleController.java
+```
+
+> [!WARNING]
+> 原有的 [config/ElasticsearchConfig.java](file:///c:/Users/zzh/Desktop/anti/demo/src/main/java/com/example/demo/config/ElasticsearchConfig.java) 和 `module/elasticsearch/` 包将在重构中**整体删除**，因为新架构完全不依赖 Elasticsearch。
+
+---
+
+## 六、需删除的旧代码清单
+
+| 文件 | 原因 |
+|------|------|
+| [config/ElasticsearchConfig.java](file:///c:/Users/zzh/Desktop/anti/demo/src/main/java/com/example/demo/config/ElasticsearchConfig.java) | ES 客户端配置，新架构不需要 |
+| [module/elasticsearch/entity/EsLogEntity.java](file:///c:/Users/zzh/Desktop/anti/demo/src/main/java/com/example/demo/module/elasticsearch/entity/EsLogEntity.java) | ES 日志实体，被 `LogContext` 取代 |
+| [module/elasticsearch/service/ElasticsearchQueryService.java](file:///c:/Users/zzh/Desktop/anti/demo/src/main/java/com/example/demo/module/elasticsearch/service/ElasticsearchQueryService.java) | ES 查询服务，被规则引擎取代 |
+
+[pom.xml](file:///c:/Users/zzh/Desktop/anti/demo/pom.xml) 中需**移除**的依赖：
+- `co.elastic.clients:elasticsearch-java`
+- `org.elasticsearch.client:elasticsearch-rest-client`
+
+[pom.xml](file:///c:/Users/zzh/Desktop/anti/demo/pom.xml) 中需**新增**的依赖：
+- `spring-boot-starter-websocket` （Spring WebSocket 支持）
+- AC 自动机库：`org.ahocorasick:ahocorasick` 或自研实现
+
+---
+
+## 七、Verification Plan
+
+由于本次任务为**纯设计文档输出**（不涉及代码变更），验证方式为：
+
+### 人工审核
+1. 请检查 WebSocket JSON 协议是否覆盖了需求中要求的所有交互场景（心跳、指标上报、日志上报、指令下发、文件传输）
+2. 请检查三级过滤链设计是否准确匹配需求描述的优先级顺序（强关注 → 排除 → 基础特征）
+3. 请确认高并发匹配策略（AC 自动机 + 读写锁）是否满足您对性能的预期
+4. 请确认状态灯规则（GREEN/YELLOW/RED）的阈值是否需要调整
+5. 请确认要删除的旧代码清单是否正确
