@@ -1,5 +1,6 @@
 package com.example.demo.websocket.handler;
 
+import com.example.demo.module.command.service.RemoteCommandService;
 import com.example.demo.websocket.protocol.BinaryFrameHandler;
 import com.example.demo.websocket.protocol.MessageDispatcher;
 import com.example.demo.websocket.protocol.WsMessage;
@@ -35,6 +36,7 @@ public class AgentWebSocketHandler extends AbstractWebSocketHandler {
     private final MessageDispatcher dispatcher;
     private final BinaryFrameHandler binaryFrameHandler;
     private final ObjectMapper objectMapper;
+    private final RemoteCommandService remoteCommandService;
 
     @Value("${ws.agent.token:default-pre-shared-key}")
     private String expectedToken;
@@ -45,11 +47,13 @@ public class AgentWebSocketHandler extends AbstractWebSocketHandler {
     public AgentWebSocketHandler(AgentSessionManager sessionManager,
             MessageDispatcher dispatcher,
             BinaryFrameHandler binaryFrameHandler,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper,
+            RemoteCommandService remoteCommandService) {
         this.sessionManager = sessionManager;
         this.dispatcher = dispatcher;
         this.binaryFrameHandler = binaryFrameHandler;
         this.objectMapper = objectMapper;
+        this.remoteCommandService = remoteCommandService;
     }
 
     @Override
@@ -92,6 +96,20 @@ public class AgentWebSocketHandler extends AbstractWebSocketHandler {
             return;
 
         try {
+            // 先尝试检测 Agent 端自定义指令响应格式: {"type":"xxx@Return","result":"...","cmdID":"xxx"}
+            com.fasterxml.jackson.databind.JsonNode rootNode = objectMapper.readTree(message.getPayload());
+            if (rootNode.has("cmdID") && rootNode.has("type")) {
+                String type = rootNode.get("type").asText("");
+                if (type.contains("@Return") || type.equals("cmd")) {
+                    String cmdId = rootNode.get("cmdID").asText();
+                    String result = rootNode.has("result") ? rootNode.get("result").asText("") : "";
+                    log.info("[WS] 收到 Agent 自定义指令响应: agentId={}, type={}, cmdID={}", agentId, type, cmdId);
+                    remoteCommandService.handleResponse(agentId, cmdId, true, result);
+                    return;
+                }
+            }
+
+            // 标准 WsMessage 信封格式
             WsMessage wsMessage = objectMapper.readValue(message.getPayload(), WsMessage.class);
             // 确保信封中的 agentId 与连接认证一致
             wsMessage.setAgentId(agentId);

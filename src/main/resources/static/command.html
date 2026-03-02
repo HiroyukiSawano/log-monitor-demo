@@ -18,7 +18,6 @@
             --yellow: #fdcb6e;
             --red: #e17055;
             --blue: #74b9ff;
-            --cyan: #00cec9;
         }
 
         * {
@@ -54,16 +53,15 @@
             text-decoration: none;
             font-size: 13px;
             opacity: 0.8;
-            transition: opacity 0.2s;
         }
 
-        header .nav-link:hover {
-            opacity: 1;
+        header .nav-link+.nav-link {
+            margin-left: 0;
         }
 
         .container {
             display: grid;
-            grid-template-columns: 380px 1fr;
+            grid-template-columns: 420px 1fr;
             grid-template-rows: 1fr auto;
             gap: 16px;
             padding: 16px;
@@ -122,7 +120,6 @@
             border-radius: 6px;
             font-size: 13px;
             font-family: inherit;
-            transition: border-color 0.2s;
         }
 
         input:focus,
@@ -134,7 +131,6 @@
 
         textarea {
             resize: vertical;
-            min-height: 80px;
             font-family: 'Consolas', 'Courier New', monospace;
             font-size: 12px;
         }
@@ -159,11 +155,6 @@
 
         .btn-primary:hover {
             background: #7c6cf7;
-            transform: translateY(-1px);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
         }
 
         .btn-success {
@@ -184,7 +175,6 @@
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
         }
 
         .btn-group {
@@ -192,7 +182,6 @@
             gap: 6px;
         }
 
-        /* Agent selector */
         .agent-row {
             display: flex;
             gap: 8px;
@@ -204,12 +193,6 @@
             margin-bottom: 0;
         }
 
-        .agent-row .btn {
-            margin-bottom: 0;
-            height: 34px;
-        }
-
-        /* Preset Buttons */
         .preset-section {
             margin-top: 16px;
             padding-top: 14px;
@@ -236,7 +219,6 @@
             color: var(--text);
             cursor: pointer;
             font-size: 11px;
-            transition: all 0.2s;
         }
 
         .preset-btn:hover {
@@ -244,7 +226,6 @@
             background: rgba(108, 92, 231, 0.15);
         }
 
-        /* Result Card */
         .result-card {
             background: var(--bg);
             border: 1px solid var(--border);
@@ -270,7 +251,6 @@
             border-radius: 4px;
             font-size: 12px;
             font-weight: 700;
-            letter-spacing: 0.5px;
         }
 
         .result-status.pending {
@@ -303,7 +283,7 @@
             border: 1px solid var(--border);
             border-radius: 4px;
             padding: 12px;
-            font-family: 'Consolas', 'Courier New', monospace;
+            font-family: 'Consolas', monospace;
             font-size: 12px;
             line-height: 1.6;
             white-space: pre-wrap;
@@ -329,7 +309,6 @@
             }
         }
 
-        /* History Table */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -411,16 +390,20 @@
             margin-bottom: 10px;
         }
 
-        /* Communication Log */
+        .hint {
+            font-size: 11px;
+            color: var(--text2);
+            margin-top: 4px;
+        }
+
         .log-console {
             background: #0a0c10;
-            font-family: 'Consolas', 'Courier New', monospace;
+            font-family: 'Consolas', monospace;
             font-size: 12px;
             line-height: 1.6;
             padding: 12px;
             flex: 1;
             overflow-y: auto;
-            max-height: 100%;
         }
 
         .log-entry {
@@ -460,7 +443,7 @@
     <div class="container">
         <!-- Left: Command Form -->
         <div class="panel">
-            <div class="panel-header">📡 发送指令</div>
+            <div class="panel-header">📡 发送指令（透传模式）</div>
             <div class="panel-body">
                 <div class="form-group">
                     <label>Server Host</label>
@@ -475,34 +458,29 @@
                                 <option value="">— 请先刷新 —</option>
                             </select>
                         </div>
-                        <button class="btn btn-sm btn-success" onclick="loadOnlineAgents()"
-                            title="刷新在线Agent列表">🔄</button>
+                        <button class="btn btn-sm btn-success" onclick="loadOnlineAgents()">🔄</button>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>指令动作</label>
-                    <select id="action">
-                        <option value="EXEC_CMD">EXEC_CMD — 执行 Shell/CMD 命令</option>
-                        <option value="GET_METRICS">GET_METRICS — 获取系统指标</option>
-                        <option value="LIST_DIR">LIST_DIR — 浏览目录</option>
-                        <option value="READ_FILE">READ_FILE — 读取文件</option>
-                        <option value="WRITE_FILE">WRITE_FILE — 写入文件</option>
-                        <option value="RESTART_APP">RESTART_APP — 重启应用</option>
-                        <option value="START_LOG_WATCH">START_LOG_WATCH — 开始监听日志</option>
-                        <option value="STOP_LOG_WATCH">STOP_LOG_WATCH — 停止监听日志</option>
-                    </select>
+                    <label>指令内容 (content — 原样透传到 Agent)</label>
+                    <textarea id="content" rows="10" placeholder='Agent 将原封不动收到此 JSON'>{
+  "type": "cmd",
+  "cmd": {
+    "func": "logTail/add",
+    "param": ["D:\\logs\\*.log", ""],
+    "cmdID": "add-001"
+  }
+}</textarea>
+                    <div class="hint">⚠️ 必须包含 <b>cmdID</b> 字段（在 cmd 内或顶层），用于关联 Agent 的响应</div>
                 </div>
-                <div class="form-group">
-                    <label>参数 (JSON)</label>
-                    <textarea id="params" rows="4" placeholder='例: {"cmd": "df -h"}'></textarea>
-                </div>
+
                 <button class="btn btn-primary" id="btnSend" onclick="sendCommand()">
                     🚀 发送指令
                 </button>
 
                 <div class="preset-section">
-                    <h4>⚡ 快捷指令</h4>
+                    <h4>⚡ 快捷模板</h4>
                     <div class="preset-btns" id="presetBtns"></div>
                 </div>
             </div>
@@ -517,7 +495,6 @@
                 </div>
             </div>
             <div class="panel-body" style="display:flex;flex-direction:column;">
-                <!-- Latest Result -->
                 <div class="result-card hidden" id="resultCard">
                     <div class="result-header">
                         <span class="result-status" id="resultStatus">—</span>
@@ -525,14 +502,13 @@
                     </div>
                     <div class="result-output" id="resultOutput"></div>
                 </div>
-                <!-- History Table -->
                 <div style="flex:1;overflow-y:auto;">
                     <table>
                         <thead>
                             <tr>
                                 <th>时间</th>
                                 <th>Agent</th>
-                                <th>动作</th>
+                                <th>Func</th>
                                 <th>状态</th>
                                 <th>响应摘要</th>
                             </tr>
@@ -552,13 +528,11 @@
             </div>
         </div>
 
-        <!-- Bottom: Communication Log (spans full width) -->
+        <!-- Bottom: Communication Log -->
         <div class="panel" style="grid-column: 1 / -1;">
             <div class="panel-header">
                 📜 通信日志
-                <div class="btn-group">
-                    <button class="btn btn-sm btn-danger" onclick="clearLog()">清空</button>
-                </div>
+                <button class="btn btn-sm btn-danger" onclick="clearLog()">清空</button>
             </div>
             <div class="log-console" id="logConsole" style="min-height:120px;max-height:200px;"></div>
         </div>
@@ -566,26 +540,16 @@
 
     <script>
         const logEl = document.getElementById('logConsole');
-
-        function ts() {
-            return new Date().toLocaleTimeString('zh-CN', { hour12: false }) + '.' +
-                String(Date.now() % 1000).padStart(3, '0');
-        }
-
+        function ts() { return new Date().toLocaleTimeString('zh-CN', { hour12: false }) + '.' + String(Date.now() % 1000).padStart(3, '0'); }
         function addLog(type, dir, msg) {
-            const entry = document.createElement('div');
-            entry.className = 'log-entry ' + type;
-            entry.innerHTML = `<span class="time">[${ts()}]</span> <span class="dir">[${dir}]</span> ${escapeHtml(msg)}`;
-            logEl.appendChild(entry);
+            const e = document.createElement('div');
+            e.className = 'log-entry ' + type;
+            e.innerHTML = `<span class="time">[${ts()}]</span> <span class="dir">[${dir}]</span> ${escapeHtml(msg)}`;
+            logEl.appendChild(e);
             logEl.scrollTop = logEl.scrollHeight;
         }
-
-        function escapeHtml(s) {
-            return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        }
-
+        function escapeHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
         function clearLog() { logEl.innerHTML = ''; }
-
         function getApiBase() { return `http://${document.getElementById('apiHost').value}`; }
 
         // ========== Online Agents ==========
@@ -597,10 +561,8 @@
                 const agents = result.data || [];
                 const sel = document.getElementById('agentId');
                 sel.innerHTML = '';
-
                 if (agents.length === 0) {
                     sel.innerHTML = '<option value="">— 无在线 Agent —</option>';
-                    addLog('info', 'API', '当前无在线 Agent');
                 } else {
                     agents.forEach(a => {
                         const opt = document.createElement('option');
@@ -618,16 +580,15 @@
         // ========== Send Command ==========
         async function sendCommand() {
             const agentId = document.getElementById('agentId').value;
-            const action = document.getElementById('action').value;
-            const params = document.getElementById('params').value.trim();
+            const content = document.getElementById('content').value.trim();
 
-            if (!agentId) { alert('请选择或输入目标 Agent'); return; }
+            if (!agentId) { alert('请选择目标 Agent'); return; }
+            if (!content) { alert('请输入指令内容'); return; }
 
-            if (params) {
-                try { JSON.parse(params); } catch (e) {
-                    alert('参数 JSON 格式不正确: ' + e.message);
-                    return;
-                }
+            // 验证 JSON 格式
+            try { JSON.parse(content); } catch (e) {
+                alert('content 必须是合法的 JSON: ' + e.message);
+                return;
             }
 
             const btn = document.getElementById('btnSend');
@@ -635,10 +596,11 @@
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner"></span> 等待响应…';
 
-            showResult('PENDING', `Agent: ${agentId} | 动作: ${action}`, '等待 Agent 执行…');
+            showResult('PENDING', `Agent: ${agentId}`, '等待 Agent 执行…');
 
-            const body = JSON.stringify({ agentId, action, params: params || '{}' });
-            addLog('sent', '▶ REQ', `POST /api/commands/send — ${body}`);
+            const body = JSON.stringify({ agentId, content });
+            addLog('sent', '▶ REQ', `POST /api/commands/send`);
+            addLog('sent', '▶ BODY', content);
 
             try {
                 const resp = await fetch(`${getApiBase()}/api/commands/send`, {
@@ -651,11 +613,9 @@
 
                 const record = result.data;
                 if (result.code === 200 && record) {
-                    showResult(
-                        record.status,
-                        `Agent: ${record.agentId} | 动作: ${record.action} | cmdId: ${record.cmdId}`,
-                        record.response || '(无输出)'
-                    );
+                    showResult(record.status,
+                        `Agent: ${record.agentId} | Func: ${record.action || '—'} | cmdId: ${record.cmdId}`,
+                        record.response || '(无输出)');
                 } else {
                     showResult('FAILED', '', result.message || '请求失败');
                 }
@@ -671,31 +631,24 @@
 
         function showResult(status, meta, output) {
             const card = document.getElementById('resultCard');
-            const statusEl = document.getElementById('resultStatus');
-            const metaEl = document.getElementById('resultMeta');
-            const outputEl = document.getElementById('resultOutput');
-
             card.classList.remove('hidden');
-
+            const statusEl = document.getElementById('resultStatus');
             const labels = { PENDING: '⏳ PENDING', SUCCESS: '✅ SUCCESS', FAILED: '❌ FAILED', TIMEOUT: '⏰ TIMEOUT' };
             statusEl.textContent = labels[status] || status;
             statusEl.className = 'result-status ' + status.toLowerCase();
-            metaEl.textContent = meta;
-            outputEl.textContent = output;
-            outputEl.style.color = status === 'SUCCESS' ? 'var(--green)' :
-                status === 'FAILED' ? 'var(--red)' :
-                    status === 'TIMEOUT' ? 'var(--yellow)' : 'var(--blue)';
+            document.getElementById('resultMeta').textContent = meta;
+            const outputEl = document.getElementById('resultOutput');
+            try { outputEl.textContent = JSON.stringify(JSON.parse(output), null, 2); }
+            catch (e) { outputEl.textContent = output; }
+            outputEl.style.color = status === 'SUCCESS' ? 'var(--green)' : status === 'FAILED' ? 'var(--red)' : status === 'TIMEOUT' ? 'var(--yellow)' : 'var(--blue)';
         }
 
         // ========== Presets ==========
         const PRESETS = [
-            { label: '💽 磁盘用量', action: 'EXEC_CMD', params: { cmd: 'df -h' } },
-            { label: '🧠 内存用量', action: 'EXEC_CMD', params: { cmd: 'free -m' } },
-            { label: '⏱️ 运行时间', action: 'EXEC_CMD', params: { cmd: 'uptime' } },
-            { label: '📊 进程Top20', action: 'EXEC_CMD', params: { cmd: 'top -bn1 | head -20' } },
-            { label: '📂 浏览日志目录', action: 'LIST_DIR', params: { path: '/opt/logs' } },
-            { label: '📈 获取指标', action: 'GET_METRICS', params: {} },
-            { label: '🏷️ 读主机名', action: 'READ_FILE', params: { path: '/etc/hostname' } },
+            { label: '📂 监听日志', content: { type: 'cmd', cmd: { func: 'logTail/add', param: ['D:\\logs\\*.log', ''], cmdID: 'add-001' } } },
+            { label: '🛑 停止监听', content: { type: 'cmd', cmd: { func: 'logTail/remove', param: ['D:\\logs\\*.log'], cmdID: 'remove-001' } } },
+            { label: '💳 读身份证', content: { type: 'cmd', cmd: { func: 'iDCardReader/read', param: [], cmdID: 'read-001' } } },
+            { label: '📊 获取指标', content: { type: 'cmd', cmd: { func: 'metrics/get', param: [], cmdID: 'metrics-001' } } },
         ];
 
         function initPresets() {
@@ -705,8 +658,7 @@
                 btn.className = 'preset-btn';
                 btn.textContent = p.label;
                 btn.addEventListener('click', () => {
-                    document.getElementById('action').value = p.action;
-                    document.getElementById('params').value = JSON.stringify(p.params, null, 2);
+                    document.getElementById('content').value = JSON.stringify(p.content, null, 2);
                 });
                 container.appendChild(btn);
             });
@@ -719,52 +671,36 @@
                 const result = await resp.json();
                 const records = result.data || [];
                 const tbody = document.getElementById('historyTable');
-
                 if (records.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="icon">📭</div><div>暂无指令记录</div></div></td></tr>';
                     return;
                 }
-
                 tbody.innerHTML = records.map(r => {
-                    const statusClass = r.status === 'SUCCESS' ? 'tag-success' :
-                        r.status === 'FAILED' ? 'tag-failed' :
-                            r.status === 'TIMEOUT' ? 'tag-timeout' : 'tag-pending';
+                    const sc = r.status === 'SUCCESS' ? 'tag-success' : r.status === 'FAILED' ? 'tag-failed' : r.status === 'TIMEOUT' ? 'tag-timeout' : 'tag-pending';
                     const time = r.createTime ? new Date(r.createTime).toLocaleString('zh-CN', { hour12: false }) : '—';
                     const snippet = (r.response || '').substring(0, 60) + ((r.response || '').length > 60 ? '…' : '');
                     return `<tr class="clickable" onclick="viewDetail('${r.cmdId}')">
                         <td class="mono">${time}</td>
                         <td>${escapeHtml(r.agentId || '')}</td>
-                        <td><span class="mono">${escapeHtml(r.action || '')}</span></td>
-                        <td><span class="tag ${statusClass}">${r.status}</span></td>
-                        <td class="truncate" title="${escapeHtml(r.response || '')}">${escapeHtml(snippet)}</td>
-                    </tr>`;
+                        <td class="mono">${escapeHtml(r.action || '—')}</td>
+                        <td><span class="tag ${sc}">${r.status}</span></td>
+                        <td class="truncate">${escapeHtml(snippet)}</td></tr>`;
                 }).join('');
-            } catch (e) {
-                console.error('加载历史失败:', e);
-            }
+            } catch (e) { console.error('加载历史失败:', e); }
         }
 
         async function viewDetail(cmdId) {
             try {
                 const resp = await fetch(`${getApiBase()}/api/commands/${cmdId}`);
-                const result = await resp.json();
-                const r = result.data;
-                if (r) {
-                    showResult(r.status, `Agent: ${r.agentId} | 动作: ${r.action} | cmdId: ${r.cmdId}`, r.response || '(无输出)');
-                }
-            } catch (e) {
-                console.error('查询详情失败:', e);
-            }
+                const r = (await resp.json()).data;
+                if (r) showResult(r.status, `Agent: ${r.agentId} | Func: ${r.action || '—'} | cmdId: ${r.cmdId}`, r.response || '(无输出)');
+            } catch (e) { console.error(e); }
         }
 
         // ========== Init ==========
         (function () {
-            const hostInput = document.getElementById('apiHost');
-            if (location.protocol === 'file:') {
-                hostInput.value = 'localhost:8080';
-            } else {
-                hostInput.value = location.host || 'localhost:8080';
-            }
+            const h = document.getElementById('apiHost');
+            h.value = location.protocol === 'file:' ? 'localhost:8080' : (location.host || 'localhost:8080');
             initPresets();
             loadOnlineAgents();
             loadHistory();

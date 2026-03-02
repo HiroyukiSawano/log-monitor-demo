@@ -535,6 +535,13 @@
                         addCmdRequestLog(e.data, cmdId, action);
                         return;
                     }
+                    // Agent 端自定义指令格式: {"type":"cmd","cmd":{"func":"xxx","cmdID":"xxx",...}}
+                    if (msg.type === 'cmd' && msg.cmd && msg.cmd.cmdID) {
+                        const cmdId = msg.cmd.cmdID;
+                        const func = msg.cmd.func || '';
+                        addCmdRequestLog(e.data, cmdId, func);
+                        return;
+                    }
                 } catch (_) { }
                 addLog('recv', '◀ RECV', e.data);
             };
@@ -605,40 +612,33 @@
 
         function clearLog() { logEl.innerHTML = ''; }
 
-        // ========== CMD_REQUEST Auto-Reply ==========
-        function addCmdRequestLog(rawData, cmdId, action) {
+        // ========== CMD Auto-Reply (Agent 自定义格式) ==========
+        function addCmdRequestLog(rawData, cmdId, func) {
             const entry = document.createElement('div');
             entry.className = 'log-entry recv';
             const replyBtnId = 'reply-' + cmdId;
-            entry.innerHTML = `<span class="time">[${ts()}]</span> <span class="dir">[◀ CMD_REQ]</span> `
+            entry.innerHTML = `<span class="time">[${ts()}]</span> <span class="dir">[◀ CMD]</span> `
                 + escapeHtml(rawData)
-                + ` <button class="cmd-reply-btn" id="${replyBtnId}" onclick="showReplyDialog('${cmdId}', '${action || ''}')">📩 快速回复</button>`;
+                + ` <button class="cmd-reply-btn" id="${replyBtnId}" onclick="showReplyDialog('${cmdId}', '${func || ''}')">📩 快速回复</button>`;
             logEl.appendChild(entry);
             logEl.scrollTop = logEl.scrollHeight;
         }
 
-        function showReplyDialog(cmdId, action) {
-            const output = prompt(
-                `回复指令: ${action}\ncmdId: ${cmdId}\n\n请输入执行输出内容 (留空则发送默认内容):`,
-                `指令 ${action} 执行成功`
+        function showReplyDialog(cmdId, func) {
+            const result = prompt(
+                `回复指令: ${func}\ncmdID: ${cmdId}\n\n请输入 result 内容 (留空则发送默认内容):`,
+                `{"status":"ok","message":"${func} 执行成功"}`
             );
-            if (output === null) return; // 取消
+            if (result === null) return;
 
-            const success = confirm('执行是否成功？\n\n确定 = success: true\n取消 = success: false');
-
+            // 使用 Agent 端自定义响应格式: {"type":"func@Return","result":"...","cmdID":"xxx"}
             const reply = {
-                type: 'CMD_RESPONSE',
-                agentId: getAgentId(),
-                timestamp: Date.now(),
-                payload: {
-                    cmdId: cmdId,
-                    success: success,
-                    output: output || `指令 ${action} 执行成功`
-                }
+                type: func + '@Return',
+                result: result || `${func} 执行成功`,
+                cmdID: cmdId
             };
             wsSend(reply);
 
-            // 标记已回复
             const btn = document.getElementById('reply-' + cmdId);
             if (btn) {
                 btn.textContent = '✅ 已回复';

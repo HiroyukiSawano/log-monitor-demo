@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.demo.module.command.entity.CommandRecord;
 import com.example.demo.module.command.mapper.CommandRecordMapper;
 import com.example.demo.websocket.session.AgentSessionManager;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,10 @@ import java.util.*;
 import java.util.concurrent.*;
 
 /**
- * 远程指令服务 — 下发指令到 Agent 并异步等待反馈
+ * 远程指令服务 — 透传模式
+ *
+ * 接收前端传来的原始 JSON (content)，原封不动发给 Agent，
+ * 从 content 中提取 cmdID 用于追踪和关联响应。
  */
 @Slf4j
 @Service
@@ -38,28 +42,50 @@ public class RemoteCommandService {
     }
 
     /**
-     * 发送指令到 Agent 并同步等待响应（最多 30 秒）
+     * 发送指令到 Agent（透传模式）
      *
      * @param agentId 目标 Agent
-     * @param action  指令动作
-     * @param params  指令参数（JSON 字符串）
+     * @param content 原始 JSON 内容（原样发送到 Agent，其中应包含 cmdID）
      * @return 指令记录（含执行结果）
      */
-    public CommandRecord sendCommand(String agentId, String action, String params) {
-        // 1. 生成指令记录
-        String cmdId = UUID.randomUUID().toString();
+    public CommandRecord sendCommand(String agentId, String content) {
+        // 1. 从 content 中提取 cmdID 和 func
+        String cmdId = null;
+        String func = null;
+        try {
+            JsonNode root = objectMapper.readTree(content);
+            // 支持 cmdID 在顶层或在 cmd 子节点
+            if (root.has("cmdID")) {
+                cmdId = root.get("cmdID").asText();
+            } else if (root.has("cmd") && root.get("cmd").has("cmdID")) {
+                cmdId = root.get("cmd").get("cmdID").asText();
+            }
+            if (root.has("cmd") && root.get("cmd").has("func")) {
+                func = root.get("cmd").get("func").asText();
+            }
+        } catch (Exception e) {
+            log.warn("[Command] 无法解析 content JSON: {}", e.getMessage());
+        }
+
+        if (cmdId == null || cmdId.isEmpty()) {
+            // 如果 content 里没有 cmdID，自动生成一个
+            cmdId = UUID.randomUUID().toString();
+            log.info("[Command] content 中未找到 cmdID，自动生成: {}", cmdId);
+        }
+
+        // 2. 生成指令记录
         CommandRecord record = CommandRecord.builder()
                 .cmdId(cmdId)
                 .agentId(agentId)
-                .action(action)
-                .params(params)
+                .action(func)
+                .params(content)
                 .status("PENDING")
                 .createTime(new Date())
                 .build();
         commandRecordMapper.insert(record);
 
-        // 2. 构建并发送 CMD_REQUEST 消息
-        boolean sent = sendCmdRequest(agentId, cmdId, action, params);
+        // 3. 透传 content 到 Agent
+        boolean sent = sendRawContent(agentId, content);
         if (!sent) {
             record.setStatus("FAILED");
             record.setResponse("Agent 不在线或发送失败");
@@ -68,7 +94,7 @@ public class RemoteCommandService {
             return record;
         }
 
-        // 3. 注册 Future 并等待响应
+        // 4. 注册 Future 并等待响应
         CompletableFuture<CommandRecord> future = new CompletableFuture<>();
         pendingFutures.put(cmdId, future);
 
@@ -94,7 +120,7 @@ public class RemoteCommandService {
     }
 
     /**
-     * 处理 Agent 回传的指令执行结果（由 MessageDispatcher 调用）
+     * 处理 Agent 回传的指令执行结果（由 AgentWebSocketHandler 调用）
      */
     public void handleResponse(String agentId, String cmdId, boolean success, String output) {
         log.info("[Command] 收到指令响应: agentId={}, cmdId={}, success={}", agentId, cmdId, success);
@@ -144,35 +170,16 @@ public class RemoteCommandService {
     }
 
     /**
-     * 通过 WebSocket 发送 CMD_REQUEST 到 Agent
+     * 透传原始 JSON 到 Agent
      */
-    private boolean sendCmdRequest(String agentId, String cmdId, String action, String params) {
+    private boolean sendRawContent(String agentId, String content) {
         return sessionManager.getSession(agentId).map(session -> {
             try {
-                Map<String, Object> message = new LinkedHashMap<>();
-                message.put("type", "CMD_REQUEST");
-                message.put("agentId", agentId);
-                message.put("timestamp", System.currentTimeMillis());
-
-                Map<String, Object> payload = new LinkedHashMap<>();
-                payload.put("cmdId", cmdId);
-                payload.put("action", action);
-                if (params != null && !params.isEmpty()) {
-                    // 尝试将 params 作为 JSON 对象解析，失败则作为字符串
-                    try {
-                        payload.put("params", objectMapper.readTree(params));
-                    } catch (Exception e) {
-                        payload.put("params", params);
-                    }
-                }
-                message.put("payload", payload);
-
-                String json = objectMapper.writeValueAsString(message);
-                session.sendMessage(new TextMessage(json));
-                log.info("[Command] 指令已下发: cmdId={}, agentId={}, action={}", cmdId, agentId, action);
+                session.sendMessage(new TextMessage(content));
+                log.info("[Command] 指令已透传: agentId={}, length={}", agentId, content.length());
                 return true;
             } catch (Exception e) {
-                log.error("[Command] 指令下发失败: cmdId={}, agentId={}", cmdId, agentId, e);
+                log.error("[Command] 指令透传失败: agentId={}", agentId, e);
                 return false;
             }
         }).orElseGet(() -> {

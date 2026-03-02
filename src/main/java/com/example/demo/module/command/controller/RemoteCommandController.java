@@ -22,26 +22,20 @@ public class RemoteCommandController {
     }
 
     /**
-     * 发送指令到 Agent 并等待响应
-     * <p>
-     * 请求体示例：
-     * { "agentId": "server-01", "action": "EXEC_CMD", "params": "{\"cmd\": \"df
-     * -h\"}" }
+     * 发送指令（透传模式）
+     * content 原样下发到 Agent，Server 从中提取 cmdID 用于追踪
      */
     @PostMapping("/send")
     public Result<CommandRecord> send(@RequestBody Map<String, String> body) {
         String agentId = body.get("agentId");
-        String action = body.get("action");
-        String params = body.get("params");
-
+        String content = body.get("content");
         if (agentId == null || agentId.isEmpty()) {
             return Result.error("agentId 不能为空");
         }
-        if (action == null || action.isEmpty()) {
-            return Result.error("action 不能为空");
+        if (content == null || content.isEmpty()) {
+            return Result.error("content 不能为空");
         }
-
-        CommandRecord record = remoteCommandService.sendCommand(agentId, action, params);
+        CommandRecord record = remoteCommandService.sendCommand(agentId, content);
         return Result.success(record);
     }
 
