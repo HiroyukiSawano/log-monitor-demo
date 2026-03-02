@@ -311,6 +311,30 @@
             margin-bottom: 8px;
         }
 
+        /* CMD Reply Button in log */
+        .cmd-reply-btn {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 1px 8px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .cmd-reply-btn:hover {
+            background: #7c6cf7;
+        }
+
+        .cmd-reply-btn.replied {
+            background: var(--green);
+            cursor: default;
+        }
+
         /* Rule Form (inline) */
         .rule-form {
             display: grid;
@@ -330,6 +354,10 @@
         <h1>🔧 Monitor Debug Console</h1>
         <div class="status-dot" id="statusDot"></div>
         <span class="status-text" id="statusText">未连接</span>
+        <a href="command.html"
+            style="margin-left:auto;color:var(--blue);text-decoration:none;font-size:13px;opacity:0.8;">Remote Command
+            →</a>
+        <a href="logs.html" style="color:var(--blue);text-decoration:none;font-size:13px;opacity:0.8;">Log Hits →</a>
     </header>
 
     <div class="container">
@@ -501,6 +529,12 @@
                             `${icon} ${p.level}`, `${detail} | ${p.logSnippet || ''}`);
                         return;
                     }
+                    if (msg.type === 'CMD_REQUEST') {
+                        const cmdId = msg.payload && msg.payload.cmdId;
+                        const action = msg.payload && msg.payload.action;
+                        addCmdRequestLog(e.data, cmdId, action);
+                        return;
+                    }
                 } catch (_) { }
                 addLog('recv', '◀ RECV', e.data);
             };
@@ -570,6 +604,48 @@
         }
 
         function clearLog() { logEl.innerHTML = ''; }
+
+        // ========== CMD_REQUEST Auto-Reply ==========
+        function addCmdRequestLog(rawData, cmdId, action) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry recv';
+            const replyBtnId = 'reply-' + cmdId;
+            entry.innerHTML = `<span class="time">[${ts()}]</span> <span class="dir">[◀ CMD_REQ]</span> `
+                + escapeHtml(rawData)
+                + ` <button class="cmd-reply-btn" id="${replyBtnId}" onclick="showReplyDialog('${cmdId}', '${action || ''}')">📩 快速回复</button>`;
+            logEl.appendChild(entry);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function showReplyDialog(cmdId, action) {
+            const output = prompt(
+                `回复指令: ${action}\ncmdId: ${cmdId}\n\n请输入执行输出内容 (留空则发送默认内容):`,
+                `指令 ${action} 执行成功`
+            );
+            if (output === null) return; // 取消
+
+            const success = confirm('执行是否成功？\n\n确定 = success: true\n取消 = success: false');
+
+            const reply = {
+                type: 'CMD_RESPONSE',
+                agentId: getAgentId(),
+                timestamp: Date.now(),
+                payload: {
+                    cmdId: cmdId,
+                    success: success,
+                    output: output || `指令 ${action} 执行成功`
+                }
+            };
+            wsSend(reply);
+
+            // 标记已回复
+            const btn = document.getElementById('reply-' + cmdId);
+            if (btn) {
+                btn.textContent = '✅ 已回复';
+                btn.className = 'cmd-reply-btn replied';
+                btn.onclick = null;
+            }
+        }
 
         // ========== Rules API ==========
         function getApiBase() { return `http://${document.getElementById('wsHost').value}/api/rules`; }

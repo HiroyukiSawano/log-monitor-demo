@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remote Command Console</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --surface2: #22263a;
+            --border: #2d3250;
+            --text: #e1e4ed;
+            --text2: #8b8fa3;
+            --accent: #6c5ce7;
+            --green: #00b894;
+            --yellow: #fdcb6e;
+            --red: #e17055;
+            --blue: #74b9ff;
+            --cyan: #00cec9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        header .nav-link {
+            margin-left: auto;
+            color: var(--blue);
+            text-decoration: none;
+            font-size: 13px;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        header .nav-link:hover {
+            opacity: 1;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            grid-template-rows: 1fr auto;
+            gap: 16px;
+            padding: 16px;
+            height: calc(100vh - 60px);
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text2);
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-body {
+            padding: 16px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text2);
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #7c6cf7;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-success {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .btn-danger {
+            background: var(--red);
+            color: #fff;
+        }
+
+        .btn-sm {
+            padding: 4px 12px;
+            font-size: 11px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        /* Agent selector */
+        .agent-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .agent-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .agent-row .btn {
+            margin-bottom: 0;
+            height: 34px;
+        }
+
+        /* Preset Buttons */
+        .preset-section {
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+
+        .preset-section h4 {
+            font-size: 12px;
+            color: var(--text2);
+            margin-bottom: 8px;
+        }
+
+        .preset-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .preset-btn {
+            padding: 5px 10px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--accent);
+            background: rgba(108, 92, 231, 0.15);
+        }
+
+        /* Result Card */
+        .result-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .result-card.hidden {
+            display: none;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .result-status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .result-status.pending {
+            background: rgba(116, 185, 255, 0.2);
+            color: var(--blue);
+        }
+
+        .result-status.success {
+            background: rgba(0, 184, 148, 0.2);
+            color: var(--green);
+        }
+
+        .result-status.failed {
+            background: rgba(225, 112, 85, 0.2);
+            color: var(--red);
+        }
+
+        .result-status.timeout {
+            background: rgba(253, 203, 110, 0.2);
+            color: var(--yellow);
+        }
+
+        .result-meta {
+            font-size: 11px;
+            color: var(--text2);
+        }
+
+        .result-output {
+            background: #0a0c10;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 200px;
+            overflow-y: auto;
+            color: var(--green);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* History Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th {
+            text-align: left;
+            padding: 8px;
+            color: var(--text2);
+            border-bottom: 1px solid var(--border);
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+            background: var(--surface);
+        }
+
+        td {
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: rgba(108, 92, 231, 0.05);
+        }
+
+        tr.clickable {
+            cursor: pointer;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .tag-success {
+            background: rgba(0, 184, 148, 0.2);
+            color: var(--green);
+        }
+
+        .tag-failed {
+            background: rgba(225, 112, 85, 0.2);
+            color: var(--red);
+        }
+
+        .tag-pending {
+            background: rgba(116, 185, 255, 0.2);
+            color: var(--blue);
+        }
+
+        .tag-timeout {
+            background: rgba(253, 203, 110, 0.2);
+            color: var(--yellow);
+        }
+
+        .mono {
+            font-family: 'Consolas', monospace;
+            font-size: 11px;
+        }
+
+        .truncate {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text2);
+        }
+
+        .empty-state .icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        /* Communication Log */
+        .log-console {
+            background: #0a0c10;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            padding: 12px;
+            flex: 1;
+            overflow-y: auto;
+            max-height: 100%;
+        }
+
+        .log-entry {
+            margin-bottom: 2px;
+            word-break: break-all;
+        }
+
+        .log-entry .time {
+            color: var(--text2);
+        }
+
+        .log-entry.sent .dir {
+            color: var(--blue);
+        }
+
+        .log-entry.recv .dir {
+            color: var(--green);
+        }
+
+        .log-entry.info .dir {
+            color: var(--yellow);
+        }
+
+        .log-entry.error .dir {
+            color: var(--red);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>🖥️ Remote Command Console</h1>
+        <a href="debug.html" class="nav-link">← Debug Console</a>
+        <a href="logs.html" class="nav-link">Log Hits →</a>
+    </header>
+
+    <div class="container">
+        <!-- Left: Command Form -->
+        <div class="panel">
+            <div class="panel-header">📡 发送指令</div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label>Server Host</label>
+                    <input type="text" id="apiHost" value="" placeholder="192.168.x.x:8080">
+                </div>
+
+                <div class="form-group">
+                    <label>目标 Agent</label>
+                    <div class="agent-row">
+                        <div class="form-group">
+                            <select id="agentId">
+                                <option value="">— 请先刷新 —</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-sm btn-success" onclick="loadOnlineAgents()"
+                            title="刷新在线Agent列表">🔄</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>指令动作</label>
+                    <select id="action">
+                        <option value="EXEC_CMD">EXEC_CMD — 执行 Shell/CMD 命令</option>
+                        <option value="GET_METRICS">GET_METRICS — 获取系统指标</option>
+                        <option value="LIST_DIR">LIST_DIR — 浏览目录</option>
+                        <option value="READ_FILE">READ_FILE — 读取文件</option>
+                        <option value="WRITE_FILE">WRITE_FILE — 写入文件</option>
+                        <option value="RESTART_APP">RESTART_APP — 重启应用</option>
+                        <option value="START_LOG_WATCH">START_LOG_WATCH — 开始监听日志</option>
+                        <option value="STOP_LOG_WATCH">STOP_LOG_WATCH — 停止监听日志</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>参数 (JSON)</label>
+                    <textarea id="params" rows="4" placeholder='例: {"cmd": "df -h"}'></textarea>
+                </div>
+                <button class="btn btn-primary" id="btnSend" onclick="sendCommand()">
+                    🚀 发送指令
+                </button>
+
+                <div class="preset-section">
+                    <h4>⚡ 快捷指令</h4>
+                    <div class="preset-btns" id="presetBtns"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Response + History -->
+        <div class="panel">
+            <div class="panel-header">
+                📋 执行结果 & 历史
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-success" onclick="loadHistory()">刷新历史</button>
+                </div>
+            </div>
+            <div class="panel-body" style="display:flex;flex-direction:column;">
+                <!-- Latest Result -->
+                <div class="result-card hidden" id="resultCard">
+                    <div class="result-header">
+                        <span class="result-status" id="resultStatus">—</span>
+                        <span class="result-meta" id="resultMeta"></span>
+                    </div>
+                    <div class="result-output" id="resultOutput"></div>
+                </div>
+                <!-- History Table -->
+                <div style="flex:1;overflow-y:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>Agent</th>
+                                <th>动作</th>
+                                <th>状态</th>
+                                <th>响应摘要</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTable">
+                            <tr>
+                                <td colspan="5">
+                                    <div class="empty-state">
+                                        <div class="icon">📭</div>
+                                        <div>暂无指令记录</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom: Communication Log (spans full width) -->
+        <div class="panel" style="grid-column: 1 / -1;">
+            <div class="panel-header">
+                📜 通信日志
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-danger" onclick="clearLog()">清空</button>
+                </div>
+            </div>
+            <div class="log-console" id="logConsole" style="min-height:120px;max-height:200px;"></div>
+        </div>
+    </div>
+
+    <script>
+        const logEl = document.getElementById('logConsole');
+
+        function ts() {
+            return new Date().toLocaleTimeString('zh-CN', { hour12: false }) + '.' +
+                String(Date.now() % 1000).padStart(3, '0');
+        }
+
+        function addLog(type, dir, msg) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + type;
+            entry.innerHTML = `<span class="time">[${ts()}]</span> <span class="dir">[${dir}]</span> ${escapeHtml(msg)}`;
+            logEl.appendChild(entry);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function escapeHtml(s) {
+            return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function clearLog() { logEl.innerHTML = ''; }
+
+        function getApiBase() { return `http://${document.getElementById('apiHost').value}`; }
+
+        // ========== Online Agents ==========
+        async function loadOnlineAgents() {
+            try {
+                addLog('info', 'API', '正在获取在线 Agent 列表…');
+                const resp = await fetch(`${getApiBase()}/api/agents/online`);
+                const result = await resp.json();
+                const agents = result.data || [];
+                const sel = document.getElementById('agentId');
+                sel.innerHTML = '';
+
+                if (agents.length === 0) {
+                    sel.innerHTML = '<option value="">— 无在线 Agent —</option>';
+                    addLog('info', 'API', '当前无在线 Agent');
+                } else {
+                    agents.forEach(a => {
+                        const opt = document.createElement('option');
+                        opt.value = a.agentId;
+                        opt.textContent = `${a.agentId} (${a.open ? '在线' : '离线'})`;
+                        sel.appendChild(opt);
+                    });
+                    addLog('info', 'API', `发现 ${agents.length} 个在线 Agent`);
+                }
+            } catch (e) {
+                addLog('error', 'API', `获取 Agent 列表失败: ${e.message}`);
+            }
+        }
+
+        // ========== Send Command ==========
+        async function sendCommand() {
+            const agentId = document.getElementById('agentId').value;
+            const action = document.getElementById('action').value;
+            const params = document.getElementById('params').value.trim();
+
+            if (!agentId) { alert('请选择或输入目标 Agent'); return; }
+
+            if (params) {
+                try { JSON.parse(params); } catch (e) {
+                    alert('参数 JSON 格式不正确: ' + e.message);
+                    return;
+                }
+            }
+
+            const btn = document.getElementById('btnSend');
+            const origText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> 等待响应…';
+
+            showResult('PENDING', `Agent: ${agentId} | 动作: ${action}`, '等待 Agent 执行…');
+
+            const body = JSON.stringify({ agentId, action, params: params || '{}' });
+            addLog('sent', '▶ REQ', `POST /api/commands/send — ${body}`);
+
+            try {
+                const resp = await fetch(`${getApiBase()}/api/commands/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: body
+                });
+                const result = await resp.json();
+                addLog('recv', '◀ RESP', JSON.stringify(result));
+
+                const record = result.data;
+                if (result.code === 200 && record) {
+                    showResult(
+                        record.status,
+                        `Agent: ${record.agentId} | 动作: ${record.action} | cmdId: ${record.cmdId}`,
+                        record.response || '(无输出)'
+                    );
+                } else {
+                    showResult('FAILED', '', result.message || '请求失败');
+                }
+            } catch (e) {
+                addLog('error', 'ERR', `请求异常: ${e.message}`);
+                showResult('FAILED', '', '请求异常: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = origText;
+                loadHistory();
+            }
+        }
+
+        function showResult(status, meta, output) {
+            const card = document.getElementById('resultCard');
+            const statusEl = document.getElementById('resultStatus');
+            const metaEl = document.getElementById('resultMeta');
+            const outputEl = document.getElementById('resultOutput');
+
+            card.classList.remove('hidden');
+
+            const labels = { PENDING: '⏳ PENDING', SUCCESS: '✅ SUCCESS', FAILED: '❌ FAILED', TIMEOUT: '⏰ TIMEOUT' };
+            statusEl.textContent = labels[status] || status;
+            statusEl.className = 'result-status ' + status.toLowerCase();
+            metaEl.textContent = meta;
+            outputEl.textContent = output;
+            outputEl.style.color = status === 'SUCCESS' ? 'var(--green)' :
+                status === 'FAILED' ? 'var(--red)' :
+                    status === 'TIMEOUT' ? 'var(--yellow)' : 'var(--blue)';
+        }
+
+        // ========== Presets ==========
+        const PRESETS = [
+            { label: '💽 磁盘用量', action: 'EXEC_CMD', params: { cmd: 'df -h' } },
+            { label: '🧠 内存用量', action: 'EXEC_CMD', params: { cmd: 'free -m' } },
+            { label: '⏱️ 运行时间', action: 'EXEC_CMD', params: { cmd: 'uptime' } },
+            { label: '📊 进程Top20', action: 'EXEC_CMD', params: { cmd: 'top -bn1 | head -20' } },
+            { label: '📂 浏览日志目录', action: 'LIST_DIR', params: { path: '/opt/logs' } },
+            { label: '📈 获取指标', action: 'GET_METRICS', params: {} },
+            { label: '🏷️ 读主机名', action: 'READ_FILE', params: { path: '/etc/hostname' } },
+        ];
+
+        function initPresets() {
+            const container = document.getElementById('presetBtns');
+            PRESETS.forEach(p => {
+                const btn = document.createElement('button');
+                btn.className = 'preset-btn';
+                btn.textContent = p.label;
+                btn.addEventListener('click', () => {
+                    document.getElementById('action').value = p.action;
+                    document.getElementById('params').value = JSON.stringify(p.params, null, 2);
+                });
+                container.appendChild(btn);
+            });
+        }
+
+        // ========== History ==========
+        async function loadHistory() {
+            try {
+                const resp = await fetch(`${getApiBase()}/api/commands`);
+                const result = await resp.json();
+                const records = result.data || [];
+                const tbody = document.getElementById('historyTable');
+
+                if (records.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="icon">📭</div><div>暂无指令记录</div></div></td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = records.map(r => {
+                    const statusClass = r.status === 'SUCCESS' ? 'tag-success' :
+                        r.status === 'FAILED' ? 'tag-failed' :
+                            r.status === 'TIMEOUT' ? 'tag-timeout' : 'tag-pending';
+                    const time = r.createTime ? new Date(r.createTime).toLocaleString('zh-CN', { hour12: false }) : '—';
+                    const snippet = (r.response || '').substring(0, 60) + ((r.response || '').length > 60 ? '…' : '');
+                    return `<tr class="clickable" onclick="viewDetail('${r.cmdId}')">
+                        <td class="mono">${time}</td>
+                        <td>${escapeHtml(r.agentId || '')}</td>
+                        <td><span class="mono">${escapeHtml(r.action || '')}</span></td>
+                        <td><span class="tag ${statusClass}">${r.status}</span></td>
+                        <td class="truncate" title="${escapeHtml(r.response || '')}">${escapeHtml(snippet)}</td>
+                    </tr>`;
+                }).join('');
+            } catch (e) {
+                console.error('加载历史失败:', e);
+            }
+        }
+
+        async function viewDetail(cmdId) {
+            try {
+                const resp = await fetch(`${getApiBase()}/api/commands/${cmdId}`);
+                const result = await resp.json();
+                const r = result.data;
+                if (r) {
+                    showResult(r.status, `Agent: ${r.agentId} | 动作: ${r.action} | cmdId: ${r.cmdId}`, r.response || '(无输出)');
+                }
+            } catch (e) {
+                console.error('查询详情失败:', e);
+            }
+        }
+
+        // ========== Init ==========
+        (function () {
+            const hostInput = document.getElementById('apiHost');
+            if (location.protocol === 'file:') {
+                hostInput.value = 'localhost:8080';
+            } else {
+                hostInput.value = location.host || 'localhost:8080';
+            }
+            initPresets();
+            loadOnlineAgents();
+            loadHistory();
+        })();
+    </script>
+</body>
+
+</html>

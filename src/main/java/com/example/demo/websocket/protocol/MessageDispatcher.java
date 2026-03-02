@@ -5,6 +5,8 @@ import com.example.demo.common.enums.MessageType;
 import com.example.demo.engine.filter.LogFilterChain;
 import com.example.demo.engine.model.FilterResult;
 import com.example.demo.engine.model.LogContext;
+import com.example.demo.module.command.service.RemoteCommandService;
+import com.example.demo.module.loghit.service.LogHitService;
 import com.example.demo.monitor.alert.AlertService;
 import com.example.demo.monitor.health.HealthEvaluator;
 import com.example.demo.monitor.health.ServerHealthState;
@@ -26,17 +28,23 @@ public class MessageDispatcher {
     private final LogFilterChain logFilterChain;
     private final HealthEvaluator healthEvaluator;
     private final AlertService alertService;
+    private final RemoteCommandService remoteCommandService;
+    private final LogHitService logHitService;
 
     public MessageDispatcher(AgentSessionManager sessionManager,
             ObjectMapper objectMapper,
             LogFilterChain logFilterChain,
             HealthEvaluator healthEvaluator,
-            AlertService alertService) {
+            AlertService alertService,
+            RemoteCommandService remoteCommandService,
+            LogHitService logHitService) {
         this.sessionManager = sessionManager;
         this.objectMapper = objectMapper;
         this.logFilterChain = logFilterChain;
         this.healthEvaluator = healthEvaluator;
         this.alertService = alertService;
+        this.remoteCommandService = remoteCommandService;
+        this.logHitService = logHitService;
     }
 
     /**
@@ -107,6 +115,9 @@ public class MessageDispatcher {
         // 3. 回推过滤结果到 Agent（调试用）
         sendFilterResult(agentId, result, line);
 
+        // 3.5 命中的日志入库
+        logHitService.saveIfMatched(context, result);
+
         // 4. 根据结果处理
         if (result.getLevel() == LogLevel.CRITICAL) {
             String snippet = line.length() > 200 ? line.substring(0, 200) : line;
@@ -148,6 +159,8 @@ public class MessageDispatcher {
     private void handleCmdResponse(String agentId, JsonNode payload) {
         String cmdId = payload.path("cmdId").asText();
         boolean success = payload.path("success").asBoolean();
+        String output = payload.path("output").asText("");
         log.info("[Dispatcher] 收到指令响应: agentId={}, cmdId={}, success={}", agentId, cmdId, success);
+        remoteCommandService.handleResponse(agentId, cmdId, success, output);
     }
 }
