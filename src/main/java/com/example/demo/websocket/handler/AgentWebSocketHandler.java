@@ -5,6 +5,7 @@ import com.example.demo.websocket.protocol.BinaryFrameHandler;
 import com.example.demo.websocket.protocol.MessageDispatcher;
 import com.example.demo.websocket.protocol.WsMessage;
 import com.example.demo.websocket.session.AgentSessionManager;
+import com.example.demo.websocket.session.MonitorSessionManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +38,7 @@ public class AgentWebSocketHandler extends AbstractWebSocketHandler {
     private final BinaryFrameHandler binaryFrameHandler;
     private final ObjectMapper objectMapper;
     private final RemoteCommandService remoteCommandService;
+    private final MonitorSessionManager monitorSessionManager;
 
     @Value("${ws.agent.token:default-pre-shared-key}")
     private String expectedToken;
@@ -48,12 +50,14 @@ public class AgentWebSocketHandler extends AbstractWebSocketHandler {
             MessageDispatcher dispatcher,
             BinaryFrameHandler binaryFrameHandler,
             ObjectMapper objectMapper,
-            RemoteCommandService remoteCommandService) {
+            RemoteCommandService remoteCommandService,
+            MonitorSessionManager monitorSessionManager) {
         this.sessionManager = sessionManager;
         this.dispatcher = dispatcher;
         this.binaryFrameHandler = binaryFrameHandler;
         this.objectMapper = objectMapper;
         this.remoteCommandService = remoteCommandService;
+        this.monitorSessionManager = monitorSessionManager;
     }
 
     @Override
@@ -94,6 +98,9 @@ public class AgentWebSocketHandler extends AbstractWebSocketHandler {
         String agentId = getAgentId(session);
         if (agentId == null)
             return;
+
+        // 广播给运营端监控
+        monitorSessionManager.broadcast(agentId, "AGENT_UP", message.getPayload());
 
         try {
             // 先尝试检测 Agent 端自定义指令响应格式: {"type":"xxx@Return","result":"...","cmdID":"xxx"}

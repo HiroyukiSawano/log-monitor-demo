@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.demo.module.command.entity.CommandRecord;
 import com.example.demo.module.command.mapper.CommandRecordMapper;
 import com.example.demo.websocket.session.AgentSessionManager;
+import com.example.demo.websocket.session.MonitorSessionManager;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ public class RemoteCommandService {
     private final AgentSessionManager sessionManager;
     private final CommandRecordMapper commandRecordMapper;
     private final ObjectMapper objectMapper;
+    private final MonitorSessionManager monitorSessionManager;
 
     /** cmdId → Future，用于异步等待 Agent 响应 */
     private final Map<String, CompletableFuture<CommandRecord>> pendingFutures = new ConcurrentHashMap<>();
@@ -35,10 +37,12 @@ public class RemoteCommandService {
 
     public RemoteCommandService(AgentSessionManager sessionManager,
             CommandRecordMapper commandRecordMapper,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper,
+            MonitorSessionManager monitorSessionManager) {
         this.sessionManager = sessionManager;
         this.commandRecordMapper = commandRecordMapper;
         this.objectMapper = objectMapper;
+        this.monitorSessionManager = monitorSessionManager;
     }
 
     /**
@@ -176,6 +180,8 @@ public class RemoteCommandService {
         return sessionManager.getSession(agentId).map(session -> {
             try {
                 session.sendMessage(new TextMessage(content));
+                // 广播给监控端
+                monitorSessionManager.broadcast(agentId, "SERVER_DOWN", content);
                 log.info("[Command] 指令已透传: agentId={}, length={}", agentId, content.length());
                 return true;
             } catch (Exception e) {
