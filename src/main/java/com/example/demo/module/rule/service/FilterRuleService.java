@@ -26,6 +26,7 @@ public class FilterRuleService {
     // 由 Phase 6 集成时配置注入，这里先引用
     private AhoCorasickMatcher criticalMatcher;
     private AhoCorasickMatcher excludeMatcher;
+    private AhoCorasickMatcher basicMatcher;
     private RegexMatcherCache regexMatcherCache;
 
     public FilterRuleService(FilterRuleMapper ruleMapper) {
@@ -37,9 +38,11 @@ public class FilterRuleService {
      */
     public void setMatchers(AhoCorasickMatcher criticalMatcher,
             AhoCorasickMatcher excludeMatcher,
+            AhoCorasickMatcher basicMatcher,
             RegexMatcherCache regexMatcherCache) {
         this.criticalMatcher = criticalMatcher;
         this.excludeMatcher = excludeMatcher;
+        this.basicMatcher = basicMatcher;
         this.regexMatcherCache = regexMatcherCache;
     }
 
@@ -111,6 +114,15 @@ public class FilterRuleService {
                         .map(FilterRule::getKeyword)
                         .collect(Collectors.toList());
                 excludeMatcher.rebuild(excludeKeywords);
+            }
+
+            // 重建基础特征 AC 自动机
+            if (basicMatcher != null) {
+                List<String> basicKeywords = listEnabledByType("BASIC").stream()
+                        .filter(r -> "CONTAINS".equals(r.getMatchMode()))
+                        .map(FilterRule::getKeyword)
+                        .collect(Collectors.toList());
+                basicMatcher.rebuild(basicKeywords);
             }
 
             // 重建正则缓存

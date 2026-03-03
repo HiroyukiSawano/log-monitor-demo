@@ -36,6 +36,11 @@ public class EngineConfig {
         return new AhoCorasickMatcher();
     }
 
+    @Bean("basicMatcher")
+    public AhoCorasickMatcher basicMatcher() {
+        return new AhoCorasickMatcher();
+    }
+
     @Bean
     public RegexMatcherCache regexMatcherCache() {
         return new RegexMatcherCache();
@@ -52,8 +57,8 @@ public class EngineConfig {
     }
 
     @Bean
-    public BasicFeatureFilter basicFeatureFilter() {
-        return new BasicFeatureFilter();
+    public BasicFeatureFilter basicFeatureFilter(@Qualifier("basicMatcher") AhoCorasickMatcher basicMatcher) {
+        return new BasicFeatureFilter(basicMatcher);
     }
 
     @Bean
@@ -68,7 +73,7 @@ public class EngineConfig {
      */
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
-        filterRuleService.setMatchers(criticalMatcher(), excludeMatcher(), regexMatcherCache());
+        filterRuleService.setMatchers(criticalMatcher(), excludeMatcher(), basicMatcher(), regexMatcherCache());
         try {
             filterRuleService.rebuildMatchers();
             log.info("[EngineConfig] 规则引擎初始化完成，规则已从 DB 加载");

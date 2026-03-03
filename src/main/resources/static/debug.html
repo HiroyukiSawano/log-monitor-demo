@@ -68,7 +68,7 @@
         .container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto 1fr;
+            grid-template-rows: min-content 1fr;
             gap: 16px;
             padding: 16px;
             height: calc(100vh - 60px);
@@ -101,6 +101,8 @@
             padding: 16px;
             overflow-y: auto;
             flex: 1;
+            max-height: 480px;
+            /* Optional constraint for the top panels to not grow infinitely */
         }
 
         /* Connection Panel */
@@ -428,6 +430,7 @@
                     <select id="ruleType">
                         <option value="CRITICAL">CRITICAL 强关注</option>
                         <option value="EXCLUDE">EXCLUDE 排除</option>
+                        <option value="BASIC">BASIC 基础特征</option>
                     </select>
                     <input type="text" id="ruleName" placeholder="规则名称">
                     <input type="text" id="ruleKeyword" placeholder="匹配关键字" class="full">
@@ -460,7 +463,7 @@
         </div>
 
         <!-- 左下 + 右下合并: 通信日志 -->
-        <div class="panel" style="grid-column: 1 / -1;">
+        <div class="panel" style="grid-column: 1 / -1; min-height: 200px;">
             <div class="panel-header">
                 📜 通信日志
                 <div class="btn-group">

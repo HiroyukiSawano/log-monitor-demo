@@ -24,7 +24,13 @@ VALUES
     ('CRITICAL', '第三方接口超时',     '调用第三方接口超时',   'CONTAINS', 1, 10),
     ('CRITICAL', '数据库连接失败',     '数据库连接失败',       'CONTAINS', 1, 20),
     ('EXCLUDE',  '正常心跳日志',       'HealthCheck OK',       'CONTAINS', 1, 10),
-    ('EXCLUDE',  '定时任务执行完成',   '定时任务执行完成',     'CONTAINS', 1, 20);
+    ('EXCLUDE',  '定时任务执行完成',   '定时任务执行完成',     'CONTAINS', 1, 20),
+    ('BASIC',    'ERROR级别日志',       'ERROR',                'CONTAINS', 1, 10),
+    ('BASIC',    '异常堆栈',           'Exception',            'CONTAINS', 1, 20),
+    ('BASIC',    'FATAL级别日志',       'FATAL',                'CONTAINS', 1, 30),
+    ('BASIC',    '堆栈跟踪',           'Stacktrace',           'CONTAINS', 1, 40),
+    ('BASIC',    '空指针异常',         'NullPointerException', 'CONTAINS', 1, 50),
+    ('BASIC',    '内存溢出',           'OutOfMemoryError',     'CONTAINS', 1, 60);
 
 -- 远程指令记录表
 CREATE TABLE IF NOT EXISTS `t_command_record` (
