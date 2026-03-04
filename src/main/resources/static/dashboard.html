@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Dashboard</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --surface2: #22263a;
+            --border: #2d3250;
+            --text: #e1e4ed;
+            --text2: #8b8fa3;
+            --accent: #6c5ce7;
+            --green: #00b894;
+            --yellow: #fdcb6e;
+            --red: #e17055;
+            --blue: #74b9ff;
+            --cyan: #81ecec;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ========== Header ========== */
+        header {
+            background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        header .nav-link {
+            margin-left: auto;
+            color: var(--blue);
+            text-decoration: none;
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        header .nav-link+.nav-link {
+            margin-left: 0;
+        }
+
+        header .nav-link:hover {
+            opacity: 1;
+        }
+
+        /* ========== Toolbar ========== */
+        .toolbar {
+            padding: 10px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .toolbar label {
+            font-size: 12px;
+            color: var(--text2);
+        }
+
+        .toolbar input {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            width: 200px;
+        }
+
+        .toolbar input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .toolbar .refresh-info {
+            margin-left: auto;
+            font-size: 11px;
+            color: var(--text2);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .toolbar .countdown {
+            color: var(--cyan);
+            font-weight: 600;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* ========== Stats Bar ========== */
+        .stats-bar {
+            display: flex;
+            gap: 14px;
+            padding: 12px 24px;
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 18px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stat-icon {
+            font-size: 24px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text2);
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        /* ========== Main Layout ========== */
+        .main {
+            display: flex;
+            height: calc(100vh - 156px);
+        }
+
+        /* ========== Agent Cards Grid ========== */
+        .cards-section {
+            flex: 1;
+            padding: 14px;
+            overflow-y: auto;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 14px;
+        }
+
+        .agent-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+            position: relative;
+        }
+
+        .agent-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 20px rgba(108, 92, 231, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .agent-card.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.3);
+        }
+
+        .agent-card.offline {
+            opacity: 0.65;
+        }
+
+        .card-header {
+            padding: 12px 14px 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #555;
+            flex-shrink: 0;
+        }
+
+        .online-dot.on {
+            background: var(--green);
+            box-shadow: 0 0 8px var(--green);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                box-shadow: 0 0 4px var(--green);
+            }
+
+            50% {
+                box-shadow: 0 0 12px var(--green);
+            }
+        }
+
+        .online-dot.off {
+            background: var(--red);
+        }
+
+        .card-hostname {
+            font-size: 14px;
+            font-weight: 600;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .badge-alert {
+            background: var(--red);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .card-os {
+            padding: 0 14px;
+            font-size: 11px;
+            color: var(--text2);
+            margin-bottom: 8px;
+        }
+
+        .card-metrics {
+            padding: 0 14px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .metric-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+        }
+
+        .metric-label {
+            width: 36px;
+            color: var(--text2);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .metric-bar {
+            flex: 1;
+            height: 6px;
+            background: var(--bg);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .metric-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .metric-val {
+            width: 38px;
+            text-align: right;
+            font-weight: 600;
+            font-size: 10px;
+        }
+
+        .card-footer {
+            padding: 6px 14px;
+            font-size: 10px;
+            color: var(--text2);
+            border-top: 1px solid var(--border);
+            background: var(--surface2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-footer .agent-id {
+            font-family: 'Consolas', monospace;
+            font-size: 9px;
+            opacity: 0.7;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ========== Detail Side Panel ========== */
+        .detail-panel {
+            width: 0;
+            overflow: hidden;
+            transition: width 0.3s ease;
+            border-left: 1px solid var(--border);
+            background: var(--surface);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-panel.open {
+            width: 480px;
+        }
+
+        .detail-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .detail-header h2 {
+            font-size: 15px;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            color: var(--text2);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .btn-close:hover {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .detail-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 16px;
+        }
+
+        .detail-section {
+            margin-bottom: 16px;
+        }
+
+        .detail-section h3 {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text2);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Hardware Info Table */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .info-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 10px;
+        }
+
+        .info-item .label {
+            font-size: 10px;
+            color: var(--text2);
+            margin-bottom: 2px;
+        }
+
+        .info-item .value {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .info-item.wide {
+            grid-column: 1 / -1;
+        }
+
+        /* Process List */
+        .process-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .process-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .process-row:hover {
+            border-color: var(--accent);
+        }
+
+        .process-name {
+            flex: 1;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .process-status {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        .process-status.ok {
+            background: rgba(0, 184, 148, 0.15);
+            color: var(--green);
+        }
+
+        .process-status.error {
+            background: rgba(225, 112, 85, 0.15);
+            color: var(--red);
+        }
+
+        /* Disk Partitions */
+        .disk-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .disk-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .disk-mount {
+            font-size: 13px;
+            font-weight: 700;
+            width: 28px;
+            color: var(--cyan);
+        }
+
+        .disk-bar-wrap {
+            flex: 1;
+        }
+
+        .disk-bar {
+            height: 8px;
+            background: var(--surface2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .disk-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .disk-meta {
+            font-size: 10px;
+            color: var(--text2);
+            white-space: nowrap;
+        }
+
+        /* Log Timeline */
+        .log-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-row {
+            padding: 6px 10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 11px;
+        }
+
+        .log-row .log-time {
+            font-size: 10px;
+            color: var(--text2);
+            margin-bottom: 2px;
+        }
+
+        .log-row .log-level {
+            display: inline-block;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: 700;
+            margin-right: 4px;
+        }
+
+        .log-level.CRITICAL {
+            background: rgba(225, 112, 85, 0.2);
+            color: var(--red);
+        }
+
+        .log-level.UNKNOWN_ERROR {
+            background: rgba(253, 203, 110, 0.2);
+            color: var(--yellow);
+        }
+
+        .log-row .log-content {
+            font-family: 'Consolas', monospace;
+            font-size: 10px;
+            color: var(--text);
+            word-break: break-all;
+            max-height: 60px;
+            overflow-y: auto;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text2);
+        }
+
+        .empty-state .icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        /* Scrollbar style */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text2);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>📊 Monitoring Dashboard</h1>
+        <a href="debug.html" class="nav-link">Debug Console</a>
+        <a href="command.html" class="nav-link">Remote Command</a>
+        <a href="logs.html" class="nav-link">Log Hits</a>
+    </header>
+
+    <div class="toolbar">
+        <label>Server Host</label>
+        <input type="text" id="apiHost" placeholder="localhost:8080">
+        <div class="refresh-info">
+            自动刷新 <span class="countdown" id="countdown">15</span>s
+            <span id="lastRefreshTime">—</span>
+        </div>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat-card">
+            <span class="stat-icon">🖥️</span>
+            <div>
+                <div class="stat-label">总服务器</div>
+                <div class="stat-value" id="statTotal">0</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">🟢</span>
+            <div>
+                <div class="stat-label">在线</div>
+                <div class="stat-value" id="statOnline" style="color:var(--green)">0</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">🔴</span>
+            <div>
+                <div class="stat-label">离线</div>
+                <div class="stat-value" id="statOffline" style="color:var(--red)">0</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">⚠️</span>
+            <div>
+                <div class="stat-label">进程异常</div>
+                <div class="stat-value" id="statAlerts" style="color:var(--yellow)">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="cards-section" id="cardsSection">
+            <div class="cards-grid" id="cardsGrid">
+                <div class="empty-state">
+                    <div class="icon">📡</div>
+                    <div>正在加载服务器数据…</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-panel" id="detailPanel">
+            <div class="detail-header">
+                <h2 id="detailTitle">服务器详情</h2>
+                <button class="btn-close" onclick="closeDetail()">✕</button>
+            </div>
+            <div class="detail-body" id="detailBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // ========== Config ==========
+        let refreshInterval = 15;
+        let countdownVal = refreshInterval;
+        let countdownTimer = null;
+        let selectedAgentId = null;
+
+        function getApiBase() { return `http://${document.getElementById('apiHost').value}`; }
+        function escapeHtml(s) { return s ? s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') : ''; }
+
+        // ========== Color Helpers ==========
+        function usageColor(pct) {
+            if (pct >= 80) return 'var(--red)';
+            if (pct >= 50) return 'var(--yellow)';
+            return 'var(--green)';
+        }
+
+        function parsePct(str) {
+            if (!str) return 0;
+            return parseFloat(str.replace('%', '')) || 0;
+        }
+
+        function parseMB(str) {
+            if (!str) return 0;
+            let v = parseFloat(str);
+            return isNaN(v) ? 0 : v;
+        }
+
+        function formatSize(mb) {
+            if (mb >= 1024) return (mb / 1024).toFixed(1) + ' GB';
+            return mb + ' MB';
+        }
+
+        // ========== Load Data ==========
+        async function loadDashboard() {
+            try {
+                const resp = await fetch(`${getApiBase()}/api/dashboard/agents`);
+                const result = await resp.json();
+                if (result.code !== 200) { console.error(result.message); return; }
+                const agents = result.data || [];
+                renderCards(agents);
+                updateStats(agents);
+
+                // Refresh detail panel if one is selected
+                if (selectedAgentId) {
+                    loadDetail(selectedAgentId);
+                }
+
+                document.getElementById('lastRefreshTime').textContent =
+                    new Date().toLocaleTimeString('zh-CN', { hour12: false });
+            } catch (e) {
+                console.error('加载失败:', e);
+            }
+        }
+
+        function updateStats(agents) {
+            const total = agents.length;
+            const online = agents.filter(a => a.online).length;
+            const offline = total - online;
+            let alerts = 0;
+            agents.forEach(a => {
+                if (a.processStatusList) {
+                    a.processStatusList.forEach(p => {
+                        if (p.status !== '正常') alerts++;
+                    });
+                }
+            });
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statOnline').textContent = online;
+            document.getElementById('statOffline').textContent = offline;
+            document.getElementById('statAlerts').textContent = alerts;
+        }
+
+        // ========== Render Cards ==========
+        function renderCards(agents) {
+            const grid = document.getElementById('cardsGrid');
+            if (agents.length === 0) {
+                grid.innerHTML = `<div class="empty-state"><div class="icon">📡</div><div>暂无服务器数据</div><div style="font-size:11px;margin-top:4px;color:var(--text2)">等待 Agent 上报 METRICS…</div></div>`;
+                return;
+            }
+
+            grid.innerHTML = agents.map(a => {
+                const isOnline = a.online;
+                const hostname = a.mainframeName || '未知主机';
+                const osInfo = [a.osName, a.osVersion].filter(Boolean).join(' ') || '—';
+                const cpuPct = parsePct(a.cpuUsage);
+                const totalDisk = parseMB(a.totalDiskCapacity);
+                const availDisk = parseMB(a.totalAvailableCapacityDisk);
+                const diskPct = totalDisk > 0 ? Math.round(((totalDisk - availDisk) / totalDisk) * 100) : 0;
+
+                // Parse RAM usage
+                let ramPct = 0;
+                if (a.ramCapacity && a.ramUsage) {
+                    const ramTotal = parseFloat(a.ramCapacity);
+                    const ramUsed = parseFloat(a.ramUsage);
+                    if (ramTotal > 0) ramPct = Math.round((ramUsed / ramTotal) * 100);
+                }
+
+                // Count process alerts
+                let alertCount = 0;
+                if (a.processStatusList) {
+                    a.processStatusList.forEach(p => { if (p.status !== '正常') alertCount++; });
+                }
+
+                const active = selectedAgentId === a.agentId ? ' active' : '';
+                const offlineClass = isOnline ? '' : ' offline';
+
+                return `
+                <div class="agent-card${active}${offlineClass}" onclick="selectAgent('${escapeHtml(a.agentId)}')">
+                    ${alertCount > 0 ? `<div class="badge-alert" style="position:absolute;top:10px;right:10px;">${alertCount}</div>` : ''}
+                    <div class="card-header">
+                        <div class="online-dot ${isOnline ? 'on' : 'off'}"></div>
+                        <div class="card-hostname">${escapeHtml(hostname)}</div>
+                    </div>
+                    <div class="card-os">${escapeHtml(osInfo)}</div>
+                    <div class="card-metrics">
+                        ${metricBar('CPU', cpuPct)}
+                        ${metricBar('RAM', ramPct)}
+                        ${metricBar('Disk', diskPct)}
+                    </div>
+                    <div class="card-footer">
+                        <span>${isOnline ? '🟢 在线' : '🔴 离线'}</span>
+                        <span style="flex:1"></span>
+                        <span class="agent-id" title="${escapeHtml(a.agentId)}">${escapeHtml(a.agentId ? a.agentId.substring(0, 12) + '…' : '')}</span>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function metricBar(label, pct) {
+            const color = usageColor(pct);
+            return `
+            <div class="metric-row">
+                <span class="metric-label">${label}</span>
+                <div class="metric-bar"><div class="metric-fill" style="width:${pct}%;background:${color}"></div></div>
+                <span class="metric-val" style="color:${color}">${pct}%</span>
+            </div>`;
+        }
+
+        // ========== Detail Panel ==========
+        function selectAgent(agentId) {
+            selectedAgentId = agentId;
+            document.querySelectorAll('.agent-card').forEach(c => c.classList.remove('active'));
+            // Find and highlight the card
+            document.querySelectorAll('.agent-card').forEach(c => {
+                if (c.onclick.toString().includes(agentId)) c.classList.add('active');
+            });
+            loadDetail(agentId);
+            document.getElementById('detailPanel').classList.add('open');
+        }
+
+        function closeDetail() {
+            selectedAgentId = null;
+            document.getElementById('detailPanel').classList.remove('open');
+            document.querySelectorAll('.agent-card').forEach(c => c.classList.remove('active'));
+        }
+
+        async function loadDetail(agentId) {
+            const body = document.getElementById('detailBody');
+            body.innerHTML = '<div style="padding:20px;color:var(--text2);text-align:center;">加载中…</div>';
+
+            try {
+                const [detailResp, logsResp] = await Promise.all([
+                    fetch(`${getApiBase()}/api/dashboard/agents/${encodeURIComponent(agentId)}`),
+                    fetch(`${getApiBase()}/api/dashboard/agents/${encodeURIComponent(agentId)}/logs?limit=50`)
+                ]);
+                const detail = (await detailResp.json()).data;
+                const logs = (await logsResp.json()).data || [];
+
+                document.getElementById('detailTitle').textContent = detail.mainframeName || agentId;
+                body.innerHTML = renderDetail(detail, logs);
+            } catch (e) {
+                body.innerHTML = `<div class="empty-state"><div class="icon">❌</div><div>加载失败: ${escapeHtml(e.message)}</div></div>`;
+            }
+        }
+
+        function renderDetail(d, logs) {
+            let html = '';
+
+            // ---- Hardware Info ----
+            html += `<div class="detail-section">
+                <h3>🖥️ 硬件信息</h3>
+                <div class="info-grid">
+                    ${infoItem('操作系统', [d.osName, d.osVersion].filter(Boolean).join(' '))}
+                    ${infoItem('系统类型', d.osType)}
+                    ${infoItem('CPU', d.cpuType)}
+                    ${infoItem('CPU 频率', d.cpuSpeed)}
+                    ${infoItem('CPU 核心', d.cpuCores)}
+                    ${infoItem('CPU 使用率', d.cpuUsage)}
+                    ${infoItem('内存', `${d.ramUsage || '?'} / ${d.ramCapacity || '?'} (可用 ${d.ramAvailable || '?'})`)}
+                    ${infoItem('内存规格', [d.ramType, d.ramSpeed, d.ramManufacturer].filter(Boolean).join(' · '))}
+                    ${infoItem('主板', d.mainBoard)}
+                    ${infoItem('硬盘', d.disk)}
+                    ${infoItemWide('GPU', (d.gpu || '').split('|').filter(Boolean).join('\n'))}
+                    ${infoItem('进程总数', d.processCount)}
+                    ${infoItem('上报时间', d.feedbackTime)}
+                </div>
+            </div>`;
+
+            // ---- Disk Partitions ----
+            const parts = d.parts || [];
+            if (parts.length > 0) {
+                html += `<div class="detail-section">
+                    <h3>💾 磁盘分区</h3>
+                    <div class="disk-list">
+                        ${parts.map(p => {
+                    const total = parseMB(p.capacity);
+                    const avail = parseMB(p.availableCapacity);
+                    const used = total - avail;
+                    const pct = total > 0 ? Math.round((used / total) * 100) : 0;
+                    return `<div class="disk-row">
+                                <span class="disk-mount">${escapeHtml(p.mountPoint)}:</span>
+                                <div class="disk-bar-wrap">
+                                    <div class="disk-bar"><div class="disk-fill" style="width:${pct}%;background:${usageColor(pct)}"></div></div>
+                                </div>
+                                <span class="disk-meta">${formatSize(used)} / ${formatSize(total)} (${pct}%)</span>
+                            </div>`;
+                }).join('')}
+                    </div>
+                </div>`;
+            }
+
+            // ---- Process Status ----
+            const psList = d.processStatusList || [];
+            if (psList.length > 0) {
+                html += `<div class="detail-section">
+                    <h3>📋 应用进程状态</h3>
+                    <div class="process-list">
+                        ${psList.map(p => {
+                    const isOk = p.status === '正常';
+                    return `<div class="process-row" onclick="viewProcessLogs('${escapeHtml(d.agentId)}', '${escapeHtml(p.processName)}')">
+                                <span class="process-name">${escapeHtml(p.processName)}</span>
+                                <span class="process-status ${isOk ? 'ok' : 'error'}">${escapeHtml(p.status)}</span>
+                            </div>`;
+                }).join('')}
+                    </div>
+                </div>`;
+            }
+
+            // ---- Error Logs ----
+            html += `<div class="detail-section">
+                <h3>🚨 错误日志 (最近 50 条)</h3>
+                <div class="log-timeline" id="logTimeline">
+                    ${logs.length === 0 ? '<div style="padding:16px;text-align:center;color:var(--text2);font-size:12px;">暂无错误日志 ✨</div>' :
+                    logs.map(l => `<div class="log-row">
+                        <div class="log-time">${l.createTime ? new Date(l.createTime).toLocaleString('zh-CN', { hour12: false }) : '—'}</div>
+                        <span class="log-level ${l.level}">${l.level}</span>
+                        <span style="font-size:11px;color:var(--text2);">[${escapeHtml(l.appName || '—')}]</span>
+                        <span style="font-size:11px;margin-left:4px;">${escapeHtml(l.matchedRuleName || '')}</span>
+                        <div class="log-content">${escapeHtml((l.logContent || '').substring(0, 200))}</div>
+                    </div>`).join('')}
+                </div>
+            </div>`;
+
+            return html;
+        }
+
+        function infoItem(label, value) {
+            return `<div class="info-item"><div class="label">${label}</div><div class="value">${escapeHtml(String(value || '—'))}</div></div>`;
+        }
+        function infoItemWide(label, value) {
+            return `<div class="info-item wide"><div class="label">${label}</div><div class="value" style="white-space:pre-line;">${escapeHtml(String(value || '—'))}</div></div>`;
+        }
+
+        function viewProcessLogs(agentId, processName) {
+            // Scroll to logs section and highlight relevant ones
+            const timeline = document.getElementById('logTimeline');
+            if (timeline) timeline.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ========== Auto Refresh ==========
+        function startCountdown() {
+            countdownVal = refreshInterval;
+            if (countdownTimer) clearInterval(countdownTimer);
+            countdownTimer = setInterval(() => {
+                countdownVal--;
+                document.getElementById('countdown').textContent = countdownVal;
+                if (countdownVal <= 0) {
+                    loadDashboard();
+                    countdownVal = refreshInterval;
+                }
+            }, 1000);
+        }
+
+        // ========== Init ==========
+        (function () {
+            const h = document.getElementById('apiHost');
+            h.value = location.protocol === 'file:' ? 'localhost:8080' : (location.host || 'localhost:8080');
+            loadDashboard();
+            startCountdown();
+        })();
+    </script>
+</body>
+
+</html>

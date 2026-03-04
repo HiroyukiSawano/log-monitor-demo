@@ -7,6 +7,7 @@ import com.example.demo.engine.model.FilterResult;
 import com.example.demo.engine.model.LogContext;
 import com.example.demo.module.command.service.RemoteCommandService;
 import com.example.demo.module.loghit.service.LogHitService;
+import com.example.demo.module.metrics.service.MetricsService;
 import com.example.demo.monitor.alert.AlertService;
 import com.example.demo.monitor.health.HealthEvaluator;
 import com.example.demo.monitor.health.ServerHealthState;
@@ -30,6 +31,7 @@ public class MessageDispatcher {
     private final AlertService alertService;
     private final RemoteCommandService remoteCommandService;
     private final LogHitService logHitService;
+    private final MetricsService metricsService;
 
     public MessageDispatcher(AgentSessionManager sessionManager,
             ObjectMapper objectMapper,
@@ -37,7 +39,8 @@ public class MessageDispatcher {
             HealthEvaluator healthEvaluator,
             AlertService alertService,
             RemoteCommandService remoteCommandService,
-            LogHitService logHitService) {
+            LogHitService logHitService,
+            MetricsService metricsService) {
         this.sessionManager = sessionManager;
         this.objectMapper = objectMapper;
         this.logFilterChain = logFilterChain;
@@ -45,6 +48,7 @@ public class MessageDispatcher {
         this.alertService = alertService;
         this.remoteCommandService = remoteCommandService;
         this.logHitService = logHitService;
+        this.metricsService = metricsService;
     }
 
     /**
@@ -68,7 +72,7 @@ public class MessageDispatcher {
                 handleHeartbeat(agentId);
                 break;
             case METRICS:
-                handleMetrics(agentId, payload);
+                handleMetrics(agentId, payload, message.getTimestamp());
                 break;
             case LOG_LINE:
                 handleLogLine(agentId, payload, message.getTimestamp());
@@ -86,13 +90,30 @@ public class MessageDispatcher {
         log.debug("[Dispatcher] 收到心跳: agentId={}", agentId);
     }
 
-    private void handleMetrics(String agentId, JsonNode payload) {
-        double cpuUsage = payload.path("cpu").path("usagePercent").asDouble();
-        double diskUsage = payload.path("disk").path("usagePercent").asDouble();
+    private void handleMetrics(String agentId, JsonNode payload, Long timestamp) {
+        // 1. 持久化完整指标快照
+        metricsService.saveMetrics(agentId, payload, timestamp);
+
+        // 2. 提取 CPU / Disk 使用率用于健康评估
+        double cpuUsage = parseCpuPercent(payload.path("cpuUsage").asText("0"));
+        double totalDisk = payload.path("totalDiskCapacity").asDouble(1);
+        double availDisk = payload.path("totalAvailableCapacityDisk").asDouble(0);
+        double diskUsage = totalDisk > 0 ? ((totalDisk - availDisk) / totalDisk) * 100.0 : 0;
 
         ServerHealthState state = healthEvaluator.updateMetrics(agentId, cpuUsage, diskUsage);
         log.info("[Dispatcher] 指标已更新: agentId={}, cpu={}%, disk={}%, status={}",
                 agentId, cpuUsage, diskUsage, state.getStatus());
+    }
+
+    /**
+     * 解析 CPU 使用率字符串 (如 "6%") 为 double
+     */
+    private double parseCpuPercent(String cpuStr) {
+        try {
+            return Double.parseDouble(cpuStr.replace("%", "").trim());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     private void handleLogLine(String agentId, JsonNode payload, Long timestamp) {

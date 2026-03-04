@@ -1,0 +1,87 @@
+2026-03-04 15:41:04.074 [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication using Java 17.0.18 on DESKTOP-589AKUV with PID 34680 (C:\Users\zzh\Desktop\anti\demo\target\classes started by zzh in c:\Users\zzh\Desktop\anti\demo)
+2026-03-04 15:41:04.076 [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-04 15:41:05.380 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2026-03-04 15:41:05.390 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-04 15:41:05.397 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-04 15:41:05.398 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-03-04 15:41:05.526 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-04 15:41:05.526 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1392 ms
+2026-03-04 15:41:05.557 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-04 15:41:05.852 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-04 15:41:05.861 [main] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:monitor_db'
+2026-03-04 15:41:06.747 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-04 15:41:06.815 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2026-03-04 15:41:06.838 [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 3.194 seconds (JVM running for 3.591)
+2026-03-04 15:41:06.899 [main] WARN  c.b.m.c.t.support.ReflectLambdaMeta - Unable to make field private final java.lang.Class java.lang.invoke.SerializedLambda.capturingClass accessible: module java.base does not "opens java.lang.invoke" to unnamed module @10bbd20a
+2026-03-04 15:41:06.957 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 2
+2026-03-04 15:41:06.959 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 2
+2026-03-04 15:41:06.965 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 6
+2026-03-04 15:41:06.970 [main] INFO  c.e.d.e.matcher.RegexMatcherCache - [Regex Cache] 正则缓存重建完成，规则数量: 0
+2026-03-04 15:41:06.971 [main] INFO  c.e.d.m.r.service.FilterRuleService - [RuleService] 匹配器重建完成
+2026-03-04 15:41:06.971 [main] INFO  com.example.demo.config.EngineConfig - [EngineConfig] 规则引擎初始化完成，规则已从 DB 加载
+2026-03-04 15:41:07.786 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-04 15:41:07.787 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-04 15:41:07.787 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2026-03-04 15:41:07.844 [http-nio-8080-exec-1] INFO  c.e.d.w.session.AgentSessionManager - [WS] Agent 上线: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, sessionId=56d2abe4-4426-58c0-6ca9-1940d5694601
+2026-03-04 15:41:07.897 [http-nio-8080-exec-1] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=1
+2026-03-04 15:41:07.900 [http-nio-8080-exec-1] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=59.0%, disk=44.59073218506915%, status=YELLOW
+2026-03-04 15:41:42.142 [http-nio-8080-exec-8] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=2
+2026-03-04 15:41:42.143 [http-nio-8080-exec-8] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=70.0%, disk=44.59165517206016%, status=YELLOW
+2026-03-04 15:42:09.181 [http-nio-8080-exec-5] INFO  c.e.d.w.session.AgentSessionManager - [WS] Agent 上线: agentId=95C31612D9CF33C7A6957734FD728A9F, sessionId=3d91194c-ebc4-d17b-d684-9377ead9f170
+2026-03-04 15:42:09.190 [http-nio-8080-exec-6] ERROR c.e.d.w.h.AgentWebSocketHandler - [WS] 传输错误: agentId=95C31612D9CF33C7A6957734FD728A9F
+java.io.EOFException: null
+	at org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper.fillReadBuffer(NioEndpoint.java:1346)
+	at org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper.read(NioEndpoint.java:1234)
+	at org.apache.tomcat.websocket.server.WsFrameServer.onDataAvailable(WsFrameServer.java:74)
+	at org.apache.tomcat.websocket.server.WsFrameServer.doOnDataAvailable(WsFrameServer.java:184)
+	at org.apache.tomcat.websocket.server.WsFrameServer.notifyDataAvailable(WsFrameServer.java:164)
+	at org.apache.tomcat.websocket.server.WsHttpUpgradeHandler.upgradeDispatch(WsHttpUpgradeHandler.java:152)
+	at org.apache.coyote.http11.upgrade.UpgradeProcessorInternal.dispatch(UpgradeProcessorInternal.java:60)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:57)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:928)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1794)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+2026-03-04 15:42:09.196 [http-nio-8080-exec-6] INFO  c.e.d.w.session.AgentSessionManager - [WS] Agent 下线: agentId=95C31612D9CF33C7A6957734FD728A9F
+2026-03-04 15:42:09.197 [http-nio-8080-exec-6] INFO  c.e.d.w.h.AgentWebSocketHandler - [WS] 连接关闭: agentId=95C31612D9CF33C7A6957734FD728A9F, status=CloseStatus[code=1011, reason=null]
+2026-03-04 15:42:44.487 [http-nio-8080-exec-6] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=3
+2026-03-04 15:42:44.489 [http-nio-8080-exec-6] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=87.0%, disk=44.59155261795005%, status=YELLOW
+2026-03-04 15:43:11.618 [http-nio-8080-exec-2] INFO  c.e.d.w.session.AgentSessionManager - [WS] Agent 上线: agentId=95C31612D9CF33C7A6957734FD728A9F, sessionId=b1737d41-37ef-ccc7-a449-08a96a009a62
+2026-03-04 15:43:11.620 [http-nio-8080-exec-2] ERROR c.e.d.w.h.AgentWebSocketHandler - [WS] 传输错误: agentId=95C31612D9CF33C7A6957734FD728A9F
+java.io.EOFException: null
+	at org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper.fillReadBuffer(NioEndpoint.java:1346)
+	at org.apache.tomcat.util.net.NioEndpoint$NioSocketWrapper.read(NioEndpoint.java:1234)
+	at org.apache.tomcat.websocket.server.WsFrameServer.onDataAvailable(WsFrameServer.java:74)
+	at org.apache.tomcat.websocket.server.WsFrameServer.doOnDataAvailable(WsFrameServer.java:184)
+	at org.apache.tomcat.websocket.server.WsFrameServer.notifyDataAvailable(WsFrameServer.java:164)
+	at org.apache.tomcat.websocket.server.WsHttpUpgradeHandler.upgradeDispatch(WsHttpUpgradeHandler.java:152)
+	at org.apache.coyote.http11.upgrade.UpgradeProcessorInternal.dispatch(UpgradeProcessorInternal.java:60)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:57)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:928)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1794)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+2026-03-04 15:43:11.632 [http-nio-8080-exec-2] INFO  c.e.d.w.session.AgentSessionManager - [WS] Agent 下线: agentId=95C31612D9CF33C7A6957734FD728A9F
+2026-03-04 15:43:11.634 [http-nio-8080-exec-2] INFO  c.e.d.w.h.AgentWebSocketHandler - [WS] 连接关闭: agentId=95C31612D9CF33C7A6957734FD728A9F, status=CloseStatus[code=1011, reason=null]
+2026-03-04 15:43:44.783 [http-nio-8080-exec-9] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=4
+2026-03-04 15:43:44.785 [http-nio-8080-exec-9] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=93.0%, disk=44.60139781252083%, status=YELLOW
+2026-03-04 15:44:42.125 [http-nio-8080-exec-1] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=5
+2026-03-04 15:44:42.125 [http-nio-8080-exec-1] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=60.0%, disk=44.60724339679724%, status=YELLOW
+2026-03-04 15:45:42.165 [http-nio-8080-exec-3] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=6
+2026-03-04 15:45:42.166 [http-nio-8080-exec-3] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=62.0%, disk=44.60785872145791%, status=YELLOW
+2026-03-04 15:46:42.015 [http-nio-8080-exec-5] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=7
+2026-03-04 15:46:42.016 [http-nio-8080-exec-5] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=51.0%, disk=44.604987206374766%, status=YELLOW
+2026-03-04 15:47:41.692 [http-nio-8080-exec-9] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=8
+2026-03-04 15:47:41.692 [http-nio-8080-exec-9] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=48.0%, disk=44.606935734466894%, status=YELLOW
+2026-03-04 15:48:42.945 [http-nio-8080-exec-7] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=9
+2026-03-04 15:48:42.946 [http-nio-8080-exec-7] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=56.0%, disk=44.608986816669145%, status=YELLOW
+2026-03-04 15:49:43.069 [http-nio-8080-exec-3] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=10
+2026-03-04 15:49:43.070 [http-nio-8080-exec-3] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=74.0%, disk=44.60949958721971%, status=YELLOW
+2026-03-04 15:50:41.851 [http-nio-8080-exec-1] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=11
+2026-03-04 15:50:41.851 [http-nio-8080-exec-1] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=46.0%, disk=44.60601274747589%, status=YELLOW

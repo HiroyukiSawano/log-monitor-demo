@@ -63,3 +63,56 @@ CREATE TABLE IF NOT EXISTS `t_log_hit_record` (
     KEY `idx_agent_level` (`agent_id`, `level`),
     KEY `idx_create_time` (`create_time`)
 );
+
+-- 指标快照主表 (每次 METRICS 上报存一行)
+CREATE TABLE IF NOT EXISTS `t_metrics_snapshot` (
+    `id`                         BIGINT        NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `agent_id`                   VARCHAR(100)  NOT NULL COMMENT '采集端 ID',
+    `mainframe_name`             VARCHAR(200)  DEFAULT NULL COMMENT '主机名',
+    `os_name`                    VARCHAR(200)  DEFAULT NULL COMMENT '操作系统名称',
+    `os_version`                 VARCHAR(100)  DEFAULT NULL COMMENT '操作系统版本',
+    `os_type`                    VARCHAR(50)   DEFAULT NULL COMMENT '操作系统类型',
+    `cpu_type`                   VARCHAR(200)  DEFAULT NULL COMMENT 'CPU 型号',
+    `cpu_speed`                  VARCHAR(50)   DEFAULT NULL COMMENT 'CPU 主频',
+    `cpu_usage`                  VARCHAR(20)   DEFAULT NULL COMMENT 'CPU 使用率',
+    `cpu_cores`                  VARCHAR(10)   DEFAULT NULL COMMENT 'CPU 核心数',
+    `ram_capacity`               VARCHAR(20)   DEFAULT NULL COMMENT '内存总量',
+    `ram_usage`                  VARCHAR(20)   DEFAULT NULL COMMENT '已用内存',
+    `ram_available`              VARCHAR(20)   DEFAULT NULL COMMENT '可用内存',
+    `ram_speed`                  VARCHAR(20)   DEFAULT NULL COMMENT '内存频率',
+    `ram_type`                   VARCHAR(50)   DEFAULT NULL COMMENT '内存类型',
+    `ram_manufacturer`           VARCHAR(100)  DEFAULT NULL COMMENT '内存厂商',
+    `main_board`                 VARCHAR(200)  DEFAULT NULL COMMENT '主板型号',
+    `disk`                       VARCHAR(500)  DEFAULT NULL COMMENT '硬盘型号',
+    `gpu`                        VARCHAR(500)  DEFAULT NULL COMMENT 'GPU 列表',
+    `total_disk_capacity`        VARCHAR(20)   DEFAULT NULL COMMENT '磁盘总容量(MB)',
+    `total_available_capacity_disk` VARCHAR(20) DEFAULT NULL COMMENT '磁盘可用容量(MB)',
+    `process_count`              INT           DEFAULT NULL COMMENT '进程数',
+    `feedback_time`              VARCHAR(50)   DEFAULT NULL COMMENT 'Agent 上报时间字符串',
+    `report_timestamp`           BIGINT        DEFAULT NULL COMMENT 'Agent 上报时间戳(ms)',
+    `create_time`                DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '入库时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_agent_id` (`agent_id`),
+    KEY `idx_create_time_ms` (`create_time`)
+);
+
+-- 磁盘分区子表
+CREATE TABLE IF NOT EXISTS `t_disk_partition` (
+    `id`                 BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `snapshot_id`        BIGINT       NOT NULL COMMENT '关联快照 ID',
+    `mount_point`        VARCHAR(20)  DEFAULT NULL COMMENT '挂载点/盘符',
+    `capacity`           VARCHAR(20)  DEFAULT NULL COMMENT '分区总容量(MB)',
+    `available_capacity` VARCHAR(20)  DEFAULT NULL COMMENT '分区可用容量(MB)',
+    PRIMARY KEY (`id`),
+    KEY `idx_snapshot_id` (`snapshot_id`)
+);
+
+-- 进程状态子表
+CREATE TABLE IF NOT EXISTS `t_process_status` (
+    `id`            BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `snapshot_id`   BIGINT       NOT NULL COMMENT '关联快照 ID',
+    `process_name`  VARCHAR(200) DEFAULT NULL COMMENT '进程/应用名称',
+    `status`        VARCHAR(50)  DEFAULT NULL COMMENT '状态: 正常 / 异常',
+    PRIMARY KEY (`id`),
+    KEY `idx_snapshot_id_ps` (`snapshot_id`)
+);
