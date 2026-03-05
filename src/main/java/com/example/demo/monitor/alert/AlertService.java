@@ -5,6 +5,7 @@ import com.example.demo.module.alert.channel.AlertChannel;
 import com.example.demo.module.alert.entity.AlertCondition;
 import com.example.demo.module.alert.entity.AlertEvent;
 import com.example.demo.module.alert.entity.AlertRule;
+import com.example.demo.module.alert.entity.ConditionGroup;
 import com.example.demo.module.alert.mapper.AlertEventMapper;
 import com.example.demo.module.alert.service.AlertRuleService;
 import com.example.demo.module.metrics.entity.DiskPartition;
@@ -18,7 +19,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * 告警服务 — 基于组合条件规则评估 METRICS 指标，触发告警并分发到通知渠道
+ * 告警服务 — 基于嵌套条件分组规则评估 METRICS 指标
+ *
+ * 表达式格式: (A OR B) AND (C) — 组间用顶层 logic，组内用各组 logic
  */
 @Slf4j
 @Service
@@ -43,9 +46,8 @@ public class AlertService {
                         .reduce((a, b) -> a + ", " + b).orElse("无"));
     }
 
-    /**
-     * 基于 METRICS 快照评估所有适用规则
-     */
+    // ==================== 公开方法 ====================
+
     public void evaluateMetrics(String agentId, MetricsSnapshot snapshot) {
         List<AlertRule> rules = ruleService.listByAgent(agentId);
         if (rules.isEmpty())
@@ -60,9 +62,6 @@ public class AlertService {
         }
     }
 
-    /**
-     * 获取未确认的告警事件
-     */
     public List<AlertEvent> getUnacknowledged(String agentId) {
         LambdaQueryWrapper<AlertEvent> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(AlertEvent::getAcknowledged, false);
@@ -74,9 +73,6 @@ public class AlertService {
         return eventMapper.selectList(wrapper);
     }
 
-    /**
-     * 获取告警事件列表
-     */
     public List<AlertEvent> listEvents(String agentId, Boolean acknowledged, Integer limit) {
         LambdaQueryWrapper<AlertEvent> wrapper = new LambdaQueryWrapper<>();
         if (agentId != null && !agentId.isEmpty()) {
@@ -90,9 +86,6 @@ public class AlertService {
         return eventMapper.selectList(wrapper);
     }
 
-    /**
-     * 确认(消除)告警
-     */
     public void acknowledge(Long eventId) {
         AlertEvent event = eventMapper.selectById(eventId);
         if (event != null) {
@@ -101,9 +94,6 @@ public class AlertService {
         }
     }
 
-    /**
-     * 批量确认
-     */
     public void acknowledgeAll(String agentId) {
         List<AlertEvent> events = getUnacknowledged(agentId);
         for (AlertEvent e : events) {
@@ -112,53 +102,90 @@ public class AlertService {
         }
     }
 
-    // ==================== 私有方法 ====================
+    // ==================== 核心评估逻辑 ====================
 
     private void checkRule(String agentId, AlertRule rule, MetricsSnapshot snapshot) {
-        List<AlertCondition> conditions = rule.parseConditions();
-        if (conditions.isEmpty())
+        List<ConditionGroup> groups = rule.parseGroups();
+        if (groups.isEmpty())
             return;
 
-        boolean isAnd = "AND".equalsIgnoreCase(rule.getLogic());
+        String topLogic = rule.parseTopLogic();
+        boolean isTopAnd = "AND".equalsIgnoreCase(topLogic);
 
-        // 评估每个条件，收集结果
-        List<ConditionResult> results = new ArrayList<>();
-        for (AlertCondition cond : conditions) {
-            ConditionResult cr = evaluateCondition(cond, snapshot);
-            results.add(cr);
+        // 评估每个分组
+        List<GroupResult> groupResults = new ArrayList<>();
+        for (ConditionGroup group : groups) {
+            GroupResult gr = evaluateGroup(group, snapshot);
+            groupResults.add(gr);
         }
 
-        // 根据 AND/OR 逻辑判断是否触发
+        // 顶层逻辑组合
         boolean shouldFire;
-        if (isAnd) {
-            // AND: 所有条件都满足
-            shouldFire = results.stream().allMatch(r -> r.triggered);
+        if (isTopAnd) {
+            shouldFire = groupResults.stream().allMatch(g -> g.triggered);
         } else {
-            // OR: 任一条件满足
-            shouldFire = results.stream().anyMatch(r -> r.triggered);
+            shouldFire = groupResults.stream().anyMatch(g -> g.triggered);
         }
 
         if (shouldFire) {
             // 构建告警消息
-            String logicLabel = isAnd ? " AND " : " OR ";
-            List<String> triggeredMessages = results.stream()
-                    .filter(r -> r.triggered)
-                    .map(r -> r.message)
-                    .collect(Collectors.toList());
-            String combinedMessage = String.join(logicLabel, triggeredMessages);
+            List<String> groupMessages = new ArrayList<>();
+            for (GroupResult gr : groupResults) {
+                if (gr.triggered && !gr.messages.isEmpty()) {
+                    String groupLogicLabel = "AND".equalsIgnoreCase(gr.logic) ? " 且 " : " 或 ";
+                    String joined = gr.messages.size() == 1
+                            ? gr.messages.get(0)
+                            : "(" + String.join(groupLogicLabel, gr.messages) + ")";
+                    groupMessages.add(joined);
+                }
+            }
+            String topLogicLabel = isTopAnd ? " 且 " : " 或 ";
+            String combinedMessage = String.join(topLogicLabel, groupMessages);
 
-            // 收集触发条件的指标类型摘要
-            String metricTypes = results.stream()
-                    .filter(r -> r.triggered)
-                    .map(r -> r.metricType)
+            String metricTypes = groupResults.stream()
+                    .filter(g -> g.triggered)
+                    .flatMap(g -> g.metricTypes.stream())
                     .collect(Collectors.joining(","));
-            String metricValues = results.stream()
-                    .filter(r -> r.triggered)
-                    .map(r -> r.actualStr)
+            String metricValues = groupResults.stream()
+                    .filter(g -> g.triggered)
+                    .flatMap(g -> g.actualValues.stream())
                     .collect(Collectors.joining(","));
 
             fireAlert(agentId, rule, metricTypes, metricValues, combinedMessage);
         }
+    }
+
+    /**
+     * 评估一个条件分组
+     */
+    private GroupResult evaluateGroup(ConditionGroup group, MetricsSnapshot snapshot) {
+        List<AlertCondition> items = group.getItems();
+        if (items == null || items.isEmpty()) {
+            return new GroupResult(false, group.getLogic(), Collections.emptyList(),
+                    Collections.emptyList(), Collections.emptyList());
+        }
+
+        boolean isAnd = "AND".equalsIgnoreCase(group.getLogic());
+        List<ConditionResult> results = new ArrayList<>();
+        for (AlertCondition cond : items) {
+            results.add(evaluateCondition(cond, snapshot));
+        }
+
+        boolean triggered;
+        if (isAnd) {
+            triggered = results.stream().allMatch(r -> r.triggered);
+        } else {
+            triggered = results.stream().anyMatch(r -> r.triggered);
+        }
+
+        List<String> messages = results.stream().filter(r -> r.triggered)
+                .map(r -> r.message).collect(Collectors.toList());
+        List<String> types = results.stream().filter(r -> r.triggered)
+                .map(r -> r.metricType).collect(Collectors.toList());
+        List<String> values = results.stream().filter(r -> r.triggered)
+                .map(r -> r.actualStr).collect(Collectors.toList());
+
+        return new GroupResult(triggered, group.getLogic(), messages, types, values);
     }
 
     /**
@@ -177,7 +204,7 @@ public class AlertService {
                 actualStr = snapshot.getCpuUsage();
                 if (compare(actual, op, threshold)) {
                     return new ConditionResult(true, metricType, actualStr,
-                            String.format("CPU使用率 %s %s%.0f%%", actualStr, opLabel(op), threshold));
+                            String.format("CPU %s %s%.0f%%", actualStr, opLabel(op), threshold));
                 }
                 return new ConditionResult(false, metricType, actualStr, "");
 
@@ -186,7 +213,7 @@ public class AlertService {
                 actualStr = String.format("%.0f%%", actual);
                 if (compare(actual, op, threshold)) {
                     return new ConditionResult(true, metricType, actualStr,
-                            String.format("内存使用率 %s %s%.0f%%", actualStr, opLabel(op), threshold));
+                            String.format("RAM %s %s%.0f%%", actualStr, opLabel(op), threshold));
                 }
                 return new ConditionResult(false, metricType, actualStr, "");
 
@@ -195,7 +222,7 @@ public class AlertService {
                 actualStr = String.format("%.0f%%", actual);
                 if (compare(actual, op, threshold)) {
                     return new ConditionResult(true, metricType, actualStr,
-                            String.format("总磁盘使用率 %s %s%.0f%%", actualStr, opLabel(op), threshold));
+                            String.format("磁盘 %s %s%.0f%%", actualStr, opLabel(op), threshold));
                 }
                 return new ConditionResult(false, metricType, actualStr, "");
 
@@ -207,7 +234,7 @@ public class AlertService {
                             actualStr = String.format("%.0fMB", avail);
                             if (compare(avail, op, threshold)) {
                                 return new ConditionResult(true, metricType, actualStr,
-                                        String.format("分区 %s 可用 %s %s%.0fMB",
+                                        String.format("分区%s %s %s%.0fMB",
                                                 part.getMountPoint(), actualStr, opLabel(op), threshold));
                             }
                             return new ConditionResult(false, metricType, actualStr, "");
@@ -225,14 +252,13 @@ public class AlertService {
                                     continue;
                             }
                             return new ConditionResult(true, metricType, ps.getStatus(),
-                                    String.format("进程 [%s] 状态异常: %s", ps.getProcessName(), ps.getStatus()));
+                                    String.format("进程[%s]异常:%s", ps.getProcessName(), ps.getStatus()));
                         }
                     }
                 }
                 return new ConditionResult(false, metricType, "正常", "");
 
             case "AGENT_OFFLINE":
-                // Agent 离线由 WebSocket 断连检测触发，METRICS 阶段此处始终为 false
                 return new ConditionResult(false, metricType, "在线", "");
 
             default:
@@ -242,19 +268,16 @@ public class AlertService {
 
     private void fireAlert(String agentId, AlertRule rule, String metricType,
             String metricValue, String message) {
-        // 冷却检查
         String cooldownKey = rule.getId() + ":" + agentId;
         Long lastFired = cooldownMap.get(cooldownKey);
         long now = System.currentTimeMillis();
         int cooldownMs = (rule.getCooldownSec() != null ? rule.getCooldownSec() : 300) * 1000;
 
         if (lastFired != null && (now - lastFired) < cooldownMs) {
-            return; // 冷却期内，跳过
+            return;
         }
-
         cooldownMap.put(cooldownKey, now);
 
-        // 写入事件表
         AlertEvent event = AlertEvent.builder()
                 .ruleId(rule.getId())
                 .ruleName(rule.getRuleName())
@@ -268,7 +291,6 @@ public class AlertService {
                 .build();
         eventMapper.insert(event);
 
-        // 分发到所有通知渠道
         for (AlertChannel channel : channels) {
             try {
                 channel.send(event);
@@ -348,7 +370,6 @@ public class AlertService {
 
     // ==================== 内部类 ====================
 
-    /** 单个条件的评估结果 */
     private static class ConditionResult {
         final boolean triggered;
         final String metricType;
@@ -360,6 +381,23 @@ public class AlertService {
             this.metricType = metricType;
             this.actualStr = actualStr;
             this.message = message;
+        }
+    }
+
+    private static class GroupResult {
+        final boolean triggered;
+        final String logic;
+        final List<String> messages;
+        final List<String> metricTypes;
+        final List<String> actualValues;
+
+        GroupResult(boolean triggered, String logic, List<String> messages,
+                List<String> metricTypes, List<String> actualValues) {
+            this.triggered = triggered;
+            this.logic = logic;
+            this.messages = messages;
+            this.metricTypes = metricTypes;
+            this.actualValues = actualValues;
         }
     }
 }

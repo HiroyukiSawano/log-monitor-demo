@@ -1274,12 +1274,19 @@
 
         // ========== Rule Config Modal ==========
         let ruleModalAgentId = null;
+        let cachedPartitions = []; // 缓存当前 agent 的磁盘分区
 
         async function openRuleModal(agentId) {
             ruleModalAgentId = agentId;
             document.getElementById('ruleModalTitle').textContent = '告警规则 — ' + (agentId.length > 12 ? agentId.substring(0, 12) + '…' : agentId);
             document.getElementById('ruleModal').classList.add('show');
             document.getElementById('addRuleForm').style.display = 'none';
+            // 缓存分区数据
+            try {
+                const resp = await fetch(`${getApiBase()}/api/dashboard/agents/${encodeURIComponent(agentId)}`);
+                const r = await resp.json();
+                cachedPartitions = (r.data && r.data.parts) ? r.data.parts.map(p => p.mountPoint) : [];
+            } catch (e) { cachedPartitions = []; }
             loadRules(agentId);
         }
 
@@ -1299,31 +1306,38 @@
                     container.innerHTML = '<div style="padding:16px;color:var(--text2);font-size:11px;text-align:center;">暂无规则，点击下方添加</div>';
                     return;
                 }
-                const TYPE_LABELS = { CPU_USAGE: 'CPU使用率', RAM_USAGE: '内存使用率', DISK_USAGE: '磁盘使用率', DISK_PARTITION: '磁盘分区', PROCESS_ABNORMAL: '进程异常', AGENT_OFFLINE: 'Agent离线' };
-                const OP_LABELS = { GT: '>', GTE: '≥', LT: '<', LTE: '≤', EQ: '=' };
-                const NON_NUMERIC = ['PROCESS_ABNORMAL', 'AGENT_OFFLINE'];
+                const TL = { CPU_USAGE: 'CPU', RAM_USAGE: 'RAM', DISK_USAGE: '磁盘', DISK_PARTITION: '分区', PROCESS_ABNORMAL: '进程异常', AGENT_OFFLINE: '离线' };
+                const OL = { GT: '>', GTE: '≥', LT: '<', LTE: '≤', EQ: '=' };
+                const NN = ['PROCESS_ABNORMAL', 'AGENT_OFFLINE'];
 
                 container.innerHTML = rules.map(r => {
                     const scope = r.agentId === '*' ? ' (全局)' : '';
-                    let condDescs = [];
+                    let exprStr = '';
                     try {
-                        const conds = JSON.parse(r.conditions || '[]');
-                        condDescs = conds.map(c => {
-                            const tl = TYPE_LABELS[c.metricType] || c.metricType;
-                            const tgt = c.targetName ? ` [${escapeHtml(c.targetName)}]` : '';
-                            if (NON_NUMERIC.includes(c.metricType)) return `${tl}${tgt}`;
-                            const op = OP_LABELS[c.operator] || c.operator;
-                            const unit = (c.metricType || '').includes('USAGE') ? '%' : '';
-                            return `${tl}${tgt} ${op} ${c.threshold}${unit}`;
+                        const expr = JSON.parse(r.conditions || '{}');
+                        const topLogic = expr.logic || 'OR';
+                        const groups = expr.groups || [];
+                        const groupStrs = groups.map(g => {
+                            const gl = g.logic || 'OR';
+                            const items = (g.items || []).map(c => {
+                                const tl = TL[c.metricType] || c.metricType;
+                                const tgt = c.targetName ? `[${escapeHtml(c.targetName)}]` : '';
+                                if (NN.includes(c.metricType)) return `${tl}${tgt}`;
+                                const op = OL[c.operator] || c.operator;
+                                const unit = (c.metricType || '').includes('USAGE') ? '%' : '';
+                                return `${tl}${tgt}${op}${c.threshold}${unit}`;
+                            });
+                            const glLabel = gl === 'AND' ? ' 且 ' : ' 或 ';
+                            return items.length > 1 ? `(${items.join(glLabel)})` : items[0] || '';
                         });
-                    } catch (e) { condDescs = ['(解析失败)']; }
-                    const logicLabel = (r.logic || 'OR') === 'AND' ? ' 且 ' : ' 或 ';
-                    const desc = condDescs.join(logicLabel);
+                        const tlLabel = topLogic === 'AND' ? ' 且 ' : ' 或 ';
+                        exprStr = groupStrs.join(tlLabel);
+                    } catch (e) { exprStr = '(解析失败)'; }
                     return `<div class="rule-item">
                         <span class="alert-level-tag ${r.alertLevel}" style="flex-shrink:0">${r.alertLevel}</span>
                         <div class="rule-info">
                             <div class="rule-name">${escapeHtml(r.ruleName)}${scope}</div>
-                            <div class="rule-desc">${desc} · ${r.logic || 'OR'} · 冷却${r.cooldownSec}s · ${r.enabled ? '✅' : '❌'}</div>
+                            <div class="rule-desc">${exprStr} · 冷却${r.cooldownSec}s · ${r.enabled ? '✅' : '❌'}</div>
                         </div>
                         ${r.agentId !== '*' ? `<button class="btn-del" onclick="deleteRule(${r.id})" title="删除">🗑</button>` : ''}
                     </div>`;
@@ -1333,7 +1347,7 @@
             }
         }
 
-        // ========== 动态条件行管理 ==========
+        // ========== 分组条件管理 ==========
         const METRIC_OPTIONS = [
             { value: 'CPU_USAGE', label: 'CPU 使用率', numeric: true },
             { value: 'RAM_USAGE', label: '内存使用率', numeric: true },
@@ -1347,100 +1361,158 @@
             { value: 'LT', label: '< 小于' }, { value: 'LTE', label: '≤ 小于等于' },
             { value: 'EQ', label: '= 等于' }
         ];
-        let ruleLogic = 'OR';
+        let topLogic = 'AND';
+        let groupCounter = 0;
 
         function showAddRuleForm() {
             document.getElementById('addRuleForm').style.display = 'block';
             document.getElementById('newRuleName').value = '';
             document.getElementById('newCooldown').value = '300';
-            document.getElementById('conditionRows').innerHTML = '';
-            ruleLogic = 'OR';
-            updateLogicBtn();
-            addConditionRow(); // 默认添加一行
+            document.getElementById('groupsContainer').innerHTML = '';
+            topLogic = 'AND';
+            groupCounter = 0;
+            updateTopLogicBtn();
+            addGroup(); // 默认一个分组
         }
 
-        function toggleLogic() {
-            ruleLogic = ruleLogic === 'OR' ? 'AND' : 'OR';
-            updateLogicBtn();
+        function toggleTopLogic() {
+            topLogic = topLogic === 'AND' ? 'OR' : 'AND';
+            updateTopLogicBtn();
         }
 
-        function updateLogicBtn() {
-            const btn = document.getElementById('logicToggle');
-            btn.textContent = ruleLogic === 'OR' ? '逻辑: 或 (OR)' : '逻辑: 且 (AND)';
-            btn.style.background = ruleLogic === 'AND' ? 'rgba(108,92,231,0.2)' : 'var(--surface2)';
-            btn.style.borderColor = ruleLogic === 'AND' ? 'var(--accent)' : 'var(--border)';
-            // Update dividers
-            document.querySelectorAll('.logic-divider').forEach(d => {
-                d.textContent = ruleLogic === 'AND' ? '且 AND' : '或 OR';
+        function updateTopLogicBtn() {
+            const btn = document.getElementById('topLogicToggle');
+            btn.textContent = topLogic === 'AND' ? '组间: 且 AND' : '组间: 或 OR';
+            btn.style.background = topLogic === 'AND' ? 'rgba(108,92,231,0.2)' : 'var(--surface2)';
+            btn.style.borderColor = topLogic === 'AND' ? 'var(--accent)' : 'var(--border)';
+            document.querySelectorAll('.group-divider').forEach(d => {
+                d.textContent = topLogic === 'AND' ? '且 AND' : '或 OR';
             });
         }
 
-        function addConditionRow() {
-            const container = document.getElementById('conditionRows');
-            const idx = container.children.length;
-            // 添加逻辑分隔线（非第一行时）
-            let dividerHtml = '';
-            if (idx > 0) {
-                dividerHtml = `<div class="logic-divider" style="text-align:center;font-size:10px;font-weight:700;color:var(--accent);padding:4px 0;">${ruleLogic === 'AND' ? '且 AND' : '或 OR'}</div>`;
+        function addGroup() {
+            const container = document.getElementById('groupsContainer');
+            const gIdx = groupCounter++;
+            // 组间分隔
+            if (container.children.length > 0) {
+                const divider = document.createElement('div');
+                divider.className = 'group-divider';
+                divider.style.cssText = 'text-align:center;font-size:11px;font-weight:700;color:var(--accent);padding:6px 0;';
+                divider.textContent = topLogic === 'AND' ? '且 AND' : '或 OR';
+                container.appendChild(divider);
             }
+            const groupEl = document.createElement('div');
+            groupEl.className = 'cond-group';
+            groupEl.dataset.gidx = gIdx;
+            groupEl.style.cssText = 'border:1px solid var(--border);border-radius:8px;padding:8px;background:var(--surface2);';
+            groupEl.innerHTML = `
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                    <span style="font-size:10px;color:var(--text2);font-weight:600;">条件组 ${gIdx + 1}</span>
+                    <button class="grp-logic-btn" onclick="toggleGroupLogic(this)" style="font-size:9px;padding:1px 8px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:3px;cursor:pointer;">组内: 或 OR</button>
+                    <span style="flex:1"></span>
+                    <button onclick="addConditionToGroup(this)" style="font-size:10px;padding:1px 8px;border:1px dashed var(--border);background:none;color:var(--cyan);border-radius:3px;cursor:pointer;">+ 条件</button>
+                    <button onclick="removeGroup(this)" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:13px;" title="删除组">✕</button>
+                </div>
+                <div class="group-items" style="display:flex;flex-direction:column;gap:4px;"></div>`;
+            container.appendChild(groupEl);
+            addConditionToGroup(groupEl.querySelector('[onclick*="addConditionToGroup"]'));
+        }
+
+        function toggleGroupLogic(btn) {
+            const cur = btn.textContent.includes('OR') ? 'AND' : 'OR';
+            btn.textContent = cur === 'AND' ? '组内: 且 AND' : '组内: 或 OR';
+            btn.style.background = cur === 'AND' ? 'rgba(108,92,231,0.15)' : 'var(--surface)';
+        }
+
+        function removeGroup(btn) {
+            const group = btn.closest('.cond-group');
+            const prev = group.previousElementSibling;
+            const next = group.nextElementSibling;
+            if (prev && prev.classList.contains('group-divider')) prev.remove();
+            if (next && next.classList.contains('group-divider')) next.remove();
+            group.remove();
+            const container = document.getElementById('groupsContainer');
+            if (container.firstElementChild && container.firstElementChild.classList.contains('group-divider')) {
+                container.firstElementChild.remove();
+            }
+        }
+
+        function addConditionToGroup(btn) {
+            const group = btn.closest('.cond-group');
+            const itemsContainer = group.querySelector('.group-items');
             const metricOpts = METRIC_OPTIONS.map(m => `<option value="${m.value}">${m.label}</option>`).join('');
             const opOpts = OP_OPTIONS.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
-            const html = `${dividerHtml}<div class="cond-row" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
-                <select class="cond-metric" onchange="onCondMetricChange(this)" style="flex:1;min-width:120px;padding:4px 6px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:4px;font-size:11px;">
+            const row = document.createElement('div');
+            row.className = 'cond-row';
+            row.style.cssText = 'background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:6px 8px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;';
+            row.innerHTML = `
+                <select class="cond-metric" onchange="onCondMetricChange(this)" style="flex:1;min-width:110px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;">
                     ${metricOpts}
                 </select>
-                <select class="cond-op" style="width:90px;padding:4px 6px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:4px;font-size:11px;">
+                <select class="cond-op" style="width:85px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;">
                     ${opOpts}
                 </select>
-                <input class="cond-threshold" type="number" value="80" style="width:60px;padding:4px 6px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:4px;font-size:11px;">
-                <input class="cond-target" placeholder="目标(可选)" style="width:80px;padding:4px 6px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:4px;font-size:11px;">
-                <button onclick="removeConditionRow(this)" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:0 4px;" title="删除条件">✕</button>
-            </div>`;
-            container.insertAdjacentHTML('beforeend', html);
+                <input class="cond-threshold" type="number" value="80" style="width:55px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;">
+                <input class="cond-target" placeholder="目标" style="width:70px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;">
+                <button onclick="removeCondRow(this)" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:12px;padding:0 3px;" title="删除">✕</button>`;
+            itemsContainer.appendChild(row);
         }
 
         function onCondMetricChange(select) {
             const row = select.closest('.cond-row');
             const metric = select.value;
-            const isNumeric = METRIC_OPTIONS.find(m => m.value === metric)?.numeric !== false;
+            const mo = METRIC_OPTIONS.find(m => m.value === metric);
+            const isNumeric = mo ? mo.numeric : true;
             const opEl = row.querySelector('.cond-op');
             const thEl = row.querySelector('.cond-threshold');
             opEl.disabled = !isNumeric;
             thEl.disabled = !isNumeric;
             opEl.style.opacity = isNumeric ? '1' : '0.4';
             thEl.style.opacity = isNumeric ? '1' : '0.4';
-        }
-
-        function removeConditionRow(btn) {
-            const row = btn.closest('.cond-row');
-            const prev = row.previousElementSibling;
-            // 删除前面的逻辑分隔线
-            if (prev && prev.classList.contains('logic-divider')) prev.remove();
-            row.remove();
-            // 删除后如果第一个元素是分隔线也移除
-            const container = document.getElementById('conditionRows');
-            if (container.firstElementChild && container.firstElementChild.classList.contains('logic-divider')) {
-                container.firstElementChild.remove();
+            // 磁盘分区 → 目标改为下拉
+            const oldTarget = row.querySelector('.cond-target');
+            if (metric === 'DISK_PARTITION' && cachedPartitions.length > 0) {
+                const sel = document.createElement('select');
+                sel.className = 'cond-target';
+                sel.style.cssText = oldTarget.style.cssText;
+                sel.innerHTML = cachedPartitions.map(p => `<option value="${p}">${p}:</option>`).join('');
+                oldTarget.replaceWith(sel);
+            } else if (oldTarget.tagName === 'SELECT') {
+                const inp = document.createElement('input');
+                inp.className = 'cond-target';
+                inp.placeholder = '目标';
+                inp.style.cssText = oldTarget.style.cssText;
+                oldTarget.replaceWith(inp);
             }
         }
 
+        function removeCondRow(btn) {
+            btn.closest('.cond-row').remove();
+        }
+
         async function submitNewRule() {
-            const rows = document.querySelectorAll('#conditionRows .cond-row');
-            if (rows.length === 0) { alert('请至少添加一个条件'); return; }
+            const groupEls = document.querySelectorAll('#groupsContainer .cond-group');
+            if (groupEls.length === 0) { alert('请至少添加一个条件组'); return; }
 
-            const conditions = Array.from(rows).map(row => {
-                const metricType = row.querySelector('.cond-metric').value;
-                const operator = row.querySelector('.cond-op').value;
-                const threshold = parseFloat(row.querySelector('.cond-threshold').value) || 0;
-                const targetName = row.querySelector('.cond-target').value || null;
-                return { metricType, operator, threshold, targetName };
-            });
+            const groups = Array.from(groupEls).map(gEl => {
+                const logicBtn = gEl.querySelector('.grp-logic-btn');
+                const groupLogic = logicBtn.textContent.includes('AND') ? 'AND' : 'OR';
+                const items = Array.from(gEl.querySelectorAll('.cond-row')).map(row => ({
+                    metricType: row.querySelector('.cond-metric').value,
+                    operator: row.querySelector('.cond-op').value,
+                    threshold: parseFloat(row.querySelector('.cond-threshold').value) || 0,
+                    targetName: row.querySelector('.cond-target').value || null
+                }));
+                return { logic: groupLogic, items };
+            }).filter(g => g.items.length > 0);
 
+            if (groups.length === 0) { alert('条件组内需要至少一个条件'); return; }
+
+            const expression = { logic: topLogic, groups };
             const rule = {
                 agentId: ruleModalAgentId,
                 ruleName: document.getElementById('newRuleName').value || '未命名规则',
-                logic: ruleLogic,
-                conditions: JSON.stringify(conditions),
+                conditions: JSON.stringify(expression),
                 alertLevel: document.getElementById('newAlertLevel').value,
                 cooldownSec: parseInt(document.getElementById('newCooldown').value) || 300,
                 enabled: true
@@ -1470,7 +1542,6 @@
             loadDashboard();
             loadAlerts();
             startCountdown();
-            // Refresh alerts with dashboard
             const origLoad = loadDashboard;
             loadDashboard = async function () { await origLoad(); loadAlerts(); };
         })();
@@ -1498,17 +1569,17 @@
                         <div class="form-group"><label>冷却(秒)</label><input id="newCooldown" type="number" value="300">
                         </div>
                     </div>
-                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-                        <span style="font-size:11px;color:var(--text2);font-weight:600;">条件列表</span>
-                        <button id="logicToggle" onclick="toggleLogic()"
-                            style="font-size:10px;padding:2px 10px;border:1px solid var(--border);background:var(--surface2);color:var(--text);border-radius:4px;cursor:pointer;">逻辑:
-                            或 (OR)</button>
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                        <span style="font-size:11px;color:var(--text2);font-weight:600;">条件分组</span>
+                        <button id="topLogicToggle" onclick="toggleTopLogic()"
+                            style="font-size:9px;padding:2px 10px;border:1px solid var(--border);background:var(--surface2);color:var(--text);border-radius:4px;cursor:pointer;">组间:
+                            且 AND</button>
                         <span style="flex:1"></span>
-                        <button onclick="addConditionRow()"
-                            style="font-size:11px;padding:2px 10px;border:1px dashed var(--border);background:none;color:var(--cyan);border-radius:4px;cursor:pointer;">+
-                            添加条件</button>
+                        <button onclick="addGroup()"
+                            style="font-size:10px;padding:2px 10px;border:1px dashed var(--border);background:none;color:var(--cyan);border-radius:4px;cursor:pointer;">+
+                            添加组</button>
                     </div>
-                    <div id="conditionRows" style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px;">
+                    <div id="groupsContainer" style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px;">
                     </div>
                     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
                         <button class="btn-secondary"
