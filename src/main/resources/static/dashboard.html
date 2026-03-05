@@ -1404,13 +1404,13 @@
             const groupEl = document.createElement('div');
             groupEl.className = 'cond-group';
             groupEl.dataset.gidx = gIdx;
-            groupEl.style.cssText = 'border:1px solid var(--border);border-radius:8px;padding:8px;background:var(--surface2);';
+            groupEl.style.cssText = 'border:1px solid var(--accent);border-radius:8px;padding:8px;background:var(--surface2);';
             groupEl.innerHTML = `
                 <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
-                    <span style="font-size:10px;color:var(--text2);font-weight:600;">条件组 ${gIdx + 1}</span>
-                    <button class="grp-logic-btn" onclick="toggleGroupLogic(this)" style="font-size:9px;padding:1px 8px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:3px;cursor:pointer;">组内: 或 OR</button>
+                    <span style="font-size:10px;color:var(--accent);font-weight:600;">条件组 ${gIdx + 1}</span>
+                    <button class="grp-logic-btn" onclick="toggleGroupLogic(this)" style="font-size:9px;padding:1px 8px;border:1px solid var(--cyan);background:var(--surface);color:var(--cyan);border-radius:3px;cursor:pointer;">组内: 或 OR</button>
                     <span style="flex:1"></span>
-                    <button onclick="addConditionToGroup(this)" style="font-size:10px;padding:1px 8px;border:1px dashed var(--border);background:none;color:var(--cyan);border-radius:3px;cursor:pointer;">+ 条件</button>
+                    <button onclick="addConditionToGroup(this)" style="font-size:10px;padding:1px 8px;border:1px dashed var(--cyan);background:none;color:var(--cyan);border-radius:3px;cursor:pointer;">+ 条件</button>
                     <button onclick="removeGroup(this)" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:13px;" title="删除组">✕</button>
                 </div>
                 <div class="group-items" style="display:flex;flex-direction:column;gap:4px;"></div>`;
@@ -1459,16 +1459,16 @@
             const opOpts = OP_OPTIONS.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
             const row = document.createElement('div');
             row.className = 'cond-row';
-            row.style.cssText = 'background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:6px 8px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;';
+            row.style.cssText = 'background:var(--bg);border:1px solid var(--cyan);border-radius:5px;padding:6px 8px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;';
             row.innerHTML = `
-                <select class="cond-metric" onchange="onCondMetricChange(this)" style="flex:1;min-width:110px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;">
+                <select class="cond-metric" onchange="onCondMetricChange(this)" style="flex:1;min-width:110px;padding:3px 5px;background:var(--surface);border:1px solid var(--cyan);color:var(--text);border-radius:3px;font-size:11px;">
                     ${metricOpts}
                 </select>
-                <select class="cond-op" style="width:85px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;">
+                <select class="cond-op" style="width:85px;padding:3px 5px;background:var(--surface);border:1px solid var(--cyan);color:var(--text);border-radius:3px;font-size:11px;">
                     ${opOpts}
                 </select>
-                <input class="cond-threshold" type="number" value="80" style="width:55px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;">
-                <input class="cond-target" placeholder="目标" style="width:70px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;">
+                <input class="cond-threshold" type="number" value="80" style="width:55px;padding:3px 5px;background:var(--surface);border:1px solid var(--cyan);color:var(--text);border-radius:3px;font-size:11px;">
+                <input class="cond-target" placeholder="目标" style="width:70px;padding:3px 5px;background:var(--surface);border:1px solid var(--cyan);color:var(--text);border-radius:3px;font-size:11px;">
                 <button onclick="removeCondRow(this)" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:12px;padding:0 3px;" title="删除">✕</button>`;
             itemsContainer.appendChild(row);
         }
