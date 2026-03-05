@@ -231,8 +231,12 @@ public class AlertService {
         switch (operator) {
             case "GT":
                 return actual > threshold;
+            case "GTE":
+                return actual >= threshold;
             case "LT":
                 return actual < threshold;
+            case "LTE":
+                return actual <= threshold;
             case "EQ":
                 return Math.abs(actual - threshold) < 0.01;
             default:
@@ -244,8 +248,12 @@ public class AlertService {
         switch (operator) {
             case "GT":
                 return "> ";
+            case "GTE":
+                return "≥ ";
             case "LT":
                 return "< ";
+            case "LTE":
+                return "≤ ";
             case "EQ":
                 return "= ";
             default:

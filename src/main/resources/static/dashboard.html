@@ -1301,11 +1301,12 @@
                 }
                 container.innerHTML = rules.map(r => {
                     const typeLabel = { CPU_USAGE: 'CPU使用率', RAM_USAGE: '内存使用率', DISK_USAGE: '磁盘使用率', DISK_PARTITION: '磁盘分区', PROCESS_ABNORMAL: '进程异常', AGENT_OFFLINE: 'Agent离线' }[r.metricType] || r.metricType;
-                    const opLabel = { GT: '>', LT: '<', EQ: '=' }[r.operator] || r.operator;
+                    const opLabel = { GT: '>', GTE: '≥', LT: '<', LTE: '≤', EQ: '=' }[r.operator] || r.operator;
                     const scope = r.agentId === '*' ? '(全局)' : '';
                     const target = r.targetName ? ` [${escapeHtml(r.targetName)}]` : '';
-                    const desc = r.metricType === 'PROCESS_ABNORMAL'
-                        ? `进程异常${target}`
+                    const isNonNumeric = r.metricType === 'PROCESS_ABNORMAL' || r.metricType === 'AGENT_OFFLINE';
+                    const desc = isNonNumeric
+                        ? `${typeLabel}${target}`
                         : `${typeLabel}${target} ${opLabel} ${r.threshold}${r.metricType.includes('USAGE') ? '%' : ''}`;
                     return `<div class="rule-item">
                         <span class="alert-level-tag ${r.alertLevel}" style="flex-shrink:0">${r.alertLevel}</span>
@@ -1327,26 +1328,57 @@
             document.getElementById('newThreshold').value = '80';
             document.getElementById('newTargetName').value = '';
             document.getElementById('newCooldown').value = '300';
+            // Reset checkboxes
+            document.querySelectorAll('.metric-checkbox').forEach(cb => { cb.checked = false; });
+            updateMetricFormState();
+        }
+
+        /** 根据勾选的指标类型，自动禁用/启用阈值和比较符 */
+        function updateMetricFormState() {
+            const checked = Array.from(document.querySelectorAll('.metric-checkbox:checked')).map(cb => cb.value);
+            const allNonNumeric = checked.length > 0 && checked.every(v => v === 'PROCESS_ABNORMAL' || v === 'AGENT_OFFLINE');
+            document.getElementById('newOperator').disabled = allNonNumeric;
+            document.getElementById('newThreshold').disabled = allNonNumeric;
+            if (allNonNumeric) {
+                document.getElementById('newOperator').style.opacity = '0.4';
+                document.getElementById('newThreshold').style.opacity = '0.4';
+            } else {
+                document.getElementById('newOperator').style.opacity = '1';
+                document.getElementById('newThreshold').style.opacity = '1';
+            }
         }
 
         async function submitNewRule() {
-            const rule = {
-                agentId: ruleModalAgentId,
-                ruleName: document.getElementById('newRuleName').value || '未命名规则',
-                metricType: document.getElementById('newMetricType').value,
-                operator: document.getElementById('newOperator').value,
-                threshold: parseFloat(document.getElementById('newThreshold').value) || 0,
-                targetName: document.getElementById('newTargetName').value || null,
-                alertLevel: document.getElementById('newAlertLevel').value,
-                cooldownSec: parseInt(document.getElementById('newCooldown').value) || 300,
-                enabled: true
-            };
+            const selectedTypes = Array.from(document.querySelectorAll('.metric-checkbox:checked')).map(cb => cb.value);
+            if (selectedTypes.length === 0) { alert('请至少选择一个指标类型'); return; }
+
+            const baseName = document.getElementById('newRuleName').value || '未命名规则';
+            const operator = document.getElementById('newOperator').value;
+            const threshold = parseFloat(document.getElementById('newThreshold').value) || 0;
+            const targetName = document.getElementById('newTargetName').value || null;
+            const alertLevel = document.getElementById('newAlertLevel').value;
+            const cooldownSec = parseInt(document.getElementById('newCooldown').value) || 300;
+
             try {
-                await fetch(`${getApiBase()}/api/alert/rules`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(rule)
-                });
+                // 为每个选中的指标类型创建一条独立规则
+                for (const metricType of selectedTypes) {
+                    const rule = {
+                        agentId: ruleModalAgentId,
+                        ruleName: selectedTypes.length > 1 ? `${baseName} (${metricType})` : baseName,
+                        metricType,
+                        operator,
+                        threshold,
+                        targetName,
+                        alertLevel,
+                        cooldownSec,
+                        enabled: true
+                    };
+                    await fetch(`${getApiBase()}/api/alert/rules`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(rule)
+                    });
+                }
                 document.getElementById('addRuleForm').style.display = 'none';
                 loadRules(ruleModalAgentId);
             } catch (e) { alert('创建失败: ' + e.message); }
@@ -1392,26 +1424,56 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group"><label>指标类型</label>
-                            <select id="newMetricType">
-                                <option value="CPU_USAGE">CPU 使用率</option>
-                                <option value="RAM_USAGE">内存使用率</option>
-                                <option value="DISK_USAGE">总磁盘使用率</option>
-                                <option value="DISK_PARTITION">磁盘分区(可用MB)</option>
-                                <option value="PROCESS_ABNORMAL">进程异常</option>
-                            </select>
-                        </div>
-                        <div class="form-group"><label>比较符</label>
-                            <select id="newOperator">
-                                <option value="GT">大于 (>)</option>
-                                <option value="LT">小于 (<)< /option>
-                                <option value="EQ">等于 (=)</option>
-                            </select>
+                        <div class="form-group" style="flex:2">
+                            <label>指标类型 (可多选，每项将创建独立规则)</label>
+                            <div style="display:flex;flex-wrap:wrap;gap:6px 14px;padding:6px 0;">
+                                <label
+                                    style="font-size:12px;color:var(--text);display:flex;align-items:center;gap:4px;cursor:pointer;">
+                                    <input type="checkbox" class="metric-checkbox" value="CPU_USAGE"
+                                        onchange="updateMetricFormState()"> CPU 使用率
+                                </label>
+                                <label
+                                    style="font-size:12px;color:var(--text);display:flex;align-items:center;gap:4px;cursor:pointer;">
+                                    <input type="checkbox" class="metric-checkbox" value="RAM_USAGE"
+                                        onchange="updateMetricFormState()"> 内存使用率
+                                </label>
+                                <label
+                                    style="font-size:12px;color:var(--text);display:flex;align-items:center;gap:4px;cursor:pointer;">
+                                    <input type="checkbox" class="metric-checkbox" value="DISK_USAGE"
+                                        onchange="updateMetricFormState()"> 总磁盘使用率
+                                </label>
+                                <label
+                                    style="font-size:12px;color:var(--text);display:flex;align-items:center;gap:4px;cursor:pointer;">
+                                    <input type="checkbox" class="metric-checkbox" value="DISK_PARTITION"
+                                        onchange="updateMetricFormState()"> 磁盘分区(可用MB)
+                                </label>
+                                <label
+                                    style="font-size:12px;color:var(--text);display:flex;align-items:center;gap:4px;cursor:pointer;">
+                                    <input type="checkbox" class="metric-checkbox" value="PROCESS_ABNORMAL"
+                                        onchange="updateMetricFormState()"> 进程异常
+                                </label>
+                                <label
+                                    style="font-size:12px;color:var(--text);display:flex;align-items:center;gap:4px;cursor:pointer;">
+                                    <input type="checkbox" class="metric-checkbox" value="AGENT_OFFLINE"
+                                        onchange="updateMetricFormState()"> Agent离线
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div class="form-row">
+                        <div class="form-group"><label>比较符</label>
+                            <select id="newOperator">
+                                <option value="GT">大于 (&gt;)</option>
+                                <option value="GTE">大于等于 (≥)</option>
+                                <option value="LT">小于 (&lt;)</option>
+                                <option value="LTE">小于等于 (≤)</option>
+                                <option value="EQ">等于 (=)</option>
+                            </select>
+                        </div>
                         <div class="form-group"><label>阈值</label><input id="newThreshold" type="number" value="80">
                         </div>
+                    </div>
+                    <div class="form-row">
                         <div class="form-group"><label>目标 (盘符/进程名，可选)</label><input id="newTargetName"
                                 placeholder="如 C 或 云上协同"></div>
                         <div class="form-group"><label>冷却(秒)</label><input id="newCooldown" type="number" value="300">

@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `t_alert_rule` (
     `agent_id`      VARCHAR(100) NOT NULL DEFAULT '*' COMMENT '绑定的采集端 ID (* = 全局)',
     `rule_name`     VARCHAR(200) NOT NULL COMMENT '规则名称',
     `metric_type`   VARCHAR(30)  NOT NULL COMMENT '指标类型: CPU_USAGE / RAM_USAGE / DISK_USAGE / DISK_PARTITION / PROCESS_ABNORMAL / AGENT_OFFLINE',
-    `operator`      VARCHAR(10)  NOT NULL DEFAULT 'GT' COMMENT '比较符: GT / LT / EQ',
+    `operator`      VARCHAR(10)  NOT NULL DEFAULT 'GT' COMMENT '比较符: GT / GTE / LT / LTE / EQ',
     `threshold`     DOUBLE       NOT NULL DEFAULT 0 COMMENT '阈值',
     `target_name`   VARCHAR(200) DEFAULT NULL COMMENT '目标名称 (盘符如 C 或进程名)',
     `alert_level`   VARCHAR(20)  NOT NULL DEFAULT 'WARNING' COMMENT '告警级别: WARNING / CRITICAL',

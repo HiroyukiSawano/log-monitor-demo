@@ -34,7 +34,7 @@ public class AlertRule {
      */
     private String metricType;
 
-    /** 比较符: GT / LT / EQ */
+    /** 比较符: GT / GTE / LT / LTE / EQ */
     private String operator;
 
     /** 阈值 */
