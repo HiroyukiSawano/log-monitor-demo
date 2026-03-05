@@ -60,8 +60,8 @@ public class AlertRuleService {
             rule.setEnabled(true);
         if (rule.getCooldownSec() == null)
             rule.setCooldownSec(300);
-        if (rule.getOperator() == null)
-            rule.setOperator("GT");
+        if (rule.getLogic() == null)
+            rule.setLogic("OR");
         if (rule.getAlertLevel() == null)
             rule.setAlertLevel("WARNING");
         ruleMapper.insert(rule);

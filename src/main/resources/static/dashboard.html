@@ -1299,20 +1299,31 @@
                     container.innerHTML = '<div style="padding:16px;color:var(--text2);font-size:11px;text-align:center;">暂无规则，点击下方添加</div>';
                     return;
                 }
+                const TYPE_LABELS = { CPU_USAGE: 'CPU使用率', RAM_USAGE: '内存使用率', DISK_USAGE: '磁盘使用率', DISK_PARTITION: '磁盘分区', PROCESS_ABNORMAL: '进程异常', AGENT_OFFLINE: 'Agent离线' };
+                const OP_LABELS = { GT: '>', GTE: '≥', LT: '<', LTE: '≤', EQ: '=' };
+                const NON_NUMERIC = ['PROCESS_ABNORMAL', 'AGENT_OFFLINE'];
+
                 container.innerHTML = rules.map(r => {
-                    const typeLabel = { CPU_USAGE: 'CPU使用率', RAM_USAGE: '内存使用率', DISK_USAGE: '磁盘使用率', DISK_PARTITION: '磁盘分区', PROCESS_ABNORMAL: '进程异常', AGENT_OFFLINE: 'Agent离线' }[r.metricType] || r.metricType;
-                    const opLabel = { GT: '>', GTE: '≥', LT: '<', LTE: '≤', EQ: '=' }[r.operator] || r.operator;
-                    const scope = r.agentId === '*' ? '(全局)' : '';
-                    const target = r.targetName ? ` [${escapeHtml(r.targetName)}]` : '';
-                    const isNonNumeric = r.metricType === 'PROCESS_ABNORMAL' || r.metricType === 'AGENT_OFFLINE';
-                    const desc = isNonNumeric
-                        ? `${typeLabel}${target}`
-                        : `${typeLabel}${target} ${opLabel} ${r.threshold}${r.metricType.includes('USAGE') ? '%' : ''}`;
+                    const scope = r.agentId === '*' ? ' (全局)' : '';
+                    let condDescs = [];
+                    try {
+                        const conds = JSON.parse(r.conditions || '[]');
+                        condDescs = conds.map(c => {
+                            const tl = TYPE_LABELS[c.metricType] || c.metricType;
+                            const tgt = c.targetName ? ` [${escapeHtml(c.targetName)}]` : '';
+                            if (NON_NUMERIC.includes(c.metricType)) return `${tl}${tgt}`;
+                            const op = OP_LABELS[c.operator] || c.operator;
+                            const unit = (c.metricType || '').includes('USAGE') ? '%' : '';
+                            return `${tl}${tgt} ${op} ${c.threshold}${unit}`;
+                        });
+                    } catch (e) { condDescs = ['(解析失败)']; }
+                    const logicLabel = (r.logic || 'OR') === 'AND' ? ' 且 ' : ' 或 ';
+                    const desc = condDescs.join(logicLabel);
                     return `<div class="rule-item">
                         <span class="alert-level-tag ${r.alertLevel}" style="flex-shrink:0">${r.alertLevel}</span>
                         <div class="rule-info">
-                            <div class="rule-name">${escapeHtml(r.ruleName)} ${scope}</div>
-                            <div class="rule-desc">${desc} · 冷却 ${r.cooldownSec}s · ${r.enabled ? '✅启用' : '❌禁用'}</div>
+                            <div class="rule-name">${escapeHtml(r.ruleName)}${scope}</div>
+                            <div class="rule-desc">${desc} · ${r.logic || 'OR'} · 冷却${r.cooldownSec}s · ${r.enabled ? '✅' : '❌'}</div>
                         </div>
                         ${r.agentId !== '*' ? `<button class="btn-del" onclick="deleteRule(${r.id})" title="删除">🗑</button>` : ''}
                     </div>`;
@@ -1322,63 +1333,125 @@
             }
         }
 
+        // ========== 动态条件行管理 ==========
+        const METRIC_OPTIONS = [
+            { value: 'CPU_USAGE', label: 'CPU 使用率', numeric: true },
+            { value: 'RAM_USAGE', label: '内存使用率', numeric: true },
+            { value: 'DISK_USAGE', label: '总磁盘使用率', numeric: true },
+            { value: 'DISK_PARTITION', label: '磁盘分区(可用MB)', numeric: true },
+            { value: 'PROCESS_ABNORMAL', label: '进程异常', numeric: false },
+            { value: 'AGENT_OFFLINE', label: 'Agent离线', numeric: false }
+        ];
+        const OP_OPTIONS = [
+            { value: 'GT', label: '> 大于' }, { value: 'GTE', label: '≥ 大于等于' },
+            { value: 'LT', label: '< 小于' }, { value: 'LTE', label: '≤ 小于等于' },
+            { value: 'EQ', label: '= 等于' }
+        ];
+        let ruleLogic = 'OR';
+
         function showAddRuleForm() {
             document.getElementById('addRuleForm').style.display = 'block';
             document.getElementById('newRuleName').value = '';
-            document.getElementById('newThreshold').value = '80';
-            document.getElementById('newTargetName').value = '';
             document.getElementById('newCooldown').value = '300';
-            // Reset checkboxes
-            document.querySelectorAll('.metric-checkbox').forEach(cb => { cb.checked = false; });
-            updateMetricFormState();
+            document.getElementById('conditionRows').innerHTML = '';
+            ruleLogic = 'OR';
+            updateLogicBtn();
+            addConditionRow(); // 默认添加一行
         }
 
-        /** 根据勾选的指标类型，自动禁用/启用阈值和比较符 */
-        function updateMetricFormState() {
-            const checked = Array.from(document.querySelectorAll('.metric-checkbox:checked')).map(cb => cb.value);
-            const allNonNumeric = checked.length > 0 && checked.every(v => v === 'PROCESS_ABNORMAL' || v === 'AGENT_OFFLINE');
-            document.getElementById('newOperator').disabled = allNonNumeric;
-            document.getElementById('newThreshold').disabled = allNonNumeric;
-            if (allNonNumeric) {
-                document.getElementById('newOperator').style.opacity = '0.4';
-                document.getElementById('newThreshold').style.opacity = '0.4';
-            } else {
-                document.getElementById('newOperator').style.opacity = '1';
-                document.getElementById('newThreshold').style.opacity = '1';
+        function toggleLogic() {
+            ruleLogic = ruleLogic === 'OR' ? 'AND' : 'OR';
+            updateLogicBtn();
+        }
+
+        function updateLogicBtn() {
+            const btn = document.getElementById('logicToggle');
+            btn.textContent = ruleLogic === 'OR' ? '逻辑: 或 (OR)' : '逻辑: 且 (AND)';
+            btn.style.background = ruleLogic === 'AND' ? 'rgba(108,92,231,0.2)' : 'var(--surface2)';
+            btn.style.borderColor = ruleLogic === 'AND' ? 'var(--accent)' : 'var(--border)';
+            // Update dividers
+            document.querySelectorAll('.logic-divider').forEach(d => {
+                d.textContent = ruleLogic === 'AND' ? '且 AND' : '或 OR';
+            });
+        }
+
+        function addConditionRow() {
+            const container = document.getElementById('conditionRows');
+            const idx = container.children.length;
+            // 添加逻辑分隔线（非第一行时）
+            let dividerHtml = '';
+            if (idx > 0) {
+                dividerHtml = `<div class="logic-divider" style="text-align:center;font-size:10px;font-weight:700;color:var(--accent);padding:4px 0;">${ruleLogic === 'AND' ? '且 AND' : '或 OR'}</div>`;
+            }
+            const metricOpts = METRIC_OPTIONS.map(m => `<option value="${m.value}">${m.label}</option>`).join('');
+            const opOpts = OP_OPTIONS.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
+            const html = `${dividerHtml}<div class="cond-row" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+                <select class="cond-metric" onchange="onCondMetricChange(this)" style="flex:1;min-width:120px;padding:4px 6px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:4px;font-size:11px;">
+                    ${metricOpts}
+                </select>
+                <select class="cond-op" style="width:90px;padding:4px 6px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:4px;font-size:11px;">
+                    ${opOpts}
+                </select>
+                <input class="cond-threshold" type="number" value="80" style="width:60px;padding:4px 6px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:4px;font-size:11px;">
+                <input class="cond-target" placeholder="目标(可选)" style="width:80px;padding:4px 6px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:4px;font-size:11px;">
+                <button onclick="removeConditionRow(this)" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:0 4px;" title="删除条件">✕</button>
+            </div>`;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        function onCondMetricChange(select) {
+            const row = select.closest('.cond-row');
+            const metric = select.value;
+            const isNumeric = METRIC_OPTIONS.find(m => m.value === metric)?.numeric !== false;
+            const opEl = row.querySelector('.cond-op');
+            const thEl = row.querySelector('.cond-threshold');
+            opEl.disabled = !isNumeric;
+            thEl.disabled = !isNumeric;
+            opEl.style.opacity = isNumeric ? '1' : '0.4';
+            thEl.style.opacity = isNumeric ? '1' : '0.4';
+        }
+
+        function removeConditionRow(btn) {
+            const row = btn.closest('.cond-row');
+            const prev = row.previousElementSibling;
+            // 删除前面的逻辑分隔线
+            if (prev && prev.classList.contains('logic-divider')) prev.remove();
+            row.remove();
+            // 删除后如果第一个元素是分隔线也移除
+            const container = document.getElementById('conditionRows');
+            if (container.firstElementChild && container.firstElementChild.classList.contains('logic-divider')) {
+                container.firstElementChild.remove();
             }
         }
 
         async function submitNewRule() {
-            const selectedTypes = Array.from(document.querySelectorAll('.metric-checkbox:checked')).map(cb => cb.value);
-            if (selectedTypes.length === 0) { alert('请至少选择一个指标类型'); return; }
+            const rows = document.querySelectorAll('#conditionRows .cond-row');
+            if (rows.length === 0) { alert('请至少添加一个条件'); return; }
 
-            const baseName = document.getElementById('newRuleName').value || '未命名规则';
-            const operator = document.getElementById('newOperator').value;
-            const threshold = parseFloat(document.getElementById('newThreshold').value) || 0;
-            const targetName = document.getElementById('newTargetName').value || null;
-            const alertLevel = document.getElementById('newAlertLevel').value;
-            const cooldownSec = parseInt(document.getElementById('newCooldown').value) || 300;
+            const conditions = Array.from(rows).map(row => {
+                const metricType = row.querySelector('.cond-metric').value;
+                const operator = row.querySelector('.cond-op').value;
+                const threshold = parseFloat(row.querySelector('.cond-threshold').value) || 0;
+                const targetName = row.querySelector('.cond-target').value || null;
+                return { metricType, operator, threshold, targetName };
+            });
+
+            const rule = {
+                agentId: ruleModalAgentId,
+                ruleName: document.getElementById('newRuleName').value || '未命名规则',
+                logic: ruleLogic,
+                conditions: JSON.stringify(conditions),
+                alertLevel: document.getElementById('newAlertLevel').value,
+                cooldownSec: parseInt(document.getElementById('newCooldown').value) || 300,
+                enabled: true
+            };
 
             try {
-                // 为每个选中的指标类型创建一条独立规则
-                for (const metricType of selectedTypes) {
-                    const rule = {
-                        agentId: ruleModalAgentId,
-                        ruleName: selectedTypes.length > 1 ? `${baseName} (${metricType})` : baseName,
-                        metricType,
-                        operator,
-                        threshold,
-                        targetName,
-                        alertLevel,
-                        cooldownSec,
-                        enabled: true
-                    };
-                    await fetch(`${getApiBase()}/api/alert/rules`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(rule)
-                    });
-                }
+                await fetch(`${getApiBase()}/api/alert/rules`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(rule)
+                });
                 document.getElementById('addRuleForm').style.display = 'none';
                 loadRules(ruleModalAgentId);
             } catch (e) { alert('创建失败: ' + e.message); }
@@ -1415,69 +1488,27 @@
                 <button class="btn-add-rule" onclick="showAddRuleForm()">+ 添加新规则</button>
                 <div class="add-rule-form" id="addRuleForm" style="display:none;">
                     <div class="form-row">
-                        <div class="form-group"><label>规则名称</label><input id="newRuleName" placeholder="如: CPU告警"></div>
+                        <div class="form-group"><label>规则名称</label><input id="newRuleName" placeholder="如: 综合告警"></div>
                         <div class="form-group"><label>告警级别</label>
                             <select id="newAlertLevel">
                                 <option value="WARNING">⚠️ WARNING</option>
                                 <option value="CRITICAL">🔴 CRITICAL</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group" style="flex:2">
-                            <label>指标类型 (可多选，每项将创建独立规则)</label>
-                            <div style="display:flex;flex-wrap:wrap;gap:6px 14px;padding:6px 0;">
-                                <label
-                                    style="font-size:12px;color:var(--text);display:flex;align-items:center;gap:4px;cursor:pointer;">
-                                    <input type="checkbox" class="metric-checkbox" value="CPU_USAGE"
-                                        onchange="updateMetricFormState()"> CPU 使用率
-                                </label>
-                                <label
-                                    style="font-size:12px;color:var(--text);display:flex;align-items:center;gap:4px;cursor:pointer;">
-                                    <input type="checkbox" class="metric-checkbox" value="RAM_USAGE"
-                                        onchange="updateMetricFormState()"> 内存使用率
-                                </label>
-                                <label
-                                    style="font-size:12px;color:var(--text);display:flex;align-items:center;gap:4px;cursor:pointer;">
-                                    <input type="checkbox" class="metric-checkbox" value="DISK_USAGE"
-                                        onchange="updateMetricFormState()"> 总磁盘使用率
-                                </label>
-                                <label
-                                    style="font-size:12px;color:var(--text);display:flex;align-items:center;gap:4px;cursor:pointer;">
-                                    <input type="checkbox" class="metric-checkbox" value="DISK_PARTITION"
-                                        onchange="updateMetricFormState()"> 磁盘分区(可用MB)
-                                </label>
-                                <label
-                                    style="font-size:12px;color:var(--text);display:flex;align-items:center;gap:4px;cursor:pointer;">
-                                    <input type="checkbox" class="metric-checkbox" value="PROCESS_ABNORMAL"
-                                        onchange="updateMetricFormState()"> 进程异常
-                                </label>
-                                <label
-                                    style="font-size:12px;color:var(--text);display:flex;align-items:center;gap:4px;cursor:pointer;">
-                                    <input type="checkbox" class="metric-checkbox" value="AGENT_OFFLINE"
-                                        onchange="updateMetricFormState()"> Agent离线
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group"><label>比较符</label>
-                            <select id="newOperator">
-                                <option value="GT">大于 (&gt;)</option>
-                                <option value="GTE">大于等于 (≥)</option>
-                                <option value="LT">小于 (&lt;)</option>
-                                <option value="LTE">小于等于 (≤)</option>
-                                <option value="EQ">等于 (=)</option>
-                            </select>
-                        </div>
-                        <div class="form-group"><label>阈值</label><input id="newThreshold" type="number" value="80">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group"><label>目标 (盘符/进程名，可选)</label><input id="newTargetName"
-                                placeholder="如 C 或 云上协同"></div>
                         <div class="form-group"><label>冷却(秒)</label><input id="newCooldown" type="number" value="300">
                         </div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span style="font-size:11px;color:var(--text2);font-weight:600;">条件列表</span>
+                        <button id="logicToggle" onclick="toggleLogic()"
+                            style="font-size:10px;padding:2px 10px;border:1px solid var(--border);background:var(--surface2);color:var(--text);border-radius:4px;cursor:pointer;">逻辑:
+                            或 (OR)</button>
+                        <span style="flex:1"></span>
+                        <button onclick="addConditionRow()"
+                            style="font-size:11px;padding:2px 10px;border:1px dashed var(--border);background:none;color:var(--cyan);border-radius:4px;cursor:pointer;">+
+                            添加条件</button>
+                    </div>
+                    <div id="conditionRows" style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px;">
                     </div>
                     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
                         <button class="btn-secondary"

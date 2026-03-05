@@ -117,15 +117,13 @@ CREATE TABLE IF NOT EXISTS `t_process_status` (
     KEY `idx_snapshot_id_ps` (`snapshot_id`)
 );
 
--- 告警规则表
+-- 告警规则表 (组合条件模式)
 CREATE TABLE IF NOT EXISTS `t_alert_rule` (
     `id`            BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键',
     `agent_id`      VARCHAR(100) NOT NULL DEFAULT '*' COMMENT '绑定的采集端 ID (* = 全局)',
     `rule_name`     VARCHAR(200) NOT NULL COMMENT '规则名称',
-    `metric_type`   VARCHAR(30)  NOT NULL COMMENT '指标类型: CPU_USAGE / RAM_USAGE / DISK_USAGE / DISK_PARTITION / PROCESS_ABNORMAL / AGENT_OFFLINE',
-    `operator`      VARCHAR(10)  NOT NULL DEFAULT 'GT' COMMENT '比较符: GT / GTE / LT / LTE / EQ',
-    `threshold`     DOUBLE       NOT NULL DEFAULT 0 COMMENT '阈值',
-    `target_name`   VARCHAR(200) DEFAULT NULL COMMENT '目标名称 (盘符如 C 或进程名)',
+    `logic`         VARCHAR(5)   NOT NULL DEFAULT 'OR' COMMENT '条件组合逻辑: AND / OR',
+    `conditions`    TEXT         NOT NULL COMMENT '条件 JSON 数组: [{metricType,operator,threshold,targetName},...]',
     `alert_level`   VARCHAR(20)  NOT NULL DEFAULT 'WARNING' COMMENT '告警级别: WARNING / CRITICAL',
     `cooldown_sec`  INT          NOT NULL DEFAULT 300 COMMENT '冷却秒数',
     `enabled`       TINYINT(1)   NOT NULL DEFAULT 1 COMMENT '是否启用',

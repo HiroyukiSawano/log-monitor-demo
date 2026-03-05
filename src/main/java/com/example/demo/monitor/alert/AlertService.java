@@ -2,6 +2,7 @@ package com.example.demo.monitor.alert;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.demo.module.alert.channel.AlertChannel;
+import com.example.demo.module.alert.entity.AlertCondition;
 import com.example.demo.module.alert.entity.AlertEvent;
 import com.example.demo.module.alert.entity.AlertRule;
 import com.example.demo.module.alert.mapper.AlertEventMapper;
@@ -14,9 +15,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
- * 告警服务 — 基于规则评估 METRICS 指标，触发告警并分发到通知渠道
+ * 告警服务 — 基于组合条件规则评估 METRICS 指标，触发告警并分发到通知渠道
  */
 @Slf4j
 @Service
@@ -113,82 +115,133 @@ public class AlertService {
     // ==================== 私有方法 ====================
 
     private void checkRule(String agentId, AlertRule rule, MetricsSnapshot snapshot) {
-        String metricType = rule.getMetricType();
+        List<AlertCondition> conditions = rule.parseConditions();
+        if (conditions.isEmpty())
+            return;
+
+        boolean isAnd = "AND".equalsIgnoreCase(rule.getLogic());
+
+        // 评估每个条件，收集结果
+        List<ConditionResult> results = new ArrayList<>();
+        for (AlertCondition cond : conditions) {
+            ConditionResult cr = evaluateCondition(cond, snapshot);
+            results.add(cr);
+        }
+
+        // 根据 AND/OR 逻辑判断是否触发
+        boolean shouldFire;
+        if (isAnd) {
+            // AND: 所有条件都满足
+            shouldFire = results.stream().allMatch(r -> r.triggered);
+        } else {
+            // OR: 任一条件满足
+            shouldFire = results.stream().anyMatch(r -> r.triggered);
+        }
+
+        if (shouldFire) {
+            // 构建告警消息
+            String logicLabel = isAnd ? " AND " : " OR ";
+            List<String> triggeredMessages = results.stream()
+                    .filter(r -> r.triggered)
+                    .map(r -> r.message)
+                    .collect(Collectors.toList());
+            String combinedMessage = String.join(logicLabel, triggeredMessages);
+
+            // 收集触发条件的指标类型摘要
+            String metricTypes = results.stream()
+                    .filter(r -> r.triggered)
+                    .map(r -> r.metricType)
+                    .collect(Collectors.joining(","));
+            String metricValues = results.stream()
+                    .filter(r -> r.triggered)
+                    .map(r -> r.actualStr)
+                    .collect(Collectors.joining(","));
+
+            fireAlert(agentId, rule, metricTypes, metricValues, combinedMessage);
+        }
+    }
+
+    /**
+     * 评估单个条件
+     */
+    private ConditionResult evaluateCondition(AlertCondition cond, MetricsSnapshot snapshot) {
+        String metricType = cond.getMetricType();
         double actual;
         String actualStr;
+        String op = cond.getOperator() != null ? cond.getOperator() : "GT";
+        double threshold = cond.getThreshold() != null ? cond.getThreshold() : 0;
 
         switch (metricType) {
             case "CPU_USAGE":
                 actual = parsePct(snapshot.getCpuUsage());
                 actualStr = snapshot.getCpuUsage();
-                if (compare(actual, rule.getOperator(), rule.getThreshold())) {
-                    fireAlert(agentId, rule, actualStr,
-                            String.format("CPU 使用率 %s，阈值 %s%.0f%%", actualStr, opLabel(rule.getOperator()),
-                                    rule.getThreshold()));
+                if (compare(actual, op, threshold)) {
+                    return new ConditionResult(true, metricType, actualStr,
+                            String.format("CPU使用率 %s %s%.0f%%", actualStr, opLabel(op), threshold));
                 }
-                break;
+                return new ConditionResult(false, metricType, actualStr, "");
 
             case "RAM_USAGE":
                 actual = calcRamPct(snapshot);
                 actualStr = String.format("%.0f%%", actual);
-                if (compare(actual, rule.getOperator(), rule.getThreshold())) {
-                    fireAlert(agentId, rule, actualStr,
-                            String.format("内存使用率 %s，阈值 %s%.0f%%", actualStr, opLabel(rule.getOperator()),
-                                    rule.getThreshold()));
+                if (compare(actual, op, threshold)) {
+                    return new ConditionResult(true, metricType, actualStr,
+                            String.format("内存使用率 %s %s%.0f%%", actualStr, opLabel(op), threshold));
                 }
-                break;
+                return new ConditionResult(false, metricType, actualStr, "");
 
             case "DISK_USAGE":
                 actual = calcDiskPct(snapshot);
                 actualStr = String.format("%.0f%%", actual);
-                if (compare(actual, rule.getOperator(), rule.getThreshold())) {
-                    fireAlert(agentId, rule, actualStr,
-                            String.format("总磁盘使用率 %s，阈值 %s%.0f%%", actualStr, opLabel(rule.getOperator()),
-                                    rule.getThreshold()));
+                if (compare(actual, op, threshold)) {
+                    return new ConditionResult(true, metricType, actualStr,
+                            String.format("总磁盘使用率 %s %s%.0f%%", actualStr, opLabel(op), threshold));
                 }
-                break;
+                return new ConditionResult(false, metricType, actualStr, "");
 
             case "DISK_PARTITION":
-                if (snapshot.getParts() != null && rule.getTargetName() != null) {
+                if (snapshot.getParts() != null && cond.getTargetName() != null) {
                     for (DiskPartition part : snapshot.getParts()) {
-                        if (rule.getTargetName().equalsIgnoreCase(part.getMountPoint())) {
-                            double total = parseDouble(part.getCapacity());
+                        if (cond.getTargetName().equalsIgnoreCase(part.getMountPoint())) {
                             double avail = parseDouble(part.getAvailableCapacity());
-                            // 对分区用"可用空间<阈值(MB)"来检查
-                            if (compare(avail, rule.getOperator(), rule.getThreshold())) {
-                                actualStr = String.format("%.0fMB", avail);
-                                fireAlert(agentId, rule, actualStr,
-                                        String.format("分区 %s: 可用空间 %s，阈值 %s%.0fMB",
-                                                part.getMountPoint(), actualStr, opLabel(rule.getOperator()),
-                                                rule.getThreshold()));
+                            actualStr = String.format("%.0fMB", avail);
+                            if (compare(avail, op, threshold)) {
+                                return new ConditionResult(true, metricType, actualStr,
+                                        String.format("分区 %s 可用 %s %s%.0fMB",
+                                                part.getMountPoint(), actualStr, opLabel(op), threshold));
                             }
+                            return new ConditionResult(false, metricType, actualStr, "");
                         }
                     }
                 }
-                break;
+                return new ConditionResult(false, metricType, "N/A", "");
 
             case "PROCESS_ABNORMAL":
                 if (snapshot.getProcessStatusList() != null) {
                     for (ProcessStatus ps : snapshot.getProcessStatusList()) {
                         if (!"正常".equals(ps.getStatus())) {
-                            // 如果指定了进程名，只检查该进程
-                            if (rule.getTargetName() != null && !rule.getTargetName().isEmpty()) {
-                                if (!rule.getTargetName().equals(ps.getProcessName()))
+                            if (cond.getTargetName() != null && !cond.getTargetName().isEmpty()) {
+                                if (!cond.getTargetName().equals(ps.getProcessName()))
                                     continue;
                             }
-                            fireAlert(agentId, rule, ps.getStatus(),
+                            return new ConditionResult(true, metricType, ps.getStatus(),
                                     String.format("进程 [%s] 状态异常: %s", ps.getProcessName(), ps.getStatus()));
                         }
                     }
                 }
-                break;
+                return new ConditionResult(false, metricType, "正常", "");
+
+            case "AGENT_OFFLINE":
+                // Agent 离线由 WebSocket 断连检测触发，METRICS 阶段此处始终为 false
+                return new ConditionResult(false, metricType, "在线", "");
 
             default:
-                break;
+                return new ConditionResult(false, metricType, "N/A", "");
         }
     }
 
-    private void fireAlert(String agentId, AlertRule rule, String metricValue, String message) {
+    private void fireAlert(String agentId, AlertRule rule, String metricType,
+            String metricValue, String message) {
         // 冷却检查
         String cooldownKey = rule.getId() + ":" + agentId;
         Long lastFired = cooldownMap.get(cooldownKey);
@@ -206,7 +259,7 @@ public class AlertService {
                 .ruleId(rule.getId())
                 .ruleName(rule.getRuleName())
                 .agentId(agentId)
-                .metricType(rule.getMetricType())
+                .metricType(metricType)
                 .metricValue(metricValue)
                 .message(message)
                 .alertLevel(rule.getAlertLevel())
@@ -291,5 +344,22 @@ public class AlertService {
         double total = parseDouble(s.getTotalDiskCapacity());
         double avail = parseDouble(s.getTotalAvailableCapacityDisk());
         return total > 0 ? ((total - avail) / total) * 100 : 0;
+    }
+
+    // ==================== 内部类 ====================
+
+    /** 单个条件的评估结果 */
+    private static class ConditionResult {
+        final boolean triggered;
+        final String metricType;
+        final String actualStr;
+        final String message;
+
+        ConditionResult(boolean triggered, String metricType, String actualStr, String message) {
+            this.triggered = triggered;
+            this.metricType = metricType;
+            this.actualStr = actualStr;
+            this.message = message;
+        }
     }
 }
