@@ -1421,7 +1421,12 @@
         function toggleGroupLogic(btn) {
             const cur = btn.textContent.includes('OR') ? 'AND' : 'OR';
             btn.textContent = cur === 'AND' ? '组内: 且 AND' : '组内: 或 OR';
-            btn.style.background = cur === 'AND' ? 'rgba(108,92,231,0.15)' : 'var(--surface)';
+            btn.style.background = cur === 'AND' ? 'rgba(0,206,209,0.15)' : 'var(--surface)';
+            // 同步更新组内分隔线
+            const group = btn.closest('.cond-group');
+            group.querySelectorAll('.item-divider').forEach(d => {
+                d.textContent = cur === 'AND' ? '且 AND' : '或 OR';
+            });
         }
 
         function removeGroup(btn) {
@@ -1440,6 +1445,16 @@
         function addConditionToGroup(btn) {
             const group = btn.closest('.cond-group');
             const itemsContainer = group.querySelector('.group-items');
+            // 组内逻辑分隔线(非第一行时)
+            if (itemsContainer.querySelectorAll('.cond-row').length > 0) {
+                const logicBtn = group.querySelector('.grp-logic-btn');
+                const gl = logicBtn.textContent.includes('AND') ? 'AND' : 'OR';
+                const divider = document.createElement('div');
+                divider.className = 'item-divider';
+                divider.style.cssText = 'text-align:center;font-size:9px;font-weight:700;color:var(--cyan);padding:2px 0;';
+                divider.textContent = gl === 'AND' ? '且 AND' : '或 OR';
+                itemsContainer.appendChild(divider);
+            }
             const metricOpts = METRIC_OPTIONS.map(m => `<option value="${m.value}">${m.label}</option>`).join('');
             const opOpts = OP_OPTIONS.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
             const row = document.createElement('div');
@@ -1487,7 +1502,14 @@
         }
 
         function removeCondRow(btn) {
-            btn.closest('.cond-row').remove();
+            const row = btn.closest('.cond-row');
+            const container = row.parentElement;
+            const prev = row.previousElementSibling;
+            const next = row.nextElementSibling;
+            // 删除相邻的组内分隔线
+            if (prev && prev.classList.contains('item-divider')) prev.remove();
+            else if (next && next.classList.contains('item-divider')) next.remove();
+            row.remove();
         }
 
         async function submitNewRule() {
