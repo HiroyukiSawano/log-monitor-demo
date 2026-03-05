@@ -477,8 +477,12 @@
         .disk-mount {
             font-size: 13px;
             font-weight: 700;
-            width: 28px;
+            min-width: 30px;
+            max-width: 120px;
             color: var(--cyan);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .disk-bar-wrap {
@@ -987,12 +991,20 @@
                 const result = await resp.json();
                 if (result.code !== 200) { console.error(result.message); return; }
                 const agents = result.data || [];
+
+                // Stable sort: online first, then by ID alphabetically
+                agents.sort((a, b) => {
+                    if (a.online && !b.online) return -1;
+                    if (!a.online && b.online) return 1;
+                    return (a.agentId || '').localeCompare(b.agentId || '');
+                });
+
                 renderCards(agents);
                 updateStats(agents);
 
-                // Refresh detail panel if one is selected
+                // Refresh detail panel if one is selected (silent refresh)
                 if (selectedAgentId) {
-                    loadDetail(selectedAgentId);
+                    loadDetail(selectedAgentId, true);
                 }
 
                 document.getElementById('lastRefreshTime').textContent =
@@ -1028,7 +1040,20 @@
                 return;
             }
 
-            grid.innerHTML = agents.map(a => {
+            // Remove the empty state message if it exists
+            const emptyState = grid.querySelector('.empty-state');
+            if (emptyState) emptyState.remove();
+
+            // Track existing ids to remove stale cards
+            const currentIds = new Set(agents.map(a => a.agentId));
+            Array.from(grid.children).forEach(child => {
+                if (child.dataset.id && !currentIds.has(child.dataset.id)) {
+                    grid.removeChild(child);
+                }
+            });
+
+            // Update or create cards
+            agents.forEach(a => {
                 const isOnline = a.online;
                 const hostname = a.mainframeName || '未知主机';
                 const osInfo = [a.osName, a.osVersion].filter(Boolean).join(' ') || '—';
@@ -1054,8 +1079,8 @@
                 const active = selectedAgentId === a.agentId ? ' active' : '';
                 const offlineClass = isOnline ? '' : ' offline';
 
-                return `
-                <div class="agent-card${active}${offlineClass}" onclick="selectAgent('${escapeHtml(a.agentId)}')">
+                let card = grid.querySelector(`[data-id="${a.agentId}"]`);
+                const cardHTML = `
                     ${alertCount > 0 ? `<div class="badge-alert" style="position:absolute;top:10px;right:10px;">${alertCount}</div>` : ''}
                     <div class="card-header">
                         <div class="online-dot ${isOnline ? 'on' : 'off'}"></div>
@@ -1072,8 +1097,30 @@
                         <span style="flex:1"></span>
                         <span class="agent-id" title="${escapeHtml(a.agentId)}">${escapeHtml(a.agentId ? a.agentId.substring(0, 12) + '…' : '')}</span>
                     </div>
-                </div>`;
-            }).join('');
+                `;
+
+                if (card) {
+                    // Update classes (keeping active if set)
+                    card.className = `agent-card ${selectedAgentId === a.agentId ? 'active' : ''} ${offlineClass}`;
+                    card.innerHTML = cardHTML;
+                } else {
+                    // Create new card
+                    card = document.createElement('div');
+                    card.className = `agent-card${active}${offlineClass}`;
+                    card.dataset.id = a.agentId;
+                    card.onclick = () => selectAgent(a.agentId);
+                    card.innerHTML = cardHTML;
+                    grid.appendChild(card);
+                }
+            });
+
+            // Fix ordering visually based on data array order
+            agents.forEach(a => {
+                const card = grid.querySelector(`[data-id="${a.agentId}"]`);
+                if (card && card.parentElement) {
+                    grid.appendChild(card);
+                }
+            });
         }
 
         function metricBar(label, pct) {
@@ -1104,9 +1151,13 @@
             document.querySelectorAll('.agent-card').forEach(c => c.classList.remove('active'));
         }
 
-        async function loadDetail(agentId) {
+        async function loadDetail(agentId, isSilentRefresh = false) {
             const body = document.getElementById('detailBody');
-            body.innerHTML = '<div style="padding:20px;color:var(--text2);text-align:center;">加载中…</div>';
+
+            // Only show loading state if it's a manual click, not an auto-refresh
+            if (!isSilentRefresh) {
+                body.innerHTML = '<div style="padding:20px;color:var(--text2);text-align:center;">加载中…</div>';
+            }
 
             try {
                 const [detailResp, logsResp] = await Promise.all([
@@ -1117,7 +1168,16 @@
                 const logs = (await logsResp.json()).data || [];
 
                 document.getElementById('detailTitle').textContent = detail.mainframeName || agentId;
+
+                // Save scroll position for silent refreshes
+                const st = isSilentRefresh ? body.scrollTop : 0;
+
                 body.innerHTML = renderDetail(detail, logs);
+
+                // Restore scroll position
+                if (isSilentRefresh) {
+                    body.scrollTop = st;
+                }
             } catch (e) {
                 body.innerHTML = `<div class="empty-state"><div class="icon">❌</div><div>加载失败: ${escapeHtml(e.message)}</div></div>`;
             }
