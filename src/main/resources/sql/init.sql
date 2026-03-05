@@ -116,3 +116,38 @@ CREATE TABLE IF NOT EXISTS `t_process_status` (
     PRIMARY KEY (`id`),
     KEY `idx_snapshot_id_ps` (`snapshot_id`)
 );
+
+-- 告警规则表
+CREATE TABLE IF NOT EXISTS `t_alert_rule` (
+    `id`            BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `agent_id`      VARCHAR(100) NOT NULL DEFAULT '*' COMMENT '绑定的采集端 ID (* = 全局)',
+    `rule_name`     VARCHAR(200) NOT NULL COMMENT '规则名称',
+    `metric_type`   VARCHAR(30)  NOT NULL COMMENT '指标类型: CPU_USAGE / RAM_USAGE / DISK_USAGE / DISK_PARTITION / PROCESS_ABNORMAL / AGENT_OFFLINE',
+    `operator`      VARCHAR(10)  NOT NULL DEFAULT 'GT' COMMENT '比较符: GT / LT / EQ',
+    `threshold`     DOUBLE       NOT NULL DEFAULT 0 COMMENT '阈值',
+    `target_name`   VARCHAR(200) DEFAULT NULL COMMENT '目标名称 (盘符如 C 或进程名)',
+    `alert_level`   VARCHAR(20)  NOT NULL DEFAULT 'WARNING' COMMENT '告警级别: WARNING / CRITICAL',
+    `cooldown_sec`  INT          NOT NULL DEFAULT 300 COMMENT '冷却秒数',
+    `enabled`       TINYINT(1)   NOT NULL DEFAULT 1 COMMENT '是否启用',
+    `create_time`   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time`   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_alert_agent` (`agent_id`)
+);
+
+-- 告警事件记录表
+CREATE TABLE IF NOT EXISTS `t_alert_event` (
+    `id`            BIGINT        NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `rule_id`       BIGINT        NOT NULL COMMENT '关联规则 ID',
+    `rule_name`     VARCHAR(200)  DEFAULT NULL COMMENT '规则名称(冗余)',
+    `agent_id`      VARCHAR(100)  NOT NULL COMMENT '触发的采集端 ID',
+    `metric_type`   VARCHAR(30)   DEFAULT NULL COMMENT '指标类型',
+    `metric_value`  VARCHAR(100)  DEFAULT NULL COMMENT '触发时的实际值',
+    `message`       VARCHAR(500)  DEFAULT NULL COMMENT '告警消息',
+    `alert_level`   VARCHAR(20)   NOT NULL DEFAULT 'WARNING' COMMENT '告警级别',
+    `acknowledged`  TINYINT(1)    NOT NULL DEFAULT 0 COMMENT '是否已确认',
+    `create_time`   DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '触发时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_alert_event_agent` (`agent_id`),
+    KEY `idx_alert_event_ack` (`acknowledged`)
+);

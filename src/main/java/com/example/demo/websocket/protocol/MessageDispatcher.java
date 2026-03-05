@@ -7,6 +7,7 @@ import com.example.demo.engine.model.FilterResult;
 import com.example.demo.engine.model.LogContext;
 import com.example.demo.module.command.service.RemoteCommandService;
 import com.example.demo.module.loghit.service.LogHitService;
+import com.example.demo.module.metrics.entity.MetricsSnapshot;
 import com.example.demo.module.metrics.service.MetricsService;
 import com.example.demo.monitor.alert.AlertService;
 import com.example.demo.monitor.health.HealthEvaluator;
@@ -103,6 +104,12 @@ public class MessageDispatcher {
         ServerHealthState state = healthEvaluator.updateMetrics(agentId, cpuUsage, diskUsage);
         log.info("[Dispatcher] 指标已更新: agentId={}, cpu={}%, disk={}%, status={}",
                 agentId, cpuUsage, diskUsage, state.getStatus());
+
+        // 3. 基于告警规则评估指标
+        MetricsSnapshot latestSnapshot = metricsService.getLatestByAgent(agentId);
+        if (latestSnapshot != null) {
+            alertService.evaluateMetrics(agentId, latestSnapshot);
+        }
     }
 
     /**
@@ -142,8 +149,7 @@ public class MessageDispatcher {
         // 4. 根据结果处理
         if (result.getLevel() == LogLevel.CRITICAL) {
             String snippet = line.length() > 200 ? line.substring(0, 200) : line;
-            ServerHealthState state = healthEvaluator.processLogResult(agentId, result, snippet);
-            alertService.triggerAlert(state, result, snippet);
+            healthEvaluator.processLogResult(agentId, result, snippet);
         } else if (result.getLevel() == LogLevel.UNKNOWN_ERROR) {
             String snippet = line.length() > 200 ? line.substring(0, 200) : line;
             healthEvaluator.processLogResult(agentId, result, snippet);

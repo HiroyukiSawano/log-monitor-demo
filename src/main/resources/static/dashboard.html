@@ -566,6 +566,291 @@
             margin-bottom: 8px;
         }
 
+        /* ========== Alert Banner ========== */
+        .alert-banner {
+            display: none;
+            background: linear-gradient(90deg, rgba(225, 112, 85, 0.12) 0%, rgba(253, 203, 110, 0.08) 100%);
+            border-bottom: 1px solid rgba(225, 112, 85, 0.3);
+            padding: 0;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .alert-banner.show {
+            display: block;
+        }
+
+        .alert-banner-header {
+            display: flex;
+            align-items: center;
+            padding: 6px 24px;
+            gap: 8px;
+            position: sticky;
+            top: 0;
+            background: rgba(15, 17, 23, 0.9);
+            z-index: 2;
+        }
+
+        .alert-banner-header .title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--red);
+            flex: 1;
+        }
+
+        .alert-banner-header .btn-ack-all {
+            font-size: 10px;
+            padding: 2px 10px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text2);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .alert-banner-header .btn-ack-all:hover {
+            border-color: var(--accent);
+            color: var(--text);
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 4px 24px;
+            font-size: 11px;
+            border-top: 1px solid rgba(45, 50, 80, 0.3);
+        }
+
+        .alert-item .alert-level-tag {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 3px;
+        }
+
+        .alert-level-tag.CRITICAL {
+            background: rgba(225, 112, 85, 0.2);
+            color: var(--red);
+        }
+
+        .alert-level-tag.WARNING {
+            background: rgba(253, 203, 110, 0.2);
+            color: var(--yellow);
+        }
+
+        .alert-item .alert-msg {
+            flex: 1;
+            color: var(--text);
+        }
+
+        .alert-item .alert-time {
+            color: var(--text2);
+            font-size: 10px;
+        }
+
+        .alert-item .btn-ack {
+            font-size: 10px;
+            padding: 1px 8px;
+            border: 1px solid var(--border);
+            background: none;
+            color: var(--text2);
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .alert-item .btn-ack:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        /* ========== Rule Config Modal ========== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 560px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-header {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-header h2 {
+            font-size: 15px;
+            flex: 1;
+        }
+
+        .modal-body {
+            padding: 16px 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 10px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            color: var(--text2);
+            margin-bottom: 3px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 6px 10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .btn-primary {
+            padding: 6px 18px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            padding: 6px 18px;
+            background: var(--surface2);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text2);
+        }
+
+        .rule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .rule-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 11px;
+        }
+
+        .rule-item .rule-info {
+            flex: 1;
+        }
+
+        .rule-item .rule-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .rule-item .rule-desc {
+            color: var(--text2);
+            font-size: 10px;
+            margin-top: 2px;
+        }
+
+        .rule-item .btn-del {
+            background: none;
+            border: none;
+            color: var(--red);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 2px 6px;
+            opacity: 0.7;
+        }
+
+        .rule-item .btn-del:hover {
+            opacity: 1;
+        }
+
+        .btn-add-rule {
+            width: 100%;
+            padding: 8px;
+            background: var(--surface2);
+            border: 1px dashed var(--border);
+            color: var(--text2);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .btn-add-rule:hover {
+            border-color: var(--accent);
+            color: var(--text);
+        }
+
+        .add-rule-form {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 8px;
+        }
+
         /* Scrollbar style */
         ::-webkit-scrollbar {
             width: 6px;
@@ -632,6 +917,15 @@
                 <div class="stat-value" id="statAlerts" style="color:var(--yellow)">0</div>
             </div>
         </div>
+    </div>
+
+    <!-- Alert Notification Banner -->
+    <div class="alert-banner" id="alertBanner">
+        <div class="alert-banner-header">
+            <span class="title">🔔 未确认告警 (<span id="alertCount">0</span>)</span>
+            <button class="btn-ack-all" onclick="ackAllAlerts()">全部确认</button>
+        </div>
+        <div id="alertList"></div>
     </div>
 
     <div class="main">
@@ -892,6 +1186,14 @@
                 </div>`;
             }
 
+            // ---- Alert Rules Button ----
+            html += `<div class="detail-section">
+                <h3>⚙️ 告警规则</h3>
+                <button class="btn-add-rule" onclick="openRuleModal('${escapeHtml(d.agentId)}')">
+                    🔧 管理告警规则 (${escapeHtml(d.agentId ? d.agentId.substring(0, 12) + '…' : '')})
+                </button>
+            </div>`;
+
             // ---- Error Logs ----
             html += `<div class="detail-section">
                 <h3>🚨 错误日志 (最近 50 条)</h3>
@@ -937,14 +1239,193 @@
             }, 1000);
         }
 
+        // ========== Alert Banner ==========
+        async function loadAlerts() {
+            try {
+                const resp = await fetch(`${getApiBase()}/api/alert/events/unacknowledged`);
+                const result = await resp.json();
+                const events = (result.code === 200 ? result.data : []) || [];
+                const banner = document.getElementById('alertBanner');
+                const list = document.getElementById('alertList');
+                document.getElementById('alertCount').textContent = events.length;
+                if (events.length === 0) {
+                    banner.classList.remove('show');
+                    return;
+                }
+                banner.classList.add('show');
+                list.innerHTML = events.map(e => `<div class="alert-item">
+                    <span class="alert-level-tag ${e.alertLevel}">${e.alertLevel}</span>
+                    <span class="alert-msg">${escapeHtml(e.message || e.ruleName || '告警')}</span>
+                    <span class="alert-time">${e.createTime ? new Date(e.createTime).toLocaleTimeString('zh-CN', { hour12: false }) : ''}</span>
+                    <button class="btn-ack" onclick="ackAlert(${e.id})">✓ 确认</button>
+                </div>`).join('');
+            } catch (e) { /* ignore */ }
+        }
+
+        async function ackAlert(id) {
+            await fetch(`${getApiBase()}/api/alert/events/${id}/ack`, { method: 'POST' });
+            loadAlerts();
+        }
+
+        async function ackAllAlerts() {
+            await fetch(`${getApiBase()}/api/alert/events/ack-all`, { method: 'POST' });
+            loadAlerts();
+        }
+
+        // ========== Rule Config Modal ==========
+        let ruleModalAgentId = null;
+
+        async function openRuleModal(agentId) {
+            ruleModalAgentId = agentId;
+            document.getElementById('ruleModalTitle').textContent = '告警规则 — ' + (agentId.length > 12 ? agentId.substring(0, 12) + '…' : agentId);
+            document.getElementById('ruleModal').classList.add('show');
+            document.getElementById('addRuleForm').style.display = 'none';
+            loadRules(agentId);
+        }
+
+        function closeRuleModal() {
+            document.getElementById('ruleModal').classList.remove('show');
+            ruleModalAgentId = null;
+        }
+
+        async function loadRules(agentId) {
+            const container = document.getElementById('ruleListContainer');
+            container.innerHTML = '<div style="padding:10px;color:var(--text2);font-size:11px;text-align:center;">加载中…</div>';
+            try {
+                const resp = await fetch(`${getApiBase()}/api/alert/rules/applicable?agentId=${encodeURIComponent(agentId)}`);
+                const result = await resp.json();
+                const rules = (result.code === 200 ? result.data : []) || [];
+                if (rules.length === 0) {
+                    container.innerHTML = '<div style="padding:16px;color:var(--text2);font-size:11px;text-align:center;">暂无规则，点击下方添加</div>';
+                    return;
+                }
+                container.innerHTML = rules.map(r => {
+                    const typeLabel = { CPU_USAGE: 'CPU使用率', RAM_USAGE: '内存使用率', DISK_USAGE: '磁盘使用率', DISK_PARTITION: '磁盘分区', PROCESS_ABNORMAL: '进程异常', AGENT_OFFLINE: 'Agent离线' }[r.metricType] || r.metricType;
+                    const opLabel = { GT: '>', LT: '<', EQ: '=' }[r.operator] || r.operator;
+                    const scope = r.agentId === '*' ? '(全局)' : '';
+                    const target = r.targetName ? ` [${escapeHtml(r.targetName)}]` : '';
+                    const desc = r.metricType === 'PROCESS_ABNORMAL'
+                        ? `进程异常${target}`
+                        : `${typeLabel}${target} ${opLabel} ${r.threshold}${r.metricType.includes('USAGE') ? '%' : ''}`;
+                    return `<div class="rule-item">
+                        <span class="alert-level-tag ${r.alertLevel}" style="flex-shrink:0">${r.alertLevel}</span>
+                        <div class="rule-info">
+                            <div class="rule-name">${escapeHtml(r.ruleName)} ${scope}</div>
+                            <div class="rule-desc">${desc} · 冷却 ${r.cooldownSec}s · ${r.enabled ? '✅启用' : '❌禁用'}</div>
+                        </div>
+                        ${r.agentId !== '*' ? `<button class="btn-del" onclick="deleteRule(${r.id})" title="删除">🗑</button>` : ''}
+                    </div>`;
+                }).join('');
+            } catch (e) {
+                container.innerHTML = `<div style="padding:10px;color:var(--red);font-size:11px;">加载失败: ${e.message}</div>`;
+            }
+        }
+
+        function showAddRuleForm() {
+            document.getElementById('addRuleForm').style.display = 'block';
+            document.getElementById('newRuleName').value = '';
+            document.getElementById('newThreshold').value = '80';
+            document.getElementById('newTargetName').value = '';
+            document.getElementById('newCooldown').value = '300';
+        }
+
+        async function submitNewRule() {
+            const rule = {
+                agentId: ruleModalAgentId,
+                ruleName: document.getElementById('newRuleName').value || '未命名规则',
+                metricType: document.getElementById('newMetricType').value,
+                operator: document.getElementById('newOperator').value,
+                threshold: parseFloat(document.getElementById('newThreshold').value) || 0,
+                targetName: document.getElementById('newTargetName').value || null,
+                alertLevel: document.getElementById('newAlertLevel').value,
+                cooldownSec: parseInt(document.getElementById('newCooldown').value) || 300,
+                enabled: true
+            };
+            try {
+                await fetch(`${getApiBase()}/api/alert/rules`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(rule)
+                });
+                document.getElementById('addRuleForm').style.display = 'none';
+                loadRules(ruleModalAgentId);
+            } catch (e) { alert('创建失败: ' + e.message); }
+        }
+
+        async function deleteRule(id) {
+            if (!confirm('确定删除此规则？')) return;
+            await fetch(`${getApiBase()}/api/alert/rules/${id}`, { method: 'DELETE' });
+            loadRules(ruleModalAgentId);
+        }
+
         // ========== Init ==========
         (function () {
             const h = document.getElementById('apiHost');
             h.value = location.protocol === 'file:' ? 'localhost:8080' : (location.host || 'localhost:8080');
             loadDashboard();
+            loadAlerts();
             startCountdown();
+            // Refresh alerts with dashboard
+            const origLoad = loadDashboard;
+            loadDashboard = async function () { await origLoad(); loadAlerts(); };
         })();
     </script>
+
+    <!-- Rule Configuration Modal -->
+    <div class="modal-overlay" id="ruleModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="ruleModalTitle">告警规则</h2>
+                <button class="btn-close" onclick="closeRuleModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="rule-list" id="ruleListContainer"></div>
+                <button class="btn-add-rule" onclick="showAddRuleForm()">+ 添加新规则</button>
+                <div class="add-rule-form" id="addRuleForm" style="display:none;">
+                    <div class="form-row">
+                        <div class="form-group"><label>规则名称</label><input id="newRuleName" placeholder="如: CPU告警"></div>
+                        <div class="form-group"><label>告警级别</label>
+                            <select id="newAlertLevel">
+                                <option value="WARNING">⚠️ WARNING</option>
+                                <option value="CRITICAL">🔴 CRITICAL</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>指标类型</label>
+                            <select id="newMetricType">
+                                <option value="CPU_USAGE">CPU 使用率</option>
+                                <option value="RAM_USAGE">内存使用率</option>
+                                <option value="DISK_USAGE">总磁盘使用率</option>
+                                <option value="DISK_PARTITION">磁盘分区(可用MB)</option>
+                                <option value="PROCESS_ABNORMAL">进程异常</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>比较符</label>
+                            <select id="newOperator">
+                                <option value="GT">大于 (>)</option>
+                                <option value="LT">小于 (<)< /option>
+                                <option value="EQ">等于 (=)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>阈值</label><input id="newThreshold" type="number" value="80">
+                        </div>
+                        <div class="form-group"><label>目标 (盘符/进程名，可选)</label><input id="newTargetName"
+                                placeholder="如 C 或 云上协同"></div>
+                        <div class="form-group"><label>冷却(秒)</label><input id="newCooldown" type="number" value="300">
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
+                        <button class="btn-secondary"
+                            onclick="document.getElementById('addRuleForm').style.display='none'">取消</button>
+                        <button class="btn-primary" onclick="submitNewRule()">创建规则</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

@@ -85,3 +85,212 @@ java.io.EOFException: null
 2026-03-04 15:49:43.070 [http-nio-8080-exec-3] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=74.0%, disk=44.60949958721971%, status=YELLOW
 2026-03-04 15:50:41.851 [http-nio-8080-exec-1] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=11
 2026-03-04 15:50:41.851 [http-nio-8080-exec-1] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=46.0%, disk=44.60601274747589%, status=YELLOW
+2026-03-04 16:16:12.936 [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication using Java 17.0.18 on DESKTOP-589AKUV with PID 21284 (C:\Users\zzh\Desktop\anti\demo\target\classes started by zzh in c:\Users\zzh\Desktop\anti\demo)
+2026-03-04 16:16:12.950 [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-04 16:16:14.658 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2026-03-04 16:16:14.673 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-04 16:16:14.678 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-04 16:16:14.679 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-03-04 16:16:14.820 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-04 16:16:14.820 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1783 ms
+2026-03-04 16:16:14.856 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-04 16:16:15.143 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-04 16:16:15.156 [main] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:monitor_db'
+2026-03-04 16:16:15.659 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'webSocketConfig' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\config\WebSocketConfig.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'agentWebSocketHandler' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\websocket\handler\AgentWebSocketHandler.class]: Unsatisfied dependency expressed through constructor parameter 1; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'messageDispatcher' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\websocket\protocol\MessageDispatcher.class]: Unsatisfied dependency expressed through constructor parameter 4; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'alertService' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\monitor\alert\AlertService.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'alertRuleService' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\module\alert\service\AlertRuleService.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.example.demo.module.alert.mapper.AlertRuleMapper' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2026-03-04 16:16:15.659 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-04 16:16:15.665 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-04 16:16:15.668 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-03-04 16:16:15.678 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2026-03-04 16:16:15.703 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.example.demo.module.alert.service.AlertRuleService required a bean of type 'com.example.demo.module.alert.mapper.AlertRuleMapper' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.example.demo.module.alert.mapper.AlertRuleMapper' in your configuration.
+
+2026-03-04 16:16:59.427 [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication using Java 17.0.18 on DESKTOP-589AKUV with PID 27044 (C:\Users\zzh\Desktop\anti\demo\target\classes started by zzh in c:\Users\zzh\Desktop\anti\demo)
+2026-03-04 16:16:59.434 [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-04 16:17:01.074 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2026-03-04 16:17:01.087 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-04 16:17:01.087 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-04 16:17:01.087 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-03-04 16:17:01.222 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-04 16:17:01.223 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1724 ms
+2026-03-04 16:17:01.251 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-04 16:17:01.470 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-04 16:17:01.484 [main] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:monitor_db'
+2026-03-04 16:17:01.901 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'webSocketConfig' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\config\WebSocketConfig.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'agentWebSocketHandler' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\websocket\handler\AgentWebSocketHandler.class]: Unsatisfied dependency expressed through constructor parameter 1; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'messageDispatcher' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\websocket\protocol\MessageDispatcher.class]: Unsatisfied dependency expressed through constructor parameter 4; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'alertService' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\monitor\alert\AlertService.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'alertRuleService' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\module\alert\service\AlertRuleService.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.example.demo.module.alert.mapper.AlertRuleMapper' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2026-03-04 16:17:01.901 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-04 16:17:01.904 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-04 16:17:01.905 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-03-04 16:17:01.919 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2026-03-04 16:17:01.939 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.example.demo.module.alert.service.AlertRuleService required a bean of type 'com.example.demo.module.alert.mapper.AlertRuleMapper' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.example.demo.module.alert.mapper.AlertRuleMapper' in your configuration.
+
+2026-03-04 16:17:18.784 [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication using Java 17.0.18 on DESKTOP-589AKUV with PID 6384 (C:\Users\zzh\Desktop\anti\demo\target\classes started by zzh in c:\Users\zzh\Desktop\anti\demo)
+2026-03-04 16:17:18.789 [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-04 16:17:20.098 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2026-03-04 16:17:20.106 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-04 16:17:20.109 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-04 16:17:20.109 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-03-04 16:17:20.233 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-04 16:17:20.233 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1334 ms
+2026-03-04 16:17:20.272 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-04 16:17:20.574 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-04 16:17:20.587 [main] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:monitor_db'
+2026-03-04 16:17:21.128 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'webSocketConfig' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\config\WebSocketConfig.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'agentWebSocketHandler' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\websocket\handler\AgentWebSocketHandler.class]: Unsatisfied dependency expressed through constructor parameter 1; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'messageDispatcher' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\websocket\protocol\MessageDispatcher.class]: Unsatisfied dependency expressed through constructor parameter 4; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'alertService' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\monitor\alert\AlertService.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'alertRuleService' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\module\alert\service\AlertRuleService.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.example.demo.module.alert.mapper.AlertRuleMapper' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2026-03-04 16:17:21.129 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-04 16:17:21.134 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-04 16:17:21.136 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-03-04 16:17:21.149 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2026-03-04 16:17:21.177 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.example.demo.module.alert.service.AlertRuleService required a bean of type 'com.example.demo.module.alert.mapper.AlertRuleMapper' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.example.demo.module.alert.mapper.AlertRuleMapper' in your configuration.
+
+2026-03-04 16:18:08.286 [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication using Java 17.0.18 on DESKTOP-589AKUV with PID 29756 (C:\Users\zzh\Desktop\anti\demo\target\classes started by zzh in c:\Users\zzh\Desktop\anti\demo)
+2026-03-04 16:18:08.286 [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-04 16:18:09.531 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2026-03-04 16:18:09.537 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-04 16:18:09.541 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-04 16:18:09.541 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-03-04 16:18:09.632 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-04 16:18:09.632 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1286 ms
+2026-03-04 16:18:09.656 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-04 16:18:09.934 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-04 16:18:09.944 [main] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:monitor_db'
+2026-03-04 16:18:10.301 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'webSocketConfig' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\config\WebSocketConfig.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'agentWebSocketHandler' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\websocket\handler\AgentWebSocketHandler.class]: Unsatisfied dependency expressed through constructor parameter 1; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'messageDispatcher' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\websocket\protocol\MessageDispatcher.class]: Unsatisfied dependency expressed through constructor parameter 4; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'alertService' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\monitor\alert\AlertService.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'alertRuleService' defined in file [C:\Users\zzh\Desktop\anti\demo\target\classes\com\example\demo\module\alert\service\AlertRuleService.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.example.demo.module.alert.mapper.AlertRuleMapper' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2026-03-04 16:18:10.302 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-04 16:18:10.304 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-04 16:18:10.308 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-03-04 16:18:10.320 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2026-03-04 16:18:10.346 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.example.demo.module.alert.service.AlertRuleService required a bean of type 'com.example.demo.module.alert.mapper.AlertRuleMapper' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.example.demo.module.alert.mapper.AlertRuleMapper' in your configuration.
+
+2026-03-04 20:47:13.428 [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication using Java 17.0.18 on DESKTOP-589AKUV with PID 5412 (C:\Users\zzh\Desktop\anti\demo\target\classes started by zzh in c:\Users\zzh\Desktop\anti\demo)
+2026-03-04 20:47:13.440 [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-04 20:47:15.545 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2026-03-04 20:47:15.554 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-04 20:47:15.557 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-04 20:47:15.557 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-03-04 20:47:15.694 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-04 20:47:15.695 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2133 ms
+2026-03-04 20:47:15.740 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-04 20:47:16.003 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-04 20:47:16.010 [main] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:monitor_db'
+2026-03-04 20:47:16.678 [main] INFO  c.e.demo.monitor.alert.AlertService - [AlertService] 已注册 1 个告警通知渠道: LOG
+2026-03-04 20:47:17.283 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-04 20:47:17.356 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2026-03-04 20:47:17.367 [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 4.938 seconds (JVM running for 5.848)
+2026-03-04 20:47:17.419 [main] WARN  c.b.m.c.t.support.ReflectLambdaMeta - Unable to make field private final java.lang.Class java.lang.invoke.SerializedLambda.capturingClass accessible: module java.base does not "opens java.lang.invoke" to unnamed module @2d6eabae
+2026-03-04 20:47:17.493 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 2
+2026-03-04 20:47:17.496 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 2
+2026-03-04 20:47:17.500 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 6
+2026-03-04 20:47:17.506 [main] INFO  c.e.d.e.matcher.RegexMatcherCache - [Regex Cache] 正则缓存重建完成，规则数量: 0
+2026-03-04 20:47:17.506 [main] INFO  c.e.d.m.r.service.FilterRuleService - [RuleService] 匹配器重建完成
+2026-03-04 20:47:17.506 [main] INFO  com.example.demo.config.EngineConfig - [EngineConfig] 规则引擎初始化完成，规则已从 DB 加载
+2026-03-04 20:47:19.057 [http-nio-8080-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-04 20:47:19.057 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-04 20:47:19.059 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-03-04 20:47:19.146 [http-nio-8080-exec-2] INFO  c.e.d.w.session.AgentSessionManager - [WS] Agent 上线: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, sessionId=11e9e82b-59c6-47ff-b71b-ac5b12b0bb4b
+2026-03-04 20:47:52.648 [http-nio-8080-exec-5] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=1
+2026-03-04 20:47:52.652 [http-nio-8080-exec-5] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=60.0%, disk=44.64108625313431%, status=YELLOW
+2026-03-04 20:48:52.571 [http-nio-8080-exec-6] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=2
+2026-03-04 20:48:52.572 [http-nio-8080-exec-6] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=58.0%, disk=44.64129136135453%, status=YELLOW
+2026-03-04 20:49:52.293 [http-nio-8080-exec-8] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=3
+2026-03-04 20:49:52.294 [http-nio-8080-exec-8] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=34.0%, disk=44.64170157779498%, status=YELLOW
+2026-03-04 20:50:57.083 [http-nio-8080-exec-4] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=4
+2026-03-04 20:50:57.086 [http-nio-8080-exec-4] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=76.0%, disk=44.6418041319051%, status=YELLOW
+2026-03-04 20:51:56.635 [http-nio-8080-exec-10] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=5
+2026-03-04 20:51:56.638 [http-nio-8080-exec-10] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=96.0%, disk=44.646419066860155%, status=YELLOW
+2026-03-04 20:52:55.766 [http-nio-8080-exec-9] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=6
+2026-03-04 20:52:55.766 [http-nio-8080-exec-9] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=79.0%, disk=44.64570118808936%, status=YELLOW
+2026-03-04 20:53:52.698 [http-nio-8080-exec-10] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=7
+2026-03-04 20:53:52.699 [http-nio-8080-exec-10] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=34.0%, disk=44.671647377947785%, status=YELLOW
+2026-03-04 20:54:52.363 [http-nio-8080-exec-9] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=8
+2026-03-04 20:54:52.364 [http-nio-8080-exec-9] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=38.0%, disk=44.672878027269135%, status=YELLOW
+2026-03-04 20:55:52.754 [http-nio-8080-exec-8] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=9
+2026-03-04 20:55:52.754 [http-nio-8080-exec-8] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=41.0%, disk=44.67298058137925%, status=YELLOW
+2026-03-04 20:56:52.728 [http-nio-8080-exec-4] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=10
+2026-03-04 20:56:52.729 [http-nio-8080-exec-4] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=30.0%, disk=44.67051928273656%, status=YELLOW
+2026-03-04 20:57:52.834 [http-nio-8080-exec-2] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=11
+2026-03-04 20:57:52.835 [http-nio-8080-exec-2] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=54.0%, disk=44.672057594388235%, status=YELLOW
+2026-03-04 20:58:53.984 [http-nio-8080-exec-5] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=12
+2026-03-04 20:58:53.986 [http-nio-8080-exec-5] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=82.0%, disk=44.676569975233186%, status=YELLOW
+2026-03-04 20:59:55.211 [http-nio-8080-exec-7] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=13
+2026-03-04 20:59:55.212 [http-nio-8080-exec-7] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=62.0%, disk=44.68333854650059%, status=YELLOW
+2026-03-04 21:00:55.731 [http-nio-8080-exec-3] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=14
+2026-03-04 21:00:55.732 [http-nio-8080-exec-3] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=85.0%, disk=44.68754326501521%, status=YELLOW
+2026-03-04 21:01:55.932 [http-nio-8080-exec-7] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=15
+2026-03-04 21:01:55.933 [http-nio-8080-exec-7] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=90.0%, disk=44.676569975233186%, status=YELLOW
+2026-03-04 21:02:55.844 [http-nio-8080-exec-4] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=16
+2026-03-04 21:02:55.846 [http-nio-8080-exec-4] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=87.0%, disk=44.68210789717925%, status=YELLOW
+2026-03-04 21:03:55.919 [http-nio-8080-exec-5] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=17
+2026-03-04 21:03:55.920 [http-nio-8080-exec-5] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=85.0%, disk=44.686004953363515%, status=YELLOW
+2026-03-04 21:04:55.714 [http-nio-8080-exec-1] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=18
+2026-03-04 21:04:55.715 [http-nio-8080-exec-1] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=96.0%, disk=44.68815858967588%, status=YELLOW
+2026-03-04 21:05:55.890 [http-nio-8080-exec-7] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=19
+2026-03-04 21:05:55.891 [http-nio-8080-exec-7] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=100.0%, disk=44.692876078741044%, status=YELLOW
+2026-03-04 21:06:55.655 [http-nio-8080-exec-8] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=20
+2026-03-04 21:06:55.656 [http-nio-8080-exec-8] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=83.0%, disk=44.698003784246666%, status=YELLOW
+2026-03-04 21:07:55.565 [http-nio-8080-exec-2] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=21
+2026-03-04 21:07:55.566 [http-nio-8080-exec-2] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=88.0%, disk=44.70313148975228%, status=YELLOW
+2026-03-04 21:08:57.076 [http-nio-8080-exec-8] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=22
+2026-03-04 21:08:57.078 [http-nio-8080-exec-8] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=99.0%, disk=44.70702854593655%, status=YELLOW
+2026-03-04 21:08:57.088 [http-nio-8080-exec-8] WARN  c.e.d.m.a.channel.LogAlertChannel - [ALERT] ⚠️ [WARNING] agentId=0E4B26F9FBFBD9B4BAD22032915F121C | CPU | 值=99% | CPU 使用率 99%，阈值 > 50%
+2026-03-04 21:09:53.544 [http-nio-8080-exec-6] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=23
+2026-03-04 21:09:53.544 [http-nio-8080-exec-6] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=59.0%, disk=44.710515385680374%, status=YELLOW
+2026-03-04 21:10:53.132 [http-nio-8080-exec-8] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=24
+2026-03-04 21:10:53.133 [http-nio-8080-exec-8] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=62.0%, disk=44.71215625144217%, status=YELLOW
+2026-03-04 21:11:52.930 [http-nio-8080-exec-3] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=25
+2026-03-04 21:11:52.930 [http-nio-8080-exec-3] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=63.0%, disk=44.72456529876576%, status=YELLOW
