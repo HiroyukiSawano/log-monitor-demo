@@ -350,7 +350,12 @@ public class AlertService {
         if (str == null)
             return 0;
         try {
-            return Double.parseDouble(str.trim());
+            // Remove any characters that are not digits or a decimal point
+            String numericPart = str.replaceAll("[^0-9.]", "");
+            if (numericPart.isEmpty()) {
+                return 0;
+            }
+            return Double.parseDouble(numericPart);
         } catch (NumberFormatException e) {
             return 0;
         }
