@@ -111,6 +111,7 @@ public class AlertRule {
                         c.setTargetName(in.has("targetName") && !in.get("targetName").isNull()
                                 ? in.get("targetName").asText()
                                 : null);
+                        c.setDurationSec(in.has("durationSec") ? in.get("durationSec").asInt(0) : null);
                         items.add(c);
                     }
                 }

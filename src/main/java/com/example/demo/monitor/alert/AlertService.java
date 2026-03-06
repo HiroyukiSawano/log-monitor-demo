@@ -34,6 +34,9 @@ public class AlertService {
     /** 冷却记录: key = "ruleId:agentId", value = 上次触发时间 */
     private final Map<String, Long> cooldownMap = new ConcurrentHashMap<>();
 
+    /** 持续条件追踪: key = "agentId:ruleId:gIdx:cIdx", value = 首次连续满足时间戳(ms) */
+    private final Map<String, Long> conditionFirstMetMap = new ConcurrentHashMap<>();
+
     public AlertService(AlertRuleService ruleService,
             AlertEventMapper eventMapper,
             List<AlertChannel> channels) {
@@ -114,8 +117,8 @@ public class AlertService {
 
         // 评估每个分组
         List<GroupResult> groupResults = new ArrayList<>();
-        for (ConditionGroup group : groups) {
-            GroupResult gr = evaluateGroup(group, snapshot);
+        for (int gIdx = 0; gIdx < groups.size(); gIdx++) {
+            GroupResult gr = evaluateGroup(agentId, rule.getId(), gIdx, groups.get(gIdx), snapshot);
             groupResults.add(gr);
         }
 
@@ -158,7 +161,8 @@ public class AlertService {
     /**
      * 评估一个条件分组
      */
-    private GroupResult evaluateGroup(ConditionGroup group, MetricsSnapshot snapshot) {
+    private GroupResult evaluateGroup(String agentId, Long ruleId, int gIdx,
+                                      ConditionGroup group, MetricsSnapshot snapshot) {
         List<AlertCondition> items = group.getItems();
         if (items == null || items.isEmpty()) {
             return new GroupResult(false, group.getLogic(), Collections.emptyList(),
@@ -167,8 +171,8 @@ public class AlertService {
 
         boolean isAnd = "AND".equalsIgnoreCase(group.getLogic());
         List<ConditionResult> results = new ArrayList<>();
-        for (AlertCondition cond : items) {
-            results.add(evaluateCondition(cond, snapshot));
+        for (int cIdx = 0; cIdx < items.size(); cIdx++) {
+            results.add(evaluateCondition(agentId, ruleId, gIdx, cIdx, items.get(cIdx), snapshot));
         }
 
         boolean triggered;
@@ -189,9 +193,66 @@ public class AlertService {
     }
 
     /**
-     * 评估单个条件
+     * 评估单个条件（含持续时间判定）
      */
-    private ConditionResult evaluateCondition(AlertCondition cond, MetricsSnapshot snapshot) {
+    private ConditionResult evaluateCondition(String agentId, Long ruleId, int gIdx, int cIdx,
+                                              AlertCondition cond, MetricsSnapshot snapshot) {
+        ConditionResult instantResult = evaluateConditionInstant(cond, snapshot);
+
+        int durationSec = cond.getDurationSec() != null ? cond.getDurationSec() : 0;
+        if (durationSec <= 0) {
+            // 无持续时间要求，直接返回瞬时结果
+            return instantResult;
+        }
+
+        // 持续时间判定逻辑
+        String durKey = agentId + ":" + ruleId + ":" + gIdx + ":" + cIdx;
+        long now = System.currentTimeMillis();
+
+        if (instantResult.triggered) {
+            Long firstMet = conditionFirstMetMap.get(durKey);
+            if (firstMet == null) {
+                // 首次满足，记录时间，暂不触发
+                conditionFirstMetMap.put(durKey, now);
+                return new ConditionResult(false, instantResult.metricType, instantResult.actualStr, "");
+            }
+            long elapsedSec = (now - firstMet) / 1000;
+            if (elapsedSec >= durationSec) {
+                // 已持续满足足够时间，触发
+                String durationLabel = formatDuration(durationSec);
+                String msg = instantResult.message + " (持续超过" + durationLabel + ")";
+                return new ConditionResult(true, instantResult.metricType, instantResult.actualStr, msg);
+            } else {
+                // 仍在等待中
+                return new ConditionResult(false, instantResult.metricType, instantResult.actualStr, "");
+            }
+        } else {
+            // 条件不满足，重置计时
+            conditionFirstMetMap.remove(durKey);
+            return instantResult;
+        }
+    }
+
+    /**
+     * 格式化持续时间为人类可读文本
+     */
+    private String formatDuration(int totalSec) {
+        if (totalSec >= 3600) {
+            int h = totalSec / 3600;
+            int m = (totalSec % 3600) / 60;
+            return m > 0 ? h + "小时" + m + "分钟" : h + "小时";
+        } else if (totalSec >= 60) {
+            int m = totalSec / 60;
+            int s = totalSec % 60;
+            return s > 0 ? m + "分钟" + s + "秒" : m + "分钟";
+        }
+        return totalSec + "秒";
+    }
+
+    /**
+     * 评估单个条件（瞬时判定，不考虑持续时间）
+     */
+    private ConditionResult evaluateConditionInstant(AlertCondition cond, MetricsSnapshot snapshot) {
         String metricType = cond.getMetricType();
         double actual;
         String actualStr;

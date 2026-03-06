@@ -1,0 +1,29 @@
+
+> frontend@0.0.0 build
+> vite build
+
+[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+[33msrc/components/agent/DetailDrawer.vue (46:30): Error when using sourcemap for reporting an error: Can't resolve original location of error.[39m
+[32m✓[39m 1463 modules transformed.
+[31m✗[39m Build failed in 12.05s
+[31merror during build:
+[31msrc/components/agent/DetailDrawer.vue (46:30): "DataDrive" is not exported by "node_modules/@element-plus/icons-vue/dist/index.js", imported by "src/components/agent/DetailDrawer.vue".[31m
+file: [36mC:/Users/zzh/Desktop/anti/demo/frontend/src/components/agent/DetailDrawer.vue:46:30[31m
+[33m
+44: 
+45: import { computed } from 'vue'
+46: import { Close, Monitor, Cpu, DataDrive, Document } from '@element-plus/icons-vue'
+                                  ^
+47: import { useMonitorStore } from '../../stores/monitorStore'
+[31m
+    at getRollupError (file:///C:/Users/zzh/Desktop/anti/demo/frontend/node_modules/rollup/dist/es/shared/parseAst.js:402:41)
+    at error (file:///C:/Users/zzh/Desktop/anti/demo/frontend/node_modules/rollup/dist/es/shared/parseAst.js:398:42)
+    at Module.error (file:///C:/Users/zzh/Desktop/anti/demo/frontend/node_modules/rollup/dist/es/shared/node-entry.js:17040:16)
+    at Module.traceVariable (file:///C:/Users/zzh/Desktop/anti/demo/frontend/node_modules/rollup/dist/es/shared/node-entry.js:17452:29)
+    at ModuleScope.findVariable (file:///C:/Users/zzh/Desktop/anti/demo/frontend/node_modules/rollup/dist/es/shared/node-entry.js:15070:39)
+    at ChildScope.findVariable (file:///C:/Users/zzh/Desktop/anti/demo/frontend/node_modules/rollup/dist/es/shared/node-entry.js:5673:38)
+    at FunctionScope.findVariable (file:///C:/Users/zzh/Desktop/anti/demo/frontend/node_modules/rollup/dist/es/shared/node-entry.js:5673:38)
+    at FunctionBodyScope.findVariable (file:///C:/Users/zzh/Desktop/anti/demo/frontend/node_modules/rollup/dist/es/shared/node-entry.js:5673:38)
+    at ReturnValueScope.findVariable (file:///C:/Users/zzh/Desktop/anti/demo/frontend/node_modules/rollup/dist/es/shared/node-entry.js:5673:38)
+    at FunctionBodyScope.findVariable (file:///C:/Users/zzh/Desktop/anti/demo/frontend/node_modules/rollup/dist/es/shared/node-entry.js:5673:38)[39m

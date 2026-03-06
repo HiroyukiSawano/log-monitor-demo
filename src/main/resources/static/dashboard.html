@@ -1382,10 +1382,11 @@
                             const items = (g.items || []).map(c => {
                                 const tl = TL[c.metricType] || c.metricType;
                                 const tgt = c.targetName ? `[${escapeHtml(c.targetName)}]` : '';
-                                if (NN.includes(c.metricType)) return `${tl}${tgt}`;
+                                const dur = c.durationSec > 0 ? `(持续≥${c.durationSec}s)` : '';
+                                if (NN.includes(c.metricType)) return `${tl}${tgt}${dur}`;
                                 const op = OL[c.operator] || c.operator;
                                 const unit = (c.metricType || '').includes('USAGE') ? '%' : '';
-                                return `${tl}${tgt}${op}${c.threshold}${unit}`;
+                                return `${tl}${tgt}${op}${c.threshold}${unit}${dur}`;
                             });
                             const glLabel = gl === 'AND' ? ' 且 ' : ' 或 ';
                             return items.length > 1 ? `(${items.join(glLabel)})` : items[0] || '';
@@ -1528,6 +1529,7 @@
                     ${opOpts}
                 </select>
                 <input class="cond-threshold" type="number" value="80" style="width:55px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;">
+                <input class="cond-duration" type="number" placeholder="持续(秒)" value="0" min="0" title="持续时间(秒)，0=瞬时判定" style="width:65px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;">
                 <input class="cond-target" placeholder="目标" style="width:70px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;">
                 <button onclick="removeCondRow(this)" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:12px;padding:0 3px;" title="删除">✕</button>`;
             itemsContainer.appendChild(row);
@@ -1583,7 +1585,8 @@
                     metricType: row.querySelector('.cond-metric').value,
                     operator: row.querySelector('.cond-op').value,
                     threshold: parseFloat(row.querySelector('.cond-threshold').value) || 0,
-                    targetName: row.querySelector('.cond-target').value || null
+                    targetName: row.querySelector('.cond-target').value || null,
+                    durationSec: parseInt(row.querySelector('.cond-duration').value) || 0
                 }));
                 return { logic: groupLogic, items };
             }).filter(g => g.items.length > 0);

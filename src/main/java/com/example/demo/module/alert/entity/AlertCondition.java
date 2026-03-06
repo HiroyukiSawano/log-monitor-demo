@@ -28,4 +28,7 @@ public class AlertCondition {
 
     /** 目标名称 (盘符如C 或进程名，可选) */
     private String targetName;
+
+    /** 持续时间（秒），为 null 或 0 表示瞬时判定 */
+    private Integer durationSec;
 }

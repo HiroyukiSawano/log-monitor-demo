@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0f1117;
+  --color-surface: #1a1d27;
+  --color-surface2: #22263a;
+  --color-border: #2d3250;
+  --color-text: #e1e4ed;
+  --color-text2: #8b8fa3;
+  --color-accent: #6c5ce7;
+  --color-green: #00b894;
+  --color-yellow: #fdcb6e;
+  --color-red: #e17055;
+  --color-blue: #74b9ff;
+  --color-cyan: #81ecec;
+}
+
+/* Base definitions for hardcoded var() usages in custom classes */
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface2: #22263a;
+  --border: #2d3250;
+  --text: #e1e4ed;
+  --text2: #8b8fa3;
+  --accent: #6c5ce7;
+  --green: #00b894;
+  --yellow: #fdcb6e;
+  --red: #e17055;
+  --blue: #74b9ff;
+  --cyan: #81ecec;
+}
+
+body {
+  @apply font-sans antialiased bg-bg text-text min-h-screen overflow-hidden;
+}
