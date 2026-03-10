@@ -1,131 +1,63 @@
 <template>
-  <div class="flex flex-col h-screen text-text">
-    <AlertBanner />
+  <div class="flex flex-col h-screen text-text bg-bg">
+    <!-- Platform Header -->
+    <header class="bg-surface shadow-sm border-b border-border px-6 py-0 flex items-center gap-6 shrink-0 h-14 z-20">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-accent/10 border border-accent/30 flex items-center justify-center text-accent">
+          <el-icon :size="18"><Monitor /></el-icon>
+        </div>
+        <h1 class="text-lg font-bold tracking-wide text-text">集中监控系统</h1>
+      </div>
+      
+      <!-- Navigation Tabs -->
+      <nav class="flex items-center h-full ml-6">
+        <router-link to="/" class="nav-item group" active-class="active">
+          <el-icon class="mr-2 opacity-70 group-hover:opacity-100 transition-opacity"><DataBoard /></el-icon>
+          监控大盘
+        </router-link>
+        <router-link to="/command" class="nav-item group" active-class="active">
+          <el-icon class="mr-2 opacity-70 group-hover:opacity-100 transition-opacity"><Connection /></el-icon>
+          远程指令
+        </router-link>
+        <router-link to="/debug" class="nav-item group" active-class="active">
+          <el-icon class="mr-2 opacity-70 group-hover:opacity-100 transition-opacity"><Setting /></el-icon>
+          调试沙箱
+        </router-link>
+        <router-link to="/logs" class="nav-item group" active-class="active">
+          <el-icon class="mr-2 opacity-70 group-hover:opacity-100 transition-opacity"><Document /></el-icon>
+          日志审计
+        </router-link>
+      </nav>
 
-    <!-- Header -->
-    <header class="bg-gradient-to-br from-surface to-surface2 border-b border-border px-6 py-3.5 flex items-center gap-4 shrink-0">
-      <h1 class="text-lg font-semibold tracking-wide flex-1">Monitoring Dashboard</h1>
-      <button 
-        v-if="store.activeAgentId"
-        @click="showRuleModal = true"
-        class="text-xs text-blue hover:text-cyan transition-colors"
-      >
-        Alert Rules ({{ store.activeAgentId }})
-      </button>
-      <a href="/debug.html" target="_blank" class="text-xs text-blue opacity-80 hover:opacity-100 transition-opacity">
-        Debug Tools
-      </a>
-      <a href="https://github.com/zzh" target="_blank" class="text-xs text-blue opacity-80 hover:opacity-100 transition-opacity">
-        GitHub
-      </a>
+      <div class="ml-auto flex items-center gap-4">
+        <a href="https://github.com/zzh" target="_blank" class="text-xs text-blue opacity-80 hover:opacity-100 transition-opacity flex items-center gap-1">
+          <el-icon><Link /></el-icon> GitHub
+        </a>
+      </div>
     </header>
 
-    <!-- Toolbar -->
-    <div class="px-6 py-2.5 border-b border-border bg-surface flex items-center gap-3 shrink-0 auto-cols-auto">
-      <label class="text-xs tracking-wider uppercase text-text2 font-semibold">Filter</label>
-      <input 
-        v-model="searchQuery" 
-        type="text" 
-        placeholder="Hostname / OS / IP..."
-        class="bg-bg border border-border text-text px-3 py-1.5 rounded-md text-xs w-52 focus:outline-none focus:border-accent transition-colors"
-      >
-      
-      <div v-if="store.activeAgentId" class="text-xs ml-4 flex items-center gap-2">
-         <span class="text-text2">Agent ID:</span>
-         <span class="font-mono text-text bg-bg px-2 py-0.5 rounded border border-border">{{ store.activeAgentId }}</span>
-      </div>
-
-      <div class="ml-auto text-[11px] text-text2 flex items-center gap-2">
-        <div 
-          class="w-2 h-2 rounded-full"
-          :class="store.status === 'OPEN' ? 'bg-green shadow-[0_0_8px_var(--green)]' : 'bg-red'"
-        ></div>
-        {{ store.status === 'OPEN' ? 'Connected (Live Data)' : 'Disconnected' }}
-      </div>
+    <!-- Main Content Area -->
+    <div class="flex-1 overflow-hidden relative">
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </div>
-
-    <!-- Stats Bar -->
-    <div class="flex gap-4 px-6 py-3 bg-surface2 border-b border-border shrink-0">
-      <div class="bg-surface border border-border rounded-lg p-3 flex-1 flex items-center gap-3">
-        <el-icon :size="24" class="text-accent"><Monitor /></el-icon>
-        <div>
-          <div class="text-[11px] text-text2 mb-0.5">Total Agents</div>
-          <div class="text-[22px] font-bold leading-none">{{ store.totalAgents }}</div>
-        </div>
-      </div>
-      <div class="bg-surface border border-border rounded-lg p-3 flex-1 flex items-center gap-3">
-        <el-icon :size="24" class="text-green"><CircleCheckFilled /></el-icon>
-        <div>
-          <div class="text-[11px] text-text2 mb-0.5">Online</div>
-          <div class="text-[22px] font-bold leading-none">{{ store.onlineAgents }}</div>
-        </div>
-      </div>
-      <div class="bg-surface border border-border rounded-lg p-3 flex-1 flex items-center gap-3">
-        <el-icon :size="24" class="text-red"><WarningFilled /></el-icon>
-        <div>
-          <div class="text-[11px] text-text2 mb-0.5">Critical Alerts</div>
-          <div class="text-[22px] font-bold leading-none">{{ store.criticalAlertsCount }}</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Main Grid Area -->
-    <main class="flex-1 overflow-y-auto p-4 bg-bg">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        <AgentCard 
-          v-for="agent in filteredAgents" 
-          :key="agent.id"
-          :agent="agent"
-          :active="store.activeAgentId === agent.id"
-          :alert-count="getAlertCountForAgent(agent.id)"
-          @click="store.setActiveAgent($event)"
-        />
-      </div>
-      
-      <div v-if="filteredAgents.length === 0" class="flex flex-col items-center justify-center h-full text-text2 opacity-60">
-        <el-icon :size="48" class="mb-4"><Monitor /></el-icon>
-        <p>No agents found matching your criteria</p>
-      </div>
-    </main>
-
-    <!-- Modals & Drawers -->
-    <DetailDrawer />
-    <RuleConfigModal v-model:visible="showRuleModal" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { Monitor, CircleCheckFilled, WarningFilled } from '@element-plus/icons-vue'
+import { Monitor, DataBoard, Connection, Setting, Document, Link } from '@element-plus/icons-vue'
+// The store is initialized here or globally so that WebSockets and data persist across views.
 import { useMonitorStore } from './stores/monitorStore'
-
-import AlertBanner from './components/alert/AlertBanner.vue'
-import AgentCard from './components/agent/AgentCard.vue'
-import DetailDrawer from './components/agent/DetailDrawer.vue'
-import RuleConfigModal from './components/alert/RuleConfigModal.vue'
-
 const store = useMonitorStore()
-
-const searchQuery = ref('')
-const showRuleModal = ref(false)
-
-const filteredAgents = computed(() => {
-  const q = searchQuery.value.toLowerCase()
-  if (!q) return store.agentList
-  return store.agentList.filter(a => {
-    return a.id.toLowerCase().includes(q) || 
-           (a.systemInfo?.hostname || '').toLowerCase().includes(q) ||
-           (a.systemInfo?.osName || '').toLowerCase().includes(q)
-  })
-})
-
-function getAlertCountForAgent(agentId) {
-  return store.alerts.filter(a => a.agentId === agentId).length
-}
+// The monitor store starts automatically because its initial state calls ws connection logic or we do it here if needed.
+// Actually, monitorStore already sets up listeners in its setup block likely, or we can just call it to ensure it's instantiated.
 </script>
 
 <style>
-/* For custom scrollbars matching dark theme */
+/* Global scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -139,5 +71,51 @@ function getAlertCountForAgent(agentId) {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text2);
+}
+
+/* Nav Item Styling */
+.nav-item {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text2);
+  text-decoration: none;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+  color: var(--accent);
+  background: rgba(64, 158, 255, 0.05);
+}
+
+.nav-item.active {
+  color: var(--accent);
+  background: rgba(64, 158, 255, 0.1);
+}
+
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+}
+
+/* Transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: scale(0.995);
 }
 </style>

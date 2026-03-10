@@ -1,17 +1,17 @@
 <template>
   <div 
     v-show="alerts.length > 0"
-    class="alert-banner bg-gradient-to-r from-red/10 to-yellow/5 border-b border-red/30 max-h-[120px] overflow-y-auto"
+    class="alert-banner bg-gradient-to-r from-red/5 to-yellow/5 border-b border-red/20 max-h-[120px] overflow-y-auto"
   >
-    <div class="sticky top-0 bg-bg/90 backdrop-blur-sm z-10 px-6 py-1.5 flex items-center gap-2 border-b border-border/50">
+    <div class="sticky top-0 bg-surface/90 backdrop-blur-sm z-10 px-6 py-1.5 flex items-center gap-2 border-b border-border/50">
       <div class="text-xs font-semibold text-red flex-1 flex items-center gap-2">
-        <el-icon><Warning /></el-icon> Active Alerts ({{ alerts.length }})
+        <el-icon><Warning /></el-icon> 当前活动告警 ({{ alerts.length }})
       </div>
       <button 
-        @click="store.clearAlerts"
+        @click="store.ackAllAlerts"
         class="text-[10px] px-2.5 py-0.5 border border-border bg-surface text-text2 rounded hover:border-accent hover:text-text transition-colors"
       >
-        Acknowledge All
+        全部确认
       </button>
     </div>
     
@@ -27,8 +27,14 @@
         {{ alert.level }}
       </span>
       <span class="text-text font-mono opacity-80">[{{ alert.agentId }}]</span>
-      <span class="flex-1 text-text">{{ alert.conditionDesc }}</span>
-      <span class="text-text2 text-[10px]">{{ formatTime(alert.timestamp) }}</span>
+      <span class="flex-1 text-text">{{ alert.message || alert.ruleName || '告警' }}</span>
+      <span class="text-text2 text-[10px]">{{ formatTime(alert.createTime) }}</span>
+      <button 
+        @click="store.ackAlert(alert.id)"
+        class="text-[10px] px-2 py-0.5 border border-border bg-transparent text-text2 rounded hover:bg-green hover:border-green hover:text-white transition-colors ml-2 shadow-sm"
+      >
+        确认 ✓
+      </button>
     </div>
   </div>
 </template>

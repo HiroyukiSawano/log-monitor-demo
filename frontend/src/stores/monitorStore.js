@@ -83,8 +83,22 @@ export const useMonitorStore = defineStore('monitor', () => {
         activeAgentId.value = agentId
     }
 
-    function clearAlerts() {
-        alerts.value = []
+    async function ackAlert(id) {
+        try {
+            await fetch(`/api/alert/events/${id}/ack`, { method: 'POST' })
+            alerts.value = alerts.value.filter(a => a.id !== id)
+        } catch (e) {
+            console.error('Failed to ack alert', e)
+        }
+    }
+
+    async function ackAllAlerts() {
+        try {
+            await fetch(`/api/alert/events/ack-all`, { method: 'POST' })
+            alerts.value = []
+        } catch (e) {
+            console.error('Failed to ack all alerts', e)
+        }
     }
 
     async function loadDashboard() {
@@ -153,7 +167,8 @@ export const useMonitorStore = defineStore('monitor', () => {
         criticalAlertsCount,
         status,
         setActiveAgent,
-        clearAlerts,
+        ackAlert,
+        ackAllAlerts,
         send // expose raw WS send if needed
     }
 })

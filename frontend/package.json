@@ -17,7 +17,8 @@
     "pinia": "^3.0.4",
     "postcss": "^8.5.8",
     "vue": "^3.5.29",
-    "vue-echarts": "^8.0.1"
+    "vue-echarts": "^8.0.1",
+    "vue-router": "^5.0.3"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.1",
