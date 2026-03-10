@@ -16,6 +16,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.lang.NonNull;
 
 import java.net.URI;
 import java.util.Map;
@@ -61,7 +62,7 @@ public class AgentWebSocketHandler extends AbstractWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(@NonNull WebSocketSession session) throws Exception {
         URI uri = session.getUri();
         if (uri == null) {
             log.warn("[WS] 连接无 URI，拒绝");
@@ -94,7 +95,7 @@ public class AgentWebSocketHandler extends AbstractWebSocketHandler {
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+    protected void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) throws Exception {
         String agentId = getAgentId(session);
         if (agentId == null)
             return;
@@ -129,7 +130,8 @@ public class AgentWebSocketHandler extends AbstractWebSocketHandler {
     }
 
     @Override
-    protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
+    protected void handleBinaryMessage(@NonNull WebSocketSession session, @NonNull BinaryMessage message)
+            throws Exception {
         String agentId = getAgentId(session);
         if (agentId == null)
             return;
@@ -138,7 +140,7 @@ public class AgentWebSocketHandler extends AbstractWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull CloseStatus status) throws Exception {
         String agentId = getAgentId(session);
         if (agentId != null) {
             sessionManager.remove(agentId);
@@ -147,7 +149,7 @@ public class AgentWebSocketHandler extends AbstractWebSocketHandler {
     }
 
     @Override
-    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+    public void handleTransportError(@NonNull WebSocketSession session, @NonNull Throwable exception) throws Exception {
         String agentId = getAgentId(session);
         log.error("[WS] 传输错误: agentId={}", agentId, exception);
         if (session.isOpen()) {

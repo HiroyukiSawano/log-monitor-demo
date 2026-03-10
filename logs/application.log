@@ -998,3 +998,829 @@ create_time )  VALUES  ( ?,
 2026-03-10 16:09:36.492 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
 2026-03-10 16:09:42.477 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
 2026-03-10 16:09:48.484 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:09:54.497 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:10:00.476 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:10:06.484 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:10:12.483 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:10:18.479 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:10:22.415 [http-nio-8080-exec-6] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=94
+2026-03-10 16:10:22.415 [http-nio-8080-exec-6] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=74.0%, disk=45.69195821945554%, status=YELLOW
+2026-03-10 16:10:24.488 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:10:30.484 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:10:36.481 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:10:42.476 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:10:48.487 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:10:54.490 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:11:00.481 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:11:06.497 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:11:12.486 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:11:18.483 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:11:22.343 [http-nio-8080-exec-10] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=95
+2026-03-10 16:11:22.343 [http-nio-8080-exec-10] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=10.0%, disk=45.692983760556665%, status=GREEN
+2026-03-10 16:11:24.490 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:11:30.491 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:11:36.488 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:11:42.485 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:11:48.493 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:11:54.488 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:12:00.490 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:12:06.491 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:12:12.494 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:12:18.523 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:12:22.621 [http-nio-8080-exec-4] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=96
+2026-03-10 16:12:22.621 [http-nio-8080-exec-4] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=71.0%, disk=45.69052246191397%, status=YELLOW
+2026-03-10 16:12:24.486 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:12:30.490 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:12:36.486 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:12:42.489 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:12:48.488 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:12:54.490 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:13:00.486 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:13:06.484 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:13:12.483 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:13:18.490 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:13:22.325 [http-nio-8080-exec-5] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=97
+2026-03-10 16:13:22.325 [http-nio-8080-exec-5] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=16.0%, disk=45.6916505571252%, status=GREEN
+2026-03-10 16:14:21.990 [http-nio-8080-exec-3] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=98
+2026-03-10 16:14:21.990 [http-nio-8080-exec-3] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=35.0%, disk=45.6924709900061%, status=YELLOW
+2026-03-10 16:15:22.059 [http-nio-8080-exec-2] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=99
+2026-03-10 16:15:22.060 [http-nio-8080-exec-2] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=16.0%, disk=45.69359908521734%, status=GREEN
+2026-03-10 16:16:21.970 [http-nio-8080-exec-6] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=100
+2026-03-10 16:16:21.971 [http-nio-8080-exec-6] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=31.0%, disk=45.69390674754767%, status=YELLOW
+2026-03-10 16:17:22.270 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:17:25.845 [http-nio-8080-exec-2] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=101
+2026-03-10 16:17:25.852 [http-nio-8080-exec-2] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=88.0%, disk=45.69667570852071%, status=YELLOW
+2026-03-10 16:17:27.502 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:17:33.496 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:17:39.492 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:17:45.488 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:17:51.483 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:17:57.491 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:18:03.489 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:18:09.493 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:18:15.489 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:18:21.488 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:18:23.416 [http-nio-8080-exec-7] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=102
+2026-03-10 16:18:23.416 [http-nio-8080-exec-7] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=79.0%, disk=45.69677826263082%, status=YELLOW
+2026-03-10 16:18:27.485 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:18:33.486 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:18:39.470 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:18:45.482 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:18:51.488 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:18:57.481 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:19:03.487 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:19:09.479 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:19:15.493 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:19:21.490 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:19:22.304 [http-nio-8080-exec-1] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=103
+2026-03-10 16:19:22.304 [http-nio-8080-exec-1] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=1.0%, disk=45.69759869551172%, status=GREEN
+2026-03-10 16:19:27.492 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:19:33.477 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:19:39.488 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:19:45.480 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:19:51.490 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:19:57.484 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:20:03.478 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:20:09.489 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:20:15.496 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:20:21.488 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:20:23.053 [http-nio-8080-exec-4] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=104
+2026-03-10 16:20:23.053 [http-nio-8080-exec-4] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=81.0%, disk=45.69565016741958%, status=YELLOW
+2026-03-10 16:20:27.478 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:20:33.482 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:20:39.482 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:20:45.489 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:20:51.480 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:20:57.485 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:21:03.488 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:21:09.483 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:21:15.481 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:21:21.495 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:21:21.947 [http-nio-8080-exec-5] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=105
+2026-03-10 16:21:21.947 [http-nio-8080-exec-5] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=8.0%, disk=45.69626549208026%, status=GREEN
+2026-03-10 16:21:27.493 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:21:33.491 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:21:39.495 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:21:45.499 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:21:51.506 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:21:58.654 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:22:04.679 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:22:10.490 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:22:16.505 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:22:22.544 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:22:24.212 [http-nio-8080-exec-3] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=106
+2026-03-10 16:22:24.213 [http-nio-8080-exec-3] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=94.0%, disk=45.70426471266902%, status=YELLOW
+2026-03-10 16:22:28.485 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:22:34.490 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:22:40.493 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:22:46.481 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:22:52.495 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:22:58.497 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:23:04.491 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:23:10.492 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:23:16.493 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:23:22.503 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:23:24.682 [http-nio-8080-exec-6] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=107
+2026-03-10 16:23:24.684 [http-nio-8080-exec-6] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=85.0%, disk=45.68365133653644%, status=YELLOW
+2026-03-10 16:23:28.499 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:23:34.487 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:23:40.493 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:23:46.488 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:23:52.490 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:23:58.490 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:24:04.491 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:24:10.495 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:24:16.486 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:24:21.952 [http-nio-8080-exec-7] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=108
+2026-03-10 16:24:21.953 [http-nio-8080-exec-7] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=13.0%, disk=45.685497310518464%, status=GREEN
+2026-03-10 16:24:22.480 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:24:28.490 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:24:34.490 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:24:40.492 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:24:47.164 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:24:55.579 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:25:01.492 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:25:08.134 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:25:13.903 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:25:19.545 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:25:24.919 [http-nio-8080-exec-1] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=109
+2026-03-10 16:25:24.921 [http-nio-8080-exec-1] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=76.0%, disk=45.71021285105554%, status=YELLOW
+2026-03-10 16:25:25.511 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:25:31.482 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:25:37.486 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:25:43.488 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:25:49.495 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:25:55.488 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:26:01.480 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:26:07.487 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:26:13.483 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:26:19.653 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:26:24.258 [http-nio-8080-exec-4] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=110
+2026-03-10 16:26:24.259 [http-nio-8080-exec-4] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=84.0%, disk=45.71626354355217%, status=YELLOW
+2026-03-10 16:26:25.501 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:26:31.486 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:26:37.621 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:26:43.503 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:26:49.482 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:26:55.475 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:27:01.487 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:27:07.485 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:27:13.488 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:27:19.491 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:27:21.921 [http-nio-8080-exec-9] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=111
+2026-03-10 16:27:21.921 [http-nio-8080-exec-9] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=0.0%, disk=45.71113583804655%, status=GREEN
+2026-03-10 16:27:25.491 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:27:31.478 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:27:37.483 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:27:43.486 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:27:49.479 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:27:55.481 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:28:01.487 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:28:07.487 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:28:13.490 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:28:19.477 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:28:21.943 [http-nio-8080-exec-2] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=112
+2026-03-10 16:28:21.943 [http-nio-8080-exec-2] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=13.0%, disk=45.7107256216061%, status=GREEN
+2026-03-10 16:28:25.487 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:28:31.495 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:28:37.481 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:28:43.487 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:28:49.494 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:28:55.483 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:29:01.484 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:29:07.481 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:29:13.485 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:29:19.487 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:29:21.899 [http-nio-8080-exec-8] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=113
+2026-03-10 16:29:21.899 [http-nio-8080-exec-8] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=6.0%, disk=45.71175116270722%, status=GREEN
+2026-03-10 16:29:25.487 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:29:31.491 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:29:37.471 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:29:43.486 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:29:49.488 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:29:55.482 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:30:01.480 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:30:07.485 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:30:13.481 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:30:19.483 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:30:21.914 [http-nio-8080-exec-7] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=114
+2026-03-10 16:30:21.914 [http-nio-8080-exec-7] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=37.0%, disk=45.71226393325779%, status=YELLOW
+2026-03-10 16:30:25.471 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:30:31.488 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:30:37.492 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:30:43.478 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:30:49.491 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:30:55.500 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:31:01.483 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:31:07.482 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:31:13.486 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:31:19.492 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:31:21.988 [http-nio-8080-exec-4] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=115
+2026-03-10 16:31:21.988 [http-nio-8080-exec-4] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=8.0%, disk=45.713392028469016%, status=GREEN
+2026-03-10 16:31:25.484 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:31:31.480 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:31:37.492 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:31:43.489 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:31:49.494 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:31:55.482 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:32:01.483 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:32:07.478 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:32:13.491 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:32:19.481 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:32:21.953 [http-nio-8080-exec-5] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=116
+2026-03-10 16:32:21.954 [http-nio-8080-exec-5] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=12.0%, disk=45.71031540516565%, status=GREEN
+2026-03-10 16:32:25.486 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:32:31.482 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:32:37.496 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:32:43.478 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:32:49.489 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:32:55.470 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:33:01.483 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:33:07.491 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:33:13.490 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:33:19.492 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:33:21.871 [http-nio-8080-exec-2] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=117
+2026-03-10 16:33:21.871 [http-nio-8080-exec-2] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=10.0%, disk=45.71185371681734%, status=GREEN
+2026-03-10 16:33:25.485 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:33:31.486 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:33:37.475 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:33:43.487 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:33:49.486 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:33:55.491 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:34:01.473 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:34:07.485 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:34:13.487 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:34:19.493 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:34:21.989 [http-nio-8080-exec-10] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=118
+2026-03-10 16:34:21.990 [http-nio-8080-exec-10] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=18.0%, disk=45.71021285105554%, status=GREEN
+2026-03-10 16:34:25.492 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:34:31.475 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:34:37.489 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:34:43.487 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:34:49.495 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:34:55.488 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:35:01.480 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:35:07.476 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:35:13.493 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:35:19.494 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:35:21.973 [http-nio-8080-exec-4] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=119
+2026-03-10 16:35:21.973 [http-nio-8080-exec-4] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=8.0%, disk=45.71041795927576%, status=GREEN
+2026-03-10 16:35:25.493 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:35:31.477 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:35:37.480 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:35:43.480 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:35:49.486 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:35:55.486 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:36:01.478 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:36:07.471 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:36:13.491 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:36:19.486 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:36:21.961 [http-nio-8080-exec-3] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=120
+2026-03-10 16:36:21.961 [http-nio-8080-exec-3] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=26.0%, disk=45.71195627092745%, status=GREEN
+2026-03-10 16:36:25.496 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:36:31.478 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:36:37.478 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:36:43.484 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:36:49.472 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:36:55.477 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:37:01.478 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:37:07.490 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:37:13.473 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:37:19.489 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:37:21.911 [http-nio-8080-exec-6] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=121
+2026-03-10 16:37:21.911 [http-nio-8080-exec-6] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=0.0%, disk=45.71195627092745%, status=GREEN
+2026-03-10 16:37:25.488 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:37:31.485 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:37:37.494 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:37:43.481 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:37:49.486 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:37:55.486 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:38:01.490 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:38:07.487 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:38:13.488 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:38:19.472 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:38:21.907 [http-nio-8080-exec-7] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=122
+2026-03-10 16:38:21.907 [http-nio-8080-exec-7] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=8.0%, disk=45.71287925791846%, status=GREEN
+2026-03-10 16:38:25.487 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:38:31.474 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:38:37.490 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:38:43.475 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:38:49.483 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:38:55.486 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:39:01.483 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:39:07.485 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:39:13.490 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:39:19.478 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:39:21.954 [http-nio-8080-exec-9] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=123
+2026-03-10 16:39:21.954 [http-nio-8080-exec-9] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=2.0%, disk=45.71287925791846%, status=GREEN
+2026-03-10 16:39:25.475 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:39:31.492 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:39:37.487 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:39:43.486 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:39:49.489 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:39:55.477 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:40:01.482 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:40:07.482 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:40:13.488 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:40:19.492 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:40:21.970 [http-nio-8080-exec-2] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=124
+2026-03-10 16:40:21.971 [http-nio-8080-exec-2] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=29.0%, disk=45.71226393325779%, status=GREEN
+2026-03-10 16:40:25.471 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:40:31.484 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:40:37.488 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:40:43.480 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:40:49.487 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:40:55.492 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:41:01.478 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:41:07.492 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:41:13.485 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:41:19.483 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:41:21.957 [http-nio-8080-exec-6] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=125
+2026-03-10 16:41:21.958 [http-nio-8080-exec-6] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=1.0%, disk=45.71246904147801%, status=GREEN
+2026-03-10 16:41:25.478 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:41:31.477 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:41:37.484 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:41:43.488 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:41:49.478 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:41:55.484 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:42:01.487 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:42:07.470 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:42:13.479 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:42:19.484 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:42:21.967 [http-nio-8080-exec-8] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=126
+2026-03-10 16:42:21.967 [http-nio-8080-exec-8] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=36.0%, disk=45.712776703808345%, status=YELLOW
+2026-03-10 16:42:25.482 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:42:31.493 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:42:37.481 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:42:43.485 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:42:49.489 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:42:55.482 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:43:01.486 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:43:07.486 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:43:13.488 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:43:19.471 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:43:21.974 [http-nio-8080-exec-5] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=127
+2026-03-10 16:43:21.975 [http-nio-8080-exec-5] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=4.0%, disk=45.71287925791846%, status=GREEN
+2026-03-10 16:43:25.473 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:43:31.484 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:43:37.480 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:43:43.485 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:43:49.490 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:43:55.486 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:44:01.485 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:44:07.483 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:44:13.481 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:44:19.488 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:44:22.006 [http-nio-8080-exec-2] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=128
+2026-03-10 16:44:22.006 [http-nio-8080-exec-2] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=28.0%, disk=45.71287925791846%, status=GREEN
+2026-03-10 16:44:25.492 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:44:31.483 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:44:37.490 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:44:43.494 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:44:49.477 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:44:55.484 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:45:01.483 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:45:07.483 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:45:13.484 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:45:19.493 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:45:22.028 [http-nio-8080-exec-6] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=129
+2026-03-10 16:45:22.029 [http-nio-8080-exec-6] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=3.0%, disk=45.712366487367895%, status=GREEN
+2026-03-10 16:45:25.490 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:45:31.476 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:45:37.483 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:45:43.485 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:45:49.477 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:45:55.476 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:46:01.485 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:46:07.490 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:46:13.489 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:46:19.490 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:46:21.971 [http-nio-8080-exec-10] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=130
+2026-03-10 16:46:21.971 [http-nio-8080-exec-10] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=30.0%, disk=45.712571595588116%, status=YELLOW
+2026-03-10 16:46:25.485 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:46:31.493 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:46:37.471 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:46:43.480 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:46:49.488 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:46:55.477 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:47:01.486 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:47:07.476 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:47:13.488 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:47:19.481 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:47:21.997 [http-nio-8080-exec-1] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=131
+2026-03-10 16:47:21.997 [http-nio-8080-exec-1] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=22.0%, disk=45.71287925791846%, status=GREEN
+2026-03-10 16:47:25.482 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:47:31.479 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:47:37.486 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:47:43.476 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:47:49.479 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:47:55.486 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:48:01.472 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:48:07.485 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:48:13.484 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:48:19.484 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:48:21.998 [http-nio-8080-exec-5] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=132
+2026-03-10 16:48:21.998 [http-nio-8080-exec-5] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=42.0%, disk=45.71287925791846%, status=YELLOW
+2026-03-10 16:48:25.475 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:48:31.483 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:48:37.485 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:48:43.484 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:48:49.475 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:48:55.478 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:49:01.484 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:49:07.482 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:49:13.486 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:49:19.494 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:49:22.217 [http-nio-8080-exec-2] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=133
+2026-03-10 16:49:22.217 [http-nio-8080-exec-2] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=13.0%, disk=45.71328947435891%, status=GREEN
+2026-03-10 16:49:25.491 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:49:31.486 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:49:37.495 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:49:43.478 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:49:49.491 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:49:55.496 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:50:01.473 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:50:07.486 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:50:13.488 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:50:19.491 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:50:21.967 [http-nio-8080-exec-6] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=134
+2026-03-10 16:50:21.971 [http-nio-8080-exec-6] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=23.0%, disk=45.70980263461509%, status=GREEN
+2026-03-10 16:50:25.474 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:50:31.490 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:50:37.485 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:50:43.479 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:50:49.487 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:50:55.499 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:51:01.479 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:51:07.485 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:51:13.480 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:51:19.489 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:51:21.967 [http-nio-8080-exec-7] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=135
+2026-03-10 16:51:21.967 [http-nio-8080-exec-7] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=62.0%, disk=45.71011029694543%, status=YELLOW
+2026-03-10 16:51:25.487 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:51:31.486 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:51:37.493 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:51:43.483 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:51:49.482 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:51:55.483 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:52:01.478 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:52:07.481 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:52:13.483 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:52:19.493 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:52:22.181 [http-nio-8080-exec-1] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=136
+2026-03-10 16:52:22.181 [http-nio-8080-exec-1] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=51.0%, disk=45.71062306749599%, status=YELLOW
+2026-03-10 16:52:25.476 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:52:31.480 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:52:37.475 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:52:43.475 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:52:49.477 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:52:55.488 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:53:01.495 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:53:07.479 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:53:13.480 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:53:19.492 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:53:24.977 [http-nio-8080-exec-4] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=137
+2026-03-10 16:53:24.979 [http-nio-8080-exec-4] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=91.0%, disk=45.722314236048796%, status=YELLOW
+2026-03-10 16:53:25.507 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:53:31.525 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:53:37.499 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:53:43.488 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:53:49.489 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:53:55.490 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:54:01.484 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:54:07.495 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:54:17.330 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:54:28.021 [http-nio-8080-exec-9] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=138
+2026-03-10 16:54:28.021 [http-nio-8080-exec-9] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=100.0%, disk=45.731031335408346%, status=YELLOW
+2026-03-10 16:54:28.560 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:54:38.765 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:54:47.500 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:54:53.507 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:54:59.543 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:55:05.494 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:55:11.546 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:55:17.491 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:55:23.739 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:55:25.265 [http-nio-8080-exec-10] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=139
+2026-03-10 16:55:25.265 [http-nio-8080-exec-10] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=99.0%, disk=45.74261994985104%, status=YELLOW
+2026-03-10 16:55:29.499 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:55:35.485 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:55:41.547 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:55:47.490 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:55:53.509 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:55:59.483 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:56:05.484 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:56:11.494 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:56:17.488 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:56:22.568 [http-nio-8080-exec-4] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=140
+2026-03-10 16:56:22.568 [http-nio-8080-exec-4] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=70.0%, disk=45.75400345607351%, status=YELLOW
+2026-03-10 16:56:23.483 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:56:29.492 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:56:35.473 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:56:41.497 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:56:47.488 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:56:53.483 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:56:59.495 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:57:05.488 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:57:11.484 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:57:17.490 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 16:57:22.084 [http-nio-8080-exec-2] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=141
+2026-03-10 16:57:22.084 [http-nio-8080-exec-2] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=8.0%, disk=45.7547213348443%, status=GREEN
+2026-03-10 17:03:49.245 [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication using Java 1.8.0_111 on DESKTOP-589AKUV with PID 7776 (C:\Users\zzh\Desktop\anti\demo\target\classes started by zzh in C:\Users\zzh\Desktop\anti\demo)
+2026-03-10 17:03:49.253 [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-10 17:03:52.844 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2026-03-10 17:03:52.861 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-10 17:03:52.872 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-10 17:03:52.872 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-03-10 17:03:53.159 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-10 17:03:53.160 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3807 ms
+2026-03-10 17:03:56.760 [main] INFO  c.e.demo.monitor.alert.AlertService - [AlertService] 已注册 1 个告警通知渠道: LOG
+2026-03-10 17:03:57.383 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+2026-03-10 17:03:57.667 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-10 17:03:58.153 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-10 17:03:58.411 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-10 17:03:58.496 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2026-03-10 17:03:58.517 [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 10.279 seconds (JVM running for 11.06)
+2026-03-10 17:03:58.832 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 4
+2026-03-10 17:03:58.847 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 4
+2026-03-10 17:03:58.871 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 12
+2026-03-10 17:03:58.887 [main] INFO  c.e.d.e.matcher.RegexMatcherCache - [Regex Cache] 正则缓存重建完成，规则数量: 0
+2026-03-10 17:03:58.889 [main] INFO  c.e.d.m.r.service.FilterRuleService - [RuleService] 匹配器重建完成
+2026-03-10 17:03:58.890 [main] INFO  com.example.demo.config.EngineConfig - [EngineConfig] 规则引擎初始化完成，规则已从 DB 加载
+2026-03-10 17:08:51.117 [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication using Java 1.8.0_111 on DESKTOP-589AKUV with PID 25492 (C:\Users\zzh\Desktop\anti\demo\target\classes started by zzh in C:\Users\zzh\Desktop\anti\demo)
+2026-03-10 17:08:51.123 [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-10 17:08:54.121 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2026-03-10 17:08:54.129 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-10 17:08:54.134 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-10 17:08:54.134 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-03-10 17:08:54.262 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-10 17:08:54.263 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3053 ms
+2026-03-10 17:08:57.465 [main] INFO  c.e.demo.monitor.alert.AlertService - [AlertService] 已注册 1 个告警通知渠道: LOG
+2026-03-10 17:08:58.177 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+2026-03-10 17:08:58.562 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-10 17:08:59.186 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-10 17:08:59.412 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-10 17:08:59.480 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2026-03-10 17:08:59.505 [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 9.065 seconds (JVM running for 9.732)
+2026-03-10 17:08:59.850 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 6
+2026-03-10 17:08:59.865 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 6
+2026-03-10 17:08:59.887 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 18
+2026-03-10 17:08:59.909 [main] INFO  c.e.d.e.matcher.RegexMatcherCache - [Regex Cache] 正则缓存重建完成，规则数量: 0
+2026-03-10 17:08:59.910 [main] INFO  c.e.d.m.r.service.FilterRuleService - [RuleService] 匹配器重建完成
+2026-03-10 17:08:59.910 [main] INFO  com.example.demo.config.EngineConfig - [EngineConfig] 规则引擎初始化完成，规则已从 DB 加载
+2026-03-10 17:09:04.044 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-10 17:09:04.044 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-10 17:09:04.059 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 12 ms
+2026-03-10 17:09:04.265 [http-nio-8080-exec-1] INFO  c.e.d.w.session.AgentSessionManager - [WS] Agent 上线: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, sessionId=bdd50d55-d8de-bc9e-1b85-f22fc2e4c849
+2026-03-10 17:09:18.495 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:09:22.910 [http-nio-8080-exec-4] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=399
+2026-03-10 17:09:22.916 [http-nio-8080-exec-4] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=18.0%, disk=45.73656925735441%, status=GREEN
+2026-03-10 17:09:23.534 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:09:27.361 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:09:32.445 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:09:37.471 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:09:42.504 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:09:48.485 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:09:54.506 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:10:00.492 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:10:06.490 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:10:12.492 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:10:18.484 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:10:22.312 [http-nio-8080-exec-2] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=400
+2026-03-10 17:10:22.315 [http-nio-8080-exec-2] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=38.0%, disk=45.73636414913418%, status=YELLOW
+2026-03-10 17:10:24.484 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:10:30.486 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:10:36.485 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:10:42.487 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:10:48.488 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:10:54.486 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:11:00.482 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:11:06.482 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:11:12.484 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:11:18.518 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:11:24.503 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:11:24.621 [http-nio-8080-exec-10] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=401
+2026-03-10 17:11:24.633 [http-nio-8080-exec-10] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=68.0%, disk=45.72405765592071%, status=YELLOW
+2026-03-10 17:11:30.489 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:11:36.487 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:11:42.489 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:11:48.491 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:11:54.509 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:12:00.521 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:12:06.494 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:12:12.496 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:12:18.506 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:12:23.239 [http-nio-8080-exec-5] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=402
+2026-03-10 17:12:23.240 [http-nio-8080-exec-5] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=45.0%, disk=45.728159820325196%, status=YELLOW
+2026-03-10 17:12:24.494 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:12:30.504 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:12:36.492 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:12:42.536 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:12:48.493 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:12:54.484 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:13:00.478 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:13:06.478 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:13:12.473 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:13:18.484 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:13:22.092 [http-nio-8080-exec-5] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=403
+2026-03-10 17:13:22.092 [http-nio-8080-exec-5] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=3.0%, disk=45.73595393269373%, status=GREEN
+2026-03-10 17:13:24.486 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:13:30.484 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:13:36.498 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:13:42.479 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:13:48.484 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:13:54.489 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:14:00.478 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:14:06.475 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:14:12.490 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:14:18.488 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:14:22.408 [http-nio-8080-exec-5] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=404
+2026-03-10 17:14:22.411 [http-nio-8080-exec-5] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=22.0%, disk=45.733492634051046%, status=GREEN
+2026-03-10 17:14:24.481 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:14:30.478 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:14:36.486 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:14:42.481 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:14:48.488 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:14:54.494 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:15:00.503 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:15:06.496 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:15:12.494 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:15:18.504 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:15:24.519 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:15:25.083 [http-nio-8080-exec-9] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=405
+2026-03-10 17:15:25.085 [http-nio-8080-exec-9] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=93.0%, disk=45.724672980581374%, status=YELLOW
+2026-03-10 17:15:30.505 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:15:36.486 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:15:42.486 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:15:48.492 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:15:54.482 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:16:00.517 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:16:06.497 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:16:12.491 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:16:18.475 [http-nio-8080-exec-3] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:16:23.055 [http-nio-8080-exec-9] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=406
+2026-03-10 17:16:23.056 [http-nio-8080-exec-9] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=27.0%, disk=45.73410795871172%, status=GREEN
+2026-03-10 17:16:24.485 [http-nio-8080-exec-6] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:16:30.480 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:16:36.490 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:16:42.487 [http-nio-8080-exec-4] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:16:49.971 [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication using Java 1.8.0_111 on DESKTOP-589AKUV with PID 24548 (C:\Users\zzh\Desktop\anti\demo\target\classes started by zzh in C:\Users\zzh\Desktop\anti\demo)
+2026-03-10 17:16:49.977 [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-10 17:16:54.036 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2026-03-10 17:16:54.049 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-10 17:16:54.056 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-10 17:16:54.056 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-03-10 17:16:54.320 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-10 17:16:54.321 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 4200 ms
+2026-03-10 17:16:59.035 [main] INFO  c.e.demo.monitor.alert.AlertService - [AlertService] 已注册 1 个告警通知渠道: LOG
+2026-03-10 17:16:59.994 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+2026-03-10 17:17:00.370 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-10 17:17:00.802 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-10 17:17:01.006 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-10 17:17:01.086 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2026-03-10 17:17:01.108 [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 12.332 seconds (JVM running for 13.44)
+2026-03-10 17:17:01.263 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-10 17:17:01.264 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-10 17:17:01.278 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 13 ms
+2026-03-10 17:17:01.445 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 8
+2026-03-10 17:17:01.465 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 8
+2026-03-10 17:17:01.492 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 24
+2026-03-10 17:17:01.511 [main] INFO  c.e.d.e.matcher.RegexMatcherCache - [Regex Cache] 正则缓存重建完成，规则数量: 0
+2026-03-10 17:17:01.515 [main] INFO  c.e.d.m.r.service.FilterRuleService - [RuleService] 匹配器重建完成
+2026-03-10 17:17:01.516 [main] INFO  com.example.demo.config.EngineConfig - [EngineConfig] 规则引擎初始化完成，规则已从 DB 加载
+2026-03-10 17:17:01.538 [http-nio-8080-exec-1] INFO  c.e.d.w.session.AgentSessionManager - [WS] Agent 上线: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, sessionId=e88f1395-3b4c-3cb3-589f-dd40209d6822
+2026-03-10 17:17:03.866 [http-nio-8080-exec-5] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:17:06.038 [http-nio-8080-exec-7] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:17:11.141 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:17:16.206 [http-nio-8080-exec-9] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:17:21.231 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:17:23.705 [http-nio-8080-exec-6] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=407
+2026-03-10 17:17:23.708 [http-nio-8080-exec-6] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=10.0%, disk=45.73369774227127%, status=GREEN
+2026-03-10 17:17:26.249 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:17:31.266 [http-nio-8080-exec-1] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:17:36.283 [http-nio-8080-exec-2] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:17:41.340 [http-nio-8080-exec-10] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:17:46.483 [http-nio-8080-exec-8] INFO  c.e.d.w.h.MonitorWebSocketHandler - [Monitor] 运营端断开: agentId=null
+2026-03-10 17:18:22.172 [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication using Java 1.8.0_111 on DESKTOP-589AKUV with PID 27164 (C:\Users\zzh\Desktop\anti\demo\target\classes started by zzh in C:\Users\zzh\Desktop\anti\demo)
+2026-03-10 17:18:22.180 [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-10 17:18:25.567 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2026-03-10 17:18:25.575 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-10 17:18:25.582 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-10 17:18:25.582 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-03-10 17:18:25.753 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-10 17:18:25.753 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3487 ms
+2026-03-10 17:18:29.372 [main] INFO  c.e.demo.monitor.alert.AlertService - [AlertService] 已注册 1 个告警通知渠道: LOG
+2026-03-10 17:18:30.516 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+2026-03-10 17:18:30.888 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-10 17:18:31.392 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-10 17:18:31.609 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-10 17:18:31.676 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2026-03-10 17:18:31.701 [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 10.134 seconds (JVM running for 11.052)
+2026-03-10 17:18:31.951 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 2
+2026-03-10 17:18:31.961 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 2
+2026-03-10 17:18:31.976 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 6
+2026-03-10 17:18:31.990 [main] INFO  c.e.d.e.matcher.RegexMatcherCache - [Regex Cache] 正则缓存重建完成，规则数量: 0
+2026-03-10 17:18:31.991 [main] INFO  c.e.d.m.r.service.FilterRuleService - [RuleService] 匹配器重建完成
+2026-03-10 17:18:31.991 [main] INFO  com.example.demo.config.EngineConfig - [EngineConfig] 规则引擎初始化完成，规则已从 DB 加载
+2026-03-10 17:18:35.030 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-10 17:18:35.031 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-10 17:18:35.041 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 9 ms
+2026-03-10 17:18:35.209 [http-nio-8080-exec-1] INFO  c.e.d.w.session.AgentSessionManager - [WS] Agent 上线: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, sessionId=8fa4464b-310f-c5dc-069f-258f461519a6
+2026-03-10 17:19:00.859 [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication using Java 1.8.0_111 on DESKTOP-589AKUV with PID 33580 (C:\Users\zzh\Desktop\anti\demo\target\classes started by zzh in C:\Users\zzh\Desktop\anti\demo)
+2026-03-10 17:19:00.865 [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-10 17:19:04.311 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2026-03-10 17:19:04.332 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-10 17:19:04.342 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-10 17:19:04.343 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-03-10 17:19:04.756 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-10 17:19:04.757 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3735 ms
+2026-03-10 17:19:10.255 [main] INFO  c.e.demo.monitor.alert.AlertService - [AlertService] 已注册 1 个告警通知渠道: LOG
+2026-03-10 17:19:11.210 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+2026-03-10 17:19:11.528 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-10 17:19:11.904 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-10 17:19:12.100 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-10 17:19:12.153 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2026-03-10 17:19:12.180 [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 12.281 seconds (JVM running for 12.871)
+2026-03-10 17:19:12.421 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 4
+2026-03-10 17:19:12.432 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 4
+2026-03-10 17:19:12.447 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 12
+2026-03-10 17:19:12.460 [main] INFO  c.e.d.e.matcher.RegexMatcherCache - [Regex Cache] 正则缓存重建完成，规则数量: 0
+2026-03-10 17:19:12.460 [main] INFO  c.e.d.m.r.service.FilterRuleService - [RuleService] 匹配器重建完成
+2026-03-10 17:19:12.461 [main] INFO  com.example.demo.config.EngineConfig - [EngineConfig] 规则引擎初始化完成，规则已从 DB 加载
+2026-03-10 17:19:16.447 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-10 17:19:16.447 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-10 17:19:16.455 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 8 ms
+2026-03-10 17:19:16.591 [http-nio-8080-exec-1] INFO  c.e.d.w.session.AgentSessionManager - [WS] Agent 上线: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, sessionId=3f011226-468f-5a55-addf-8788981f8604
+2026-03-10 17:19:22.687 [http-nio-8080-exec-5] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=408
+2026-03-10 17:19:22.691 [http-nio-8080-exec-5] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=0.0%, disk=45.73287730939037%, status=GREEN
+2026-03-10 17:20:22.375 [http-nio-8080-exec-8] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=409
+2026-03-10 17:20:22.377 [http-nio-8080-exec-8] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=37.0%, disk=45.73369774227127%, status=YELLOW
+2026-03-10 17:21:22.236 [http-nio-8080-exec-10] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=410
+2026-03-10 17:21:22.239 [http-nio-8080-exec-10] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=4.0%, disk=45.734825837482504%, status=GREEN
+2026-03-10 17:22:22.149 [http-nio-8080-exec-8] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=411
+2026-03-10 17:22:22.149 [http-nio-8080-exec-8] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=42.0%, disk=45.735441162143175%, status=YELLOW
+2026-03-10 17:23:21.988 [http-nio-8080-exec-5] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=412
+2026-03-10 17:23:21.988 [http-nio-8080-exec-5] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=4.0%, disk=45.735030945702725%, status=GREEN
+2026-03-10 17:24:22.280 [http-nio-8080-exec-1] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=413
+2026-03-10 17:24:22.280 [http-nio-8080-exec-1] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=62.0%, disk=45.73574882447352%, status=YELLOW
+2026-03-10 17:24:41.306 [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication using Java 1.8.0_111 on DESKTOP-589AKUV with PID 22980 (C:\Users\zzh\Desktop\anti\demo\target\classes started by zzh in C:\Users\zzh\Desktop\anti\demo)
+2026-03-10 17:24:41.313 [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-10 17:24:44.343 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2026-03-10 17:24:44.355 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-10 17:24:44.359 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-10 17:24:44.359 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-03-10 17:24:44.512 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-10 17:24:44.513 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3090 ms
+2026-03-10 17:24:51.675 [main] INFO  c.e.demo.monitor.alert.AlertService - [AlertService] 已注册 1 个告警通知渠道: LOG
+2026-03-10 17:24:52.394 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+2026-03-10 17:24:52.757 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-10 17:24:52.823 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2026-03-10 17:24:52.852 [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 12.259 seconds (JVM running for 13.098)
+2026-03-10 17:24:53.039 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-10 17:24:53.567 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-10 17:24:53.747 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 4
+2026-03-10 17:24:53.775 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 4
+2026-03-10 17:24:53.806 [main] INFO  c.e.d.e.matcher.AhoCorasickMatcher - [AC Matcher] AC 自动机重建完成，关键字数量: 12
+2026-03-10 17:24:53.828 [main] INFO  c.e.d.e.matcher.RegexMatcherCache - [Regex Cache] 正则缓存重建完成，规则数量: 0
+2026-03-10 17:24:53.829 [main] INFO  c.e.d.m.r.service.FilterRuleService - [RuleService] 匹配器重建完成
+2026-03-10 17:24:53.829 [main] INFO  com.example.demo.config.EngineConfig - [EngineConfig] 规则引擎初始化完成，规则已从 DB 加载
+2026-03-10 17:24:56.266 [http-nio-8080-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-10 17:24:56.267 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-10 17:24:56.280 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 13 ms
+2026-03-10 17:24:56.459 [http-nio-8080-exec-2] INFO  c.e.d.w.session.AgentSessionManager - [WS] Agent 上线: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, sessionId=ff05b824-3a35-cbd5-629a-b254c49c8bbe
+2026-03-10 17:25:22.403 [http-nio-8080-exec-4] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=414
+2026-03-10 17:25:22.407 [http-nio-8080-exec-4] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=0.0%, disk=45.7381075690061%, status=GREEN
+2026-03-10 17:26:22.865 [http-nio-8080-exec-3] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=415
+2026-03-10 17:26:22.867 [http-nio-8080-exec-3] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=37.0%, disk=45.73759479845553%, status=YELLOW
+2026-03-10 17:27:22.553 [http-nio-8080-exec-1] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=416
+2026-03-10 17:27:22.554 [http-nio-8080-exec-1] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=7.0%, disk=45.73246709294992%, status=GREEN
+2026-03-10 17:28:22.955 [http-nio-8080-exec-2] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=417
+2026-03-10 17:28:22.955 [http-nio-8080-exec-2] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=54.0%, disk=45.733082417610596%, status=YELLOW
+2026-03-10 17:29:22.204 [http-nio-8080-exec-10] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=418
+2026-03-10 17:29:22.204 [http-nio-8080-exec-10] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=1.0%, disk=45.73472328337239%, status=GREEN
+2026-03-10 17:30:22.146 [http-nio-8080-exec-9] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=419
+2026-03-10 17:30:22.146 [http-nio-8080-exec-9] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=21.0%, disk=45.73472328337239%, status=GREEN
+2026-03-10 17:31:23.109 [http-nio-8080-exec-8] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=420
+2026-03-10 17:31:23.109 [http-nio-8080-exec-8] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=33.0%, disk=45.73287730939037%, status=YELLOW
+2026-03-10 17:32:22.463 [http-nio-8080-exec-7] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=421
+2026-03-10 17:32:22.467 [http-nio-8080-exec-7] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=39.0%, disk=45.734005404601604%, status=YELLOW
+2026-03-10 17:33:22.627 [http-nio-8080-exec-6] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=422
+2026-03-10 17:33:22.627 [http-nio-8080-exec-6] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=18.0%, disk=45.735646270363404%, status=GREEN
+2026-03-10 17:34:22.636 [http-nio-8080-exec-5] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=423
+2026-03-10 17:34:22.636 [http-nio-8080-exec-5] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=30.0%, disk=45.734415621042054%, status=YELLOW
+2026-03-10 17:35:22.814 [http-nio-8080-exec-4] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=424
+2026-03-10 17:35:22.817 [http-nio-8080-exec-4] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=14.0%, disk=45.735030945702725%, status=GREEN
+2026-03-10 17:36:22.735 [http-nio-8080-exec-3] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=425
+2026-03-10 17:36:22.736 [http-nio-8080-exec-3] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=62.0%, disk=45.73328752583082%, status=YELLOW
+2026-03-10 17:37:23.090 [http-nio-8080-exec-1] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=426
+2026-03-10 17:37:23.090 [http-nio-8080-exec-1] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=25.0%, disk=45.73451817515217%, status=GREEN
+2026-03-10 17:38:22.420 [http-nio-8080-exec-2] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=427
+2026-03-10 17:38:22.420 [http-nio-8080-exec-2] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=63.0%, disk=45.73574882447352%, status=YELLOW
+2026-03-10 17:39:22.242 [http-nio-8080-exec-10] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=428
+2026-03-10 17:39:22.242 [http-nio-8080-exec-10] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=3.0%, disk=45.7364667032443%, status=GREEN
+2026-03-10 17:40:22.219 [http-nio-8080-exec-9] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=429
+2026-03-10 17:40:22.219 [http-nio-8080-exec-9] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=62.0%, disk=45.73287730939037%, status=YELLOW
+2026-03-10 17:41:22.293 [http-nio-8080-exec-8] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=430
+2026-03-10 17:41:22.294 [http-nio-8080-exec-8] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=6.0%, disk=45.73369774227127%, status=GREEN
+2026-03-10 17:42:23.595 [http-nio-8080-exec-7] INFO  c.e.d.m.m.service.MetricsService - [Metrics] 指标快照已入库: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, snapshotId=431
+2026-03-10 17:42:23.597 [http-nio-8080-exec-7] INFO  c.e.d.w.protocol.MessageDispatcher - [Dispatcher] 指标已更新: agentId=0E4B26F9FBFBD9B4BAD22032915F121C, cpu=65.0%, disk=45.734005404601604%, status=YELLOW

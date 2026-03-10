@@ -10,7 +10,8 @@ const router = createRouter({
         {
             path: '/',
             name: 'dashboard',
-            component: DashboardView
+            component: DashboardView,
+            alias: '/index.html'
         },
         {
             path: '/command',
@@ -26,6 +27,10 @@ const router = createRouter({
             path: '/logs',
             name: 'logs',
             component: LogsView
+        },
+        {
+            path: '/:pathMatch(.*)*',
+            redirect: '/'
         }
     ]
 })

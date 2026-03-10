@@ -8,6 +8,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.lang.NonNull;
 
 import java.net.URI;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class MonitorWebSocketHandler extends AbstractWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(@NonNull WebSocketSession session) throws Exception {
         String agentId = extractAgentId(session);
         if (agentId == null || agentId.isEmpty()) {
             session.close(CloseStatus.BAD_DATA.withReason("缺少 agentId 参数"));
@@ -50,7 +51,7 @@ public class MonitorWebSocketHandler extends AbstractWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull CloseStatus status) throws Exception {
         String agentId = getAgentId(session);
         if (agentId != null) {
             monitorSessionManager.unsubscribe(agentId, session);
@@ -59,7 +60,7 @@ public class MonitorWebSocketHandler extends AbstractWebSocketHandler {
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+    protected void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) throws Exception {
         // 运营端也可以通过此连接发送指令（未来扩展）
         // 目前忽略运营端发来的文本消息
         log.debug("[Monitor] 运营端发来消息(忽略): {}", message.getPayload());

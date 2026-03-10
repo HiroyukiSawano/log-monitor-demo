@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.lang.NonNull;
 
 /**
  * 消息分发器 — 根据信封中的 type 字段将消息路由到对应的处理逻辑
@@ -124,9 +125,9 @@ public class MessageDispatcher {
     }
 
     private void handleLogLine(String agentId, JsonNode payload, Long timestamp) {
-        String appName = payload.path("appName").asText();
-        String logPath = payload.path("logPath").asText();
-        String line = payload.path("line").asText();
+        String appName = payload.path("appName").asText("");
+        String logPath = payload.path("logPath").asText("");
+        String line = payload.path("line").asText("");
 
         // 1. 构建日志上下文
         LogContext context = LogContext.builder()
@@ -161,7 +162,7 @@ public class MessageDispatcher {
     /**
      * 向 Agent 回推日志过滤结果
      */
-    private void sendFilterResult(String agentId, FilterResult result, String logLine) {
+    private void sendFilterResult(String agentId, FilterResult result, @NonNull String logLine) {
         sessionManager.getSession(agentId).ifPresent(session -> {
             try {
                 java.util.Map<String, Object> response = new java.util.LinkedHashMap<>();

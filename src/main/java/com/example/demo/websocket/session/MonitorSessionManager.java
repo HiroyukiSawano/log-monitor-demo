@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+import org.springframework.lang.NonNull;
 
 import java.io.IOException;
 import java.util.Map;
@@ -55,7 +56,7 @@ public class MonitorSessionManager {
      *                   "SERVER_DOWN"(Server→Agent)
      * @param rawPayload 原始报文内容
      */
-    public void broadcast(String agentId, String direction, String rawPayload) {
+    public void broadcast(String agentId, String direction, @NonNull String rawPayload) {
         Set<WebSocketSession> sessions = subscriptions.get(agentId);
         if (sessions == null || sessions.isEmpty()) {
             return;

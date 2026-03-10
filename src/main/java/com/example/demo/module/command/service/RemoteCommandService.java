@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
+import org.springframework.lang.NonNull;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -52,7 +53,7 @@ public class RemoteCommandService {
      * @param content 原始 JSON 内容（原样发送到 Agent，其中应包含 cmdID）
      * @return 指令记录（含执行结果）
      */
-    public CommandRecord sendCommand(String agentId, String content) {
+    public CommandRecord sendCommand(String agentId, @NonNull String content) {
         // 1. 从 content 中提取 cmdID 和 func
         String cmdId = null;
         String func = null;
@@ -176,7 +177,7 @@ public class RemoteCommandService {
     /**
      * 透传原始 JSON 到 Agent
      */
-    private boolean sendRawContent(String agentId, String content) {
+    private boolean sendRawContent(String agentId, @NonNull String content) {
         return sessionManager.getSession(agentId).map(session -> {
             try {
                 session.sendMessage(new TextMessage(content));

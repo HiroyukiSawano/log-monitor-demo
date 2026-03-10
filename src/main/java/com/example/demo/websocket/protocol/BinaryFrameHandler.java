@@ -52,8 +52,8 @@ public class BinaryFrameHandler {
         byte[] bodyData = new byte[buffer.remaining()];
         buffer.get(bodyData);
 
-        log.info("[Binary] 收到分块: transferId={}, chunk={}/{}, size={}, last={}",
-                transferId, chunkIdx, totalChunks, bodyData.length, isLastChunk);
+        log.info("[Binary] 收到分块: transferId={}, dir={}, chunk={}/{}, size={}, last={}",
+                transferId, direction, chunkIdx, totalChunks, bodyData.length, isLastChunk);
 
         // 存储分块
         byte[][] chunks = transferBuffers.computeIfAbsent(transferId, k -> new byte[totalChunks][]);
