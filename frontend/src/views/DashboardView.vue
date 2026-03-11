@@ -56,13 +56,6 @@
           <div class="text-[22px] font-bold leading-none text-yellow">{{ alertsCount }}</div>
         </div>
       </div>
-      <div class="bg-surface border border-border rounded-lg p-3 flex-1 flex items-center gap-3">
-        <el-icon :size="24" class="text-red"><WarningFilled /></el-icon>
-        <div>
-          <div class="text-[11px] text-text2 mb-0.5">严重告警</div>
-          <div class="text-[22px] font-bold leading-none">{{ store.criticalAlertsCount }}</div>
-        </div>
-      </div>
     </div>
 
     <!-- Main Grid Area -->
