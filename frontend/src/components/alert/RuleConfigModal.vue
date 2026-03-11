@@ -100,35 +100,48 @@
               </div>
 
               <!-- Conditions in Group -->
-              <div class="flex flex-col gap-1.5">
-                <div v-for="(item, cIdx) in group.items" :key="cIdx" class="flex flex-wrap items-center gap-1 bg-surface border border-border rounded p-1.5 shadow-sm relative">
-                  <!-- Metric -->
-                  <select v-model="item.metricType" @change="onMetricChange(item)" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded min-w-[100px] outline-none text-text">
-                    <option v-for="opt in metricOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-                  </select>
-                  
-                  <!-- Target (e.g. Partition Name) -->
-                  <select v-if="item.metricType === 'DISK_PARTITION' && cachedPartitions.length" v-model="item.targetName" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-20 text-text">
-                    <option v-for="p in cachedPartitions" :key="p" :value="p">{{ p }}</option>
-                  </select>
-                  <input v-else-if="!['AGENT_OFFLINE', 'PROCESS_ABNORMAL'].includes(item.metricType)" v-model="item.targetName" placeholder="目标对象" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-16 text-text">
-
-                  <!-- Operator & Threshold -->
-                  <template v-if="!['PROCESS_ABNORMAL', 'AGENT_OFFLINE'].includes(item.metricType)">
-                    <select v-model="item.operator" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-14 text-text">
-                      <option v-for="op in opOptions" :key="op.value" :value="op.value">{{ op.label }}</option>
+              <div class="flex flex-col gap-1.5 align-middle relative">
+                <template v-for="(item, cIdx) in group.items" :key="cIdx">
+                  <div class="flex flex-wrap items-center gap-1 bg-surface border border-border rounded p-1.5 shadow-sm relative z-10 w-fit">
+                    <!-- Metric -->
+                    <select v-model="item.metricType" @change="onMetricChange(item)" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded min-w-[100px] outline-none text-text">
+                      <option v-for="opt in metricOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                     </select>
-                    <input v-model.number="item.threshold" type="number" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-14 text-text">
-                  </template>
+                    
+                    <!-- Target (e.g. Partition Name) -->
+                    <select v-if="item.metricType === 'DISK_PARTITION' && cachedPartitions.length" v-model="item.targetName" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-20 text-text">
+                      <option v-for="p in cachedPartitions" :key="p" :value="p">{{ p }}</option>
+                    </select>
+                    <input v-else-if="!['AGENT_OFFLINE', 'PROCESS_ABNORMAL'].includes(item.metricType)" v-model="item.targetName" placeholder="目标对象" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-16 text-text">
 
-                  <!-- Duration -->
-                  <div class="flex items-center gap-1 border-l border-border pl-1 ml-1" title="持续时间(0=即时触发)">
-                    <el-icon class="text-text2 text-[10px]"><Timer /></el-icon>
-                    <input v-model.number="item.durationSec" type="number" placeholder="秒数" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-12 text-center text-text">
+                    <!-- Operator & Threshold -->
+                    <template v-if="!['PROCESS_ABNORMAL', 'AGENT_OFFLINE'].includes(item.metricType)">
+                      <select v-model="item.operator" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-14 text-text">
+                        <option v-for="op in opOptions" :key="op.value" :value="op.value">{{ op.label }}</option>
+                      </select>
+                      <input v-model.number="item.threshold" type="number" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-14 text-text">
+                    </template>
+
+                    <!-- Duration -->
+                    <div class="flex items-center gap-1 border-l border-border pl-1 ml-1" title="持续时间(0=即时触发)">
+                      <el-icon class="text-text2 text-[10px]"><Timer /></el-icon>
+                      <input v-model.number="item.durationSec" type="number" placeholder="秒数" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-12 text-center text-text">
+                    </div>
+
+                    <button @click="removeGroupItem(group, cIdx)" class="text-red hover:text-[#ff8a7a] ml-auto px-1 opacity-50 hover:opacity-100"><el-icon size="12"><Close /></el-icon></button>
                   </div>
 
-                  <button @click="removeGroupItem(group, cIdx)" class="text-red hover:text-[#ff8a7a] ml-auto px-1 opacity-50 hover:opacity-100"><el-icon size="12"><Close /></el-icon></button>
-                </div>
+                  <!-- Logical Operator Separator -->
+                  <div 
+                    v-if="cIdx < group.items.length - 1" 
+                    class="ml-6 -my-1.5 z-0 flex items-center gap-2"
+                  >
+                    <div class="w-px h-5 bg-border"></div>
+                    <span class="text-[9px] font-bold px-1.5 py-[1px] rounded border border-border bg-surface text-cyan opacity-80 shadow-sm leading-none flex items-center justify-center">
+                      {{ group.logic === 'AND' ? 'AND' : 'OR' }}
+                    </span>
+                  </div>
+                </template>
               </div>
 
               <!-- Group Divider visual -->
