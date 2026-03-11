@@ -88,12 +88,12 @@
             <div 
               v-for="disk in partitionList" 
               :key="disk.mountPoint"
-              class="flex items-center gap-3 px-3 py-2 bg-bg border border-border rounded-md"
+              class="flex flex-wrap items-center gap-x-3 gap-y-1.5 px-3 py-2 bg-bg border border-border rounded-md"
             >
-              <div class="text-[13px] font-bold min-w-[30px] max-w-[120px] text-cyan truncate" :title="disk.mountPoint">
-                {{ disk.mountPoint }}:
+              <div class="text-[13px] font-bold min-w-[30px] max-w-[150px] text-cyan truncate" :title="disk.mountPoint">
+                {{ disk.mountPoint }}
               </div>
-              <div class="flex-1">
+              <div class="flex-1 min-w-[120px]">
                 <div class="h-2 bg-surface2 rounded w-full overflow-hidden">
                   <div 
                     class="h-full rounded transition-all duration-500"
@@ -102,7 +102,7 @@
                   ></div>
                 </div>
               </div>
-              <div class="text-[10px] text-text2 whitespace-nowrap w-[90px] text-right">
+              <div class="text-[10px] text-text2 whitespace-nowrap lg:w-[130px] lg:text-right shrink-0">
                 {{ formatSize(disk.used) }} / {{ formatSize(disk.total) }} <span class="font-bold ml-1">({{ disk.percent }}%)</span>
               </div>
             </div>
@@ -131,6 +131,19 @@
           </div>
         </div>
 
+        <!-- Filter Rules -->
+        <div class="mb-6">
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-text2 mb-3 flex items-center gap-1.5">
+            <el-icon><Document /></el-icon> 日志过滤规则
+          </h3>
+          <button 
+            @click="openFilterRuleModal"
+            class="w-full py-2.5 bg-surface2 border border-dashed border-border text-text2 rounded-lg text-xs hover:border-accent hover:text-text transition-all"
+          >
+            <el-icon class="mr-1"><Setting /></el-icon> 管理过滤规则 ({{ agent?.id }})
+          </button>
+        </div>
+
         <!-- Alert Rules -->
         <div class="mb-6">
           <h3 class="text-xs font-semibold uppercase tracking-wide text-text2 mb-3 flex items-center gap-1.5">
@@ -140,18 +153,18 @@
             @click="openRuleModal"
             class="w-full py-2.5 bg-surface2 border border-dashed border-border text-text2 rounded-lg text-xs hover:border-accent hover:text-text transition-all"
           >
-            <el-icon class="mr-1"><Tools /></el-icon> 管理告警规则 ({{ agent.id }})
+            <el-icon class="mr-1"><Tools /></el-icon> 管理告警规则 ({{ agent?.id }})
           </button>
         </div>
         
-        <!-- Error Logs Timeline -->
+        <!-- Hit Logs Timeline -->
         <div class="mb-2">
           <h3 class="text-xs font-semibold uppercase tracking-wide text-text2 mb-3 flex items-center gap-1.5">
-            <el-icon><Warning /></el-icon> 近期异常日志 (最近50条)
+            <el-icon><Warning /></el-icon> 近期命中日志 (最近50条)
           </h3>
           <div class="flex flex-col gap-2 relative">
              <div v-if="errorLogs.length === 0" class="text-center py-6 text-text2 text-xs border border-border rounded-lg bg-bg/50">
-               暂无异常日志 ✨
+               暂无命中日志 ✨
              </div>
              
              <div 
@@ -165,9 +178,10 @@
                <div class="flex items-center gap-2 mb-1 flex-wrap">
                  <span class="px-1.5 py-[2px] rounded uppercase font-bold text-[9px]" :class="log.level === 'CRITICAL' ? 'bg-red/20 text-red' : 'bg-yellow/20 text-yellow'">{{ log.level }}</span>
                  <span class="text-text2 opacity-80" v-if="log.appName">[{{ log.appName }}]</span>
-                 <span class="text-accent ml-1 font-semibold">{{ log.matchedRuleName }}</span>
+                 <span class="text-accent ml-1 font-semibold border-b border-accent/30 border-dashed" title="匹配规则名称">{{ log.matchedRuleName }}</span>
+                 <span v-if="log.matchedKeyword" class="text-[10px] text-cyan bg-cyan/10 px-1 rounded ml-1" title="命中关键字">匹配: {{ log.matchedKeyword }}</span>
                </div>
-               <div class="font-mono text-[10px] break-all max-h-[80px] overflow-y-auto text-text/90 select-text">
+               <div class="font-mono text-[10px] break-all max-h-[120px] overflow-y-auto text-text/90 select-text bg-surface2 p-1.5 rounded mt-1.5 border border-border/50">
                  {{ log.logContent }}
                </div>
              </div>
@@ -179,6 +193,7 @@
   </el-drawer>
 
   <RuleConfigModal v-model:visible="showRuleModal" :agent-id="agent?.id" />
+  <FilterRuleConfigModal v-model:visible="showFilterRuleModal" :agent-id="agent?.id" />
 </template>
 
 <script setup>
@@ -186,6 +201,7 @@ import { computed, ref, watch } from 'vue'
 import { Close, Monitor, Cpu, DataBoard, Document, Setting, Tools, Warning } from '@element-plus/icons-vue'
 import { useMonitorStore } from '../../stores/monitorStore'
 import RuleConfigModal from '../alert/RuleConfigModal.vue'
+import FilterRuleConfigModal from '../alert/FilterRuleConfigModal.vue'
 
 const store = useMonitorStore()
 
@@ -199,6 +215,7 @@ const drawerVisible = computed({
 const agent = computed(() => store.activeAgent)
 
 const showRuleModal = ref(false)
+const showFilterRuleModal = ref(false)
 
 const loading = ref(false)
 const deepDetails = ref(null)
@@ -239,6 +256,10 @@ async function loadDetails(agentId) {
 
 function openRuleModal() {
   showRuleModal.value = true
+}
+
+function openFilterRuleModal() {
+  showFilterRuleModal.value = true
 }
 
 function parseMB(str) {

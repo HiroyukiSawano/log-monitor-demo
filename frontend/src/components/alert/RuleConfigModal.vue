@@ -174,7 +174,9 @@ const metricOptions = [
   { value: 'DISK_USAGE', label: '总磁盘使用率(%)', numeric: true },
   { value: 'DISK_PARTITION', label: '分区可用空间(MB)', numeric: true },
   { value: 'PROCESS_ABNORMAL', label: '进程异常', numeric: false },
-  { value: 'AGENT_OFFLINE', label: '节点离线', numeric: false }
+  { value: 'AGENT_OFFLINE', label: '节点离线', numeric: false },
+  { value: 'LOG_HIT_CRITICAL', label: 'CRITICAL命中数', numeric: true },
+  { value: 'LOG_HIT_TOTAL', label: '日志命中总数', numeric: true }
 ]
 
 const opOptions = [
@@ -350,7 +352,7 @@ function formatConditions(jsonStr) {
     const groups = expr.groups || []
     
     const labels = {
-        CPU_USAGE: 'CPU', RAM_USAGE: '内存', DISK_USAGE: '磁盘', DISK_PARTITION: '分区', PROCESS_ABNORMAL: '进程异常', AGENT_OFFLINE: '离线'
+        CPU_USAGE: 'CPU', RAM_USAGE: '内存', DISK_USAGE: '磁盘', DISK_PARTITION: '分区', PROCESS_ABNORMAL: '进程异常', AGENT_OFFLINE: '离线', LOG_HIT_CRITICAL: 'CRITICAL命中', LOG_HIT_TOTAL: '命中总数'
     }
     const ops = { GT: '>', GTE: '>=', LT: '<', LTE: '<=', EQ: '=' }
     
