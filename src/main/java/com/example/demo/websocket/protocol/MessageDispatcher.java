@@ -9,6 +9,7 @@ import com.example.demo.module.command.service.RemoteCommandService;
 import com.example.demo.module.loghit.service.LogHitService;
 import com.example.demo.module.metrics.entity.MetricsSnapshot;
 import com.example.demo.module.metrics.service.MetricsService;
+import com.example.demo.module.rule.service.FilterRuleService;
 import com.example.demo.monitor.alert.AlertService;
 import com.example.demo.monitor.health.HealthEvaluator;
 import com.example.demo.monitor.health.ServerHealthState;
@@ -28,7 +29,7 @@ public class MessageDispatcher {
 
     private final AgentSessionManager sessionManager;
     private final ObjectMapper objectMapper;
-    private final LogFilterChain logFilterChain;
+    private final FilterRuleService filterRuleService;
     private final HealthEvaluator healthEvaluator;
     private final AlertService alertService;
     private final RemoteCommandService remoteCommandService;
@@ -37,7 +38,7 @@ public class MessageDispatcher {
 
     public MessageDispatcher(AgentSessionManager sessionManager,
             ObjectMapper objectMapper,
-            LogFilterChain logFilterChain,
+            FilterRuleService filterRuleService,
             HealthEvaluator healthEvaluator,
             AlertService alertService,
             RemoteCommandService remoteCommandService,
@@ -45,7 +46,7 @@ public class MessageDispatcher {
             MetricsService metricsService) {
         this.sessionManager = sessionManager;
         this.objectMapper = objectMapper;
-        this.logFilterChain = logFilterChain;
+        this.filterRuleService = filterRuleService;
         this.healthEvaluator = healthEvaluator;
         this.alertService = alertService;
         this.remoteCommandService = remoteCommandService;
@@ -138,8 +139,9 @@ public class MessageDispatcher {
                 .timestamp(timestamp != null ? timestamp : System.currentTimeMillis())
                 .build();
 
-        // 2. 送入过滤链
-        FilterResult result = logFilterChain.execute(context);
+        // 2. 送入过滤链（按 Agent 获取独立的过滤链）
+        LogFilterChain filterChain = filterRuleService.getFilterChainForAgent(agentId);
+        FilterResult result = filterChain.execute(context);
 
         // 3. 回推过滤结果到 Agent（调试用）
         sendFilterResult(agentId, result, line);

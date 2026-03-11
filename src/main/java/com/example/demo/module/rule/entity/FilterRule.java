@@ -16,6 +16,9 @@ public class FilterRule {
     @TableId(type = IdType.AUTO)
     private Long id;
 
+    /** 绑定的采集端 ID（'*' 表示全局生效） */
+    private String agentId;
+
     /** 规则类型：CRITICAL(强关注) / EXCLUDE(排除) / BASIC(基础特征) */
     private String ruleType;
 

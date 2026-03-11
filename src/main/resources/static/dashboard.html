@@ -855,6 +855,37 @@
             margin-top: 8px;
         }
 
+        /* Filter Rule Tags */
+        .ftag {
+            display: inline-block;
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .ftag-critical {
+            background: rgba(225, 112, 85, 0.2);
+            color: var(--red);
+        }
+
+        .ftag-exclude {
+            background: rgba(0, 184, 148, 0.2);
+            color: var(--green);
+        }
+
+        .ftag-basic {
+            background: rgba(253, 203, 110, 0.2);
+            color: var(--yellow);
+        }
+
+        .ftag-global {
+            background: rgba(116, 185, 255, 0.15);
+            color: var(--blue);
+            font-size: 9px;
+            margin-left: 4px;
+        }
+
         /* Scrollbar style */
         ::-webkit-scrollbar {
             width: 6px;
@@ -1246,6 +1277,14 @@
                 </div>`;
             }
 
+            // ---- Filter Rules Button ----
+            html += `<div class="detail-section">
+                <h3>📋 日志过滤规则</h3>
+                <button class="btn-add-rule" onclick="openFilterRuleModal('${escapeHtml(d.agentId)}')">
+                    🔧 管理过滤规则 (${escapeHtml(d.agentId ? d.agentId.substring(0, 12) + '…' : '')})
+                </button>
+            </div>`;
+
             // ---- Alert Rules Button ----
             html += `<div class="detail-section">
                 <h3>⚙️ 告警规则</h3>
@@ -1254,17 +1293,18 @@
                 </button>
             </div>`;
 
-            // ---- Error Logs ----
+            // ---- Hit Logs ----
             html += `<div class="detail-section">
-                <h3>🚨 错误日志 (最近 50 条)</h3>
+                <h3>🚨 命中日志 (最近 50 条)</h3>
                 <div class="log-timeline" id="logTimeline">
-                    ${logs.length === 0 ? '<div style="padding:16px;text-align:center;color:var(--text2);font-size:12px;">暂无错误日志 ✨</div>' :
+                    ${logs.length === 0 ? '<div style="padding:16px;text-align:center;color:var(--text2);font-size:12px;">暂无命中日志 ✨</div>' :
                     logs.map(l => `<div class="log-row">
                         <div class="log-time">${l.createTime ? new Date(l.createTime).toLocaleString('zh-CN', { hour12: false }) : '—'}</div>
                         <span class="log-level ${l.level}">${l.level}</span>
                         <span style="font-size:11px;color:var(--text2);">[${escapeHtml(l.appName || '—')}]</span>
                         <span style="font-size:11px;margin-left:4px;">${escapeHtml(l.matchedRuleName || '')}</span>
-                        <div class="log-content">${escapeHtml((l.logContent || '').substring(0, 200))}</div>
+                        <span style="font-size:10px;color:var(--cyan);margin-left:4px;">关键字: ${escapeHtml(l.matchedKeyword || '')}</span>
+                        <div class="log-content">${escapeHtml((l.logContent || '').substring(0, 300))}</div>
                     </div>`).join('')}
                 </div>
             </div>`;
@@ -1366,7 +1406,7 @@
                     container.innerHTML = '<div style="padding:16px;color:var(--text2);font-size:11px;text-align:center;">暂无规则，点击下方添加</div>';
                     return;
                 }
-                const TL = { CPU_USAGE: 'CPU', RAM_USAGE: 'RAM', DISK_USAGE: '磁盘', DISK_PARTITION: '分区', PROCESS_ABNORMAL: '进程异常', AGENT_OFFLINE: '离线' };
+                const TL = { CPU_USAGE: 'CPU', RAM_USAGE: 'RAM', DISK_USAGE: '磁盘', DISK_PARTITION: '分区', PROCESS_ABNORMAL: '进程异常', AGENT_OFFLINE: '离线', LOG_HIT_CRITICAL: 'CRITICAL命中', LOG_HIT_TOTAL: '命中总数' };
                 const OL = { GT: '>', GTE: '≥', LT: '<', LTE: '≤', EQ: '=' };
                 const NN = ['PROCESS_ABNORMAL', 'AGENT_OFFLINE'];
 
@@ -1415,7 +1455,9 @@
             { value: 'DISK_USAGE', label: '总磁盘使用率', numeric: true },
             { value: 'DISK_PARTITION', label: '磁盘分区(可用MB)', numeric: true },
             { value: 'PROCESS_ABNORMAL', label: '进程异常', numeric: false },
-            { value: 'AGENT_OFFLINE', label: 'Agent离线', numeric: false }
+            { value: 'AGENT_OFFLINE', label: 'Agent离线', numeric: false },
+            { value: 'LOG_HIT_CRITICAL', label: 'CRITICAL命中数', numeric: true },
+            { value: 'LOG_HIT_TOTAL', label: '日志命中总数', numeric: true }
         ];
         const OP_OPTIONS = [
             { value: 'GT', label: '> 大于' }, { value: 'GTE', label: '≥ 大于等于' },
@@ -1620,6 +1662,85 @@
             loadRules(ruleModalAgentId);
         }
 
+        // ========== Filter Rule Modal ==========
+        let filterRuleModalAgentId = null;
+
+        async function openFilterRuleModal(agentId) {
+            filterRuleModalAgentId = agentId;
+            document.getElementById('filterRuleModalTitle').textContent = '日志过滤规则 — ' + (agentId.length > 12 ? agentId.substring(0, 12) + '…' : agentId);
+            document.getElementById('filterRuleModal').classList.add('show');
+            document.getElementById('addFilterRuleForm').style.display = 'none';
+            loadFilterRules(agentId);
+        }
+
+        function closeFilterRuleModal() {
+            document.getElementById('filterRuleModal').classList.remove('show');
+            filterRuleModalAgentId = null;
+        }
+
+        async function loadFilterRules(agentId) {
+            const container = document.getElementById('filterRuleListContainer');
+            container.innerHTML = '<div style="padding:10px;color:var(--text2);font-size:11px;text-align:center;">加载中…</div>';
+            try {
+                const resp = await fetch(`${getApiBase()}/api/rules?agentId=${encodeURIComponent(agentId)}`);
+                const result = await resp.json();
+                const rules = (result.code === 200 ? result.data : []) || [];
+                if (rules.length === 0) {
+                    container.innerHTML = '<div style="padding:16px;color:var(--text2);font-size:11px;text-align:center;">暂无过滤规则，点击下方添加</div>';
+                    return;
+                }
+                container.innerHTML = rules.map(r => {
+                    const typeClass = r.ruleType === 'CRITICAL' ? 'ftag-critical' : r.ruleType === 'EXCLUDE' ? 'ftag-exclude' : 'ftag-basic';
+                    const isGlobal = r.agentId === '*' || !r.agentId;
+                    const globalTag = isGlobal ? '<span class="ftag ftag-global">全局</span>' : '';
+                    return `<div class="rule-item">
+                        <span class="ftag ${typeClass}" style="flex-shrink:0">${r.ruleType}</span>
+                        <div class="rule-info">
+                            <div class="rule-name">${escapeHtml(r.ruleName || '')}${globalTag}</div>
+                            <div class="rule-desc">${escapeHtml(r.matchMode || '')} ▸ <code style="font-size:10px;color:var(--cyan);">${escapeHtml(r.keyword || '')}</code> · ${r.enabled ? '✅' : '❌'}</div>
+                        </div>
+                        ${!isGlobal ? `<button class="btn-del" onclick="deleteFilterRule(${r.id})" title="删除">🗑</button>` : ''}
+                    </div>`;
+                }).join('');
+            } catch (e) {
+                container.innerHTML = `<div style="padding:10px;color:var(--red);font-size:11px;">加载失败: ${e.message}</div>`;
+            }
+        }
+
+        function showAddFilterRuleForm() {
+            document.getElementById('addFilterRuleForm').style.display = 'block';
+            document.getElementById('frRuleName').value = '';
+            document.getElementById('frKeyword').value = '';
+        }
+
+        async function submitNewFilterRule() {
+            const rule = {
+                agentId: filterRuleModalAgentId,
+                ruleType: document.getElementById('frRuleType').value,
+                ruleName: document.getElementById('frRuleName').value || '未命名规则',
+                keyword: document.getElementById('frKeyword').value,
+                matchMode: document.getElementById('frMatchMode').value,
+                enabled: true,
+                priority: 0
+            };
+            if (!rule.keyword) { alert('关键字不能为空'); return; }
+            try {
+                await fetch(`${getApiBase()}/api/rules`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(rule)
+                });
+                document.getElementById('addFilterRuleForm').style.display = 'none';
+                loadFilterRules(filterRuleModalAgentId);
+            } catch (e) { alert('创建失败: ' + e.message); }
+        }
+
+        async function deleteFilterRule(id) {
+            if (!confirm('确定删除此过滤规则？')) return;
+            await fetch(`${getApiBase()}/api/rules/${id}`, { method: 'DELETE' });
+            loadFilterRules(filterRuleModalAgentId);
+        }
+
         // ========== Init ==========
         (function () {
             const h = document.getElementById('apiHost');
@@ -1670,6 +1791,51 @@
                         <button class="btn-secondary"
                             onclick="document.getElementById('addRuleForm').style.display='none'">取消</button>
                         <button class="btn-primary" onclick="submitNewRule()">创建规则</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Rule Configuration Modal -->
+    <div class="modal-overlay" id="filterRuleModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="filterRuleModalTitle">日志过滤规则</h2>
+                <button class="btn-close" onclick="closeFilterRuleModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="rule-list" id="filterRuleListContainer"></div>
+                <button class="btn-add-rule" onclick="showAddFilterRuleForm()">+ 添加过滤规则</button>
+                <div class="add-rule-form" id="addFilterRuleForm" style="display:none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>规则类型</label>
+                            <select id="frRuleType">
+                                <option value="CRITICAL">🔴 CRITICAL 强关注</option>
+                                <option value="EXCLUDE">✅ EXCLUDE 排除</option>
+                                <option value="BASIC">🟡 BASIC 基础特征</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>匹配模式</label>
+                            <select id="frMatchMode">
+                                <option value="CONTAINS">CONTAINS 包含</option>
+                                <option value="REGEX">REGEX 正则</option>
+                                <option value="STARTS_WITH">STARTS_WITH</option>
+                                <option value="ENDS_WITH">ENDS_WITH</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>规则名称</label><input id="frRuleName" placeholder="如: 数据库超时"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>匹配关键字</label><input id="frKeyword" placeholder="如: 调用第三方接口超时"></div>
+                    </div>
+                    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
+                        <button class="btn-secondary" onclick="document.getElementById('addFilterRuleForm').style.display='none'">取消</button>
+                        <button class="btn-primary" onclick="submitNewFilterRule()">创建规则</button>
                     </div>
                 </div>
             </div>

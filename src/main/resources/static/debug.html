@@ -421,6 +421,7 @@
             <div class="panel-header">
                 📋 过滤规则管理
                 <div class="btn-group">
+                    <input type="text" id="filterAgentId" placeholder="按 Agent 过滤" style="width:120px;font-size:11px;padding:3px 6px;">
                     <button class="btn btn-primary btn-sm" onclick="loadRules()">刷新</button>
                     <button class="btn btn-warning btn-sm" onclick="rebuildMatchers()">重建匹配器</button>
                 </div>
@@ -428,6 +429,7 @@
             <div class="panel-body">
                 <!-- Add Rule Form -->
                 <div class="rule-form" id="ruleForm">
+                    <input type="text" id="ruleAgentId" value="*" placeholder="Agent ID (* = 全局)">
                     <select id="ruleType">
                         <option value="CRITICAL">CRITICAL 强关注</option>
                         <option value="EXCLUDE">EXCLUDE 排除</option>
@@ -450,6 +452,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Agent</th>
                             <th>类型</th>
                             <th>名称</th>
                             <th>关键字</th>
@@ -656,15 +659,20 @@
 
         async function loadRules() {
             try {
-                const resp = await fetch(getApiBase());
+                const filterAgent = (document.getElementById('filterAgentId').value || '').trim();
+                let url = getApiBase();
+                if (filterAgent) url += `?agentId=${encodeURIComponent(filterAgent)}`;
+                const resp = await fetch(url);
                 const result = await resp.json();
                 const rules = result.data || [];
                 const tbody = document.getElementById('rulesTable');
                 tbody.innerHTML = '';
                 rules.forEach(r => {
                     const typeClass = r.ruleType === 'CRITICAL' ? 'tag-critical' : r.ruleType === 'EXCLUDE' ? 'tag-exclude' : 'tag-basic';
+                    const agentLabel = (r.agentId === '*' || !r.agentId) ? '<span style="color:var(--text2)">全局</span>' : escapeHtml(r.agentId);
                     tbody.innerHTML += `<tr>
                         <td>${r.id}</td>
+                        <td>${agentLabel}</td>
                         <td><span class="tag ${typeClass}">${r.ruleType}</span></td>
                         <td>${r.ruleName || ''}</td>
                         <td style="font-family:monospace;font-size:11px">${escapeHtml(r.keyword || '')}</td>
@@ -681,6 +689,7 @@
 
         async function addRule() {
             const rule = {
+                agentId: document.getElementById('ruleAgentId').value || '*',
                 ruleType: document.getElementById('ruleType').value,
                 ruleName: document.getElementById('ruleName').value,
                 keyword: document.getElementById('ruleKeyword').value,
@@ -692,7 +701,7 @@
             try {
                 const resp = await fetch(getApiBase(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(rule) });
                 const result = await resp.json();
-                addLog('info', 'API', `规则已添加: id=${result.data?.id}`);
+                addLog('info', 'API', `规则已添加: id=${result.data?.id}, agentId=${rule.agentId}`);
                 document.getElementById('ruleName').value = '';
                 document.getElementById('ruleKeyword').value = '';
                 loadRules();

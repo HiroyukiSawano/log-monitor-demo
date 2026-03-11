@@ -8,6 +8,7 @@ import com.example.demo.module.alert.entity.AlertRule;
 import com.example.demo.module.alert.entity.ConditionGroup;
 import com.example.demo.module.alert.mapper.AlertEventMapper;
 import com.example.demo.module.alert.service.AlertRuleService;
+import com.example.demo.module.loghit.service.LogHitService;
 import com.example.demo.module.metrics.entity.DiskPartition;
 import com.example.demo.module.metrics.entity.MetricsSnapshot;
 import com.example.demo.module.metrics.entity.ProcessStatus;
@@ -29,6 +30,7 @@ public class AlertService {
 
     private final AlertRuleService ruleService;
     private final AlertEventMapper eventMapper;
+    private final LogHitService logHitService;
     private final List<AlertChannel> channels;
 
     /** 冷却记录: key = "ruleId:agentId", value = 上次触发时间 */
@@ -37,11 +39,17 @@ public class AlertService {
     /** 持续条件追踪: key = "agentId:ruleId:gIdx:cIdx", value = 首次连续满足时间戳(ms) */
     private final Map<String, Long> conditionFirstMetMap = new ConcurrentHashMap<>();
 
+    /** 日志命中条件使用的 metricType 集合 */
+    private static final Set<String> LOG_HIT_TYPES = new HashSet<>(Arrays.asList(
+            "LOG_HIT_CRITICAL", "LOG_HIT_TOTAL"));
+
     public AlertService(AlertRuleService ruleService,
             AlertEventMapper eventMapper,
+            LogHitService logHitService,
             List<AlertChannel> channels) {
         this.ruleService = ruleService;
         this.eventMapper = eventMapper;
+        this.logHitService = logHitService;
         this.channels = channels != null ? channels : Collections.emptyList();
         log.info("[AlertService] 已注册 {} 个告警通知渠道: {}",
                 this.channels.size(),
@@ -197,7 +205,12 @@ public class AlertService {
      */
     private ConditionResult evaluateCondition(String agentId, Long ruleId, int gIdx, int cIdx,
                                               AlertCondition cond, MetricsSnapshot snapshot) {
-        ConditionResult instantResult = evaluateConditionInstant(cond, snapshot);
+        // 日志命中条件：durationSec 作为时间窗口，直接在 instant 级别处理
+        if (LOG_HIT_TYPES.contains(cond.getMetricType())) {
+            return evaluateConditionInstant(agentId, cond, snapshot);
+        }
+
+        ConditionResult instantResult = evaluateConditionInstant(agentId, cond, snapshot);
 
         int durationSec = cond.getDurationSec() != null ? cond.getDurationSec() : 0;
         if (durationSec <= 0) {
@@ -252,7 +265,7 @@ public class AlertService {
     /**
      * 评估单个条件（瞬时判定，不考虑持续时间）
      */
-    private ConditionResult evaluateConditionInstant(AlertCondition cond, MetricsSnapshot snapshot) {
+    private ConditionResult evaluateConditionInstant(String agentId, AlertCondition cond, MetricsSnapshot snapshot) {
         String metricType = cond.getMetricType();
         double actual;
         String actualStr;
@@ -321,6 +334,31 @@ public class AlertService {
 
             case "AGENT_OFFLINE":
                 return new ConditionResult(false, metricType, "在线", "");
+
+            // ---- 日志命中条件（durationSec 作为时间窗口） ----
+            case "LOG_HIT_CRITICAL": {
+                int windowSec = cond.getDurationSec() != null ? cond.getDurationSec() : 300;
+                long count = logHitService.countRecentByAgent(agentId, "CRITICAL", windowSec);
+                actualStr = count + "次";
+                if (compare(count, op, threshold)) {
+                    String window = formatDuration(windowSec);
+                    return new ConditionResult(true, metricType, actualStr,
+                            String.format("CRITICAL命中 %s %s%.0f (%s内)", actualStr, opLabel(op), threshold, window));
+                }
+                return new ConditionResult(false, metricType, actualStr, "");
+            }
+
+            case "LOG_HIT_TOTAL": {
+                int windowSec = cond.getDurationSec() != null ? cond.getDurationSec() : 300;
+                long count = logHitService.countRecentByAgent(agentId, null, windowSec);
+                actualStr = count + "次";
+                if (compare(count, op, threshold)) {
+                    String window = formatDuration(windowSec);
+                    return new ConditionResult(true, metricType, actualStr,
+                            String.format("日志命中总数 %s %s%.0f (%s内)", actualStr, opLabel(op), threshold, window));
+                }
+                return new ConditionResult(false, metricType, actualStr, "");
+            }
 
             default:
                 return new ConditionResult(false, metricType, "N/A", "");

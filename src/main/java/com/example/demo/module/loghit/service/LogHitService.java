@@ -91,4 +91,24 @@ public class LogHitService {
                 .eq(LogHitRecord::getLevel, level);
         return logHitRecordMapper.selectCount(wrapper);
     }
+
+    /**
+     * 统计最近 sinceSec 秒内指定 Agent 的命中数量
+     *
+     * @param agentId  采集端 ID
+     * @param level    可选，按级别过滤 (CRITICAL / UNKNOWN_ERROR)，null 表示所有级别
+     * @param sinceSec 时间窗口（秒），0 或负数表示不限时间
+     */
+    public long countRecentByAgent(String agentId, String level, int sinceSec) {
+        LambdaQueryWrapper<LogHitRecord> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(LogHitRecord::getAgentId, agentId);
+        if (level != null && !level.isEmpty()) {
+            wrapper.eq(LogHitRecord::getLevel, level);
+        }
+        if (sinceSec > 0) {
+            Date since = new Date(System.currentTimeMillis() - sinceSec * 1000L);
+            wrapper.ge(LogHitRecord::getCreateTime, since);
+        }
+        return logHitRecordMapper.selectCount(wrapper);
+    }
 }

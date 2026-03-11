@@ -20,9 +20,12 @@ public class FilterRuleController {
         this.filterRuleService = filterRuleService;
     }
 
-    /** 查询所有规则 */
+    /** 查询所有规则，支持可选 agentId 过滤 */
     @GetMapping
-    public Result<List<FilterRule>> list() {
+    public Result<List<FilterRule>> list(@RequestParam(required = false) String agentId) {
+        if (agentId != null && !agentId.isEmpty()) {
+            return Result.success(filterRuleService.listByAgentId(agentId));
+        }
         return Result.success(filterRuleService.listAll());
     }
 
@@ -35,7 +38,6 @@ public class FilterRuleController {
     @PostMapping
     public Result<FilterRule> create(@RequestBody FilterRule rule) {
         FilterRule created = filterRuleService.create(rule);
-        filterRuleService.rebuildMatchers();
         return Result.success(created);
     }
 
@@ -43,21 +45,26 @@ public class FilterRuleController {
     public Result<FilterRule> update(@PathVariable Long id, @RequestBody FilterRule rule) {
         rule.setId(id);
         FilterRule updated = filterRuleService.update(rule);
-        filterRuleService.rebuildMatchers();
         return Result.success(updated);
     }
 
     @DeleteMapping("/{id}")
     public Result<Void> delete(@PathVariable Long id) {
         filterRuleService.delete(id);
-        filterRuleService.rebuildMatchers();
         return Result.success(null);
     }
 
-    /** 手动触发匹配器重建 */
+    /** 手动触发全部匹配器重建 */
     @PostMapping("/rebuild")
     public Result<String> rebuild() {
-        filterRuleService.rebuildMatchers();
-        return Result.success("匹配器重建完成");
+        filterRuleService.rebuildAllMatchers();
+        return Result.success("全部匹配器重建完成");
+    }
+
+    /** 手动触发指定 Agent 匹配器重建 */
+    @PostMapping("/rebuild/{agentId}")
+    public Result<String> rebuildForAgent(@PathVariable String agentId) {
+        filterRuleService.rebuildMatchersForAgent(agentId);
+        return Result.success("匹配器重建完成: " + agentId);
     }
 }

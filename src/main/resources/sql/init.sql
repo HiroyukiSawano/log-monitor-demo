@@ -6,6 +6,7 @@
 -- 过滤规则表
 CREATE TABLE IF NOT EXISTS `t_filter_rule` (
     `id`          BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `agent_id`    VARCHAR(100) NOT NULL DEFAULT '*' COMMENT '绑定的采集端 ID (* = 全局)',
     `rule_type`   VARCHAR(20)  NOT NULL COMMENT '规则类型: CRITICAL / EXCLUDE / BASIC',
     `rule_name`   VARCHAR(100) NOT NULL COMMENT '规则名称（人类可读）',
     `keyword`     VARCHAR(500) NOT NULL COMMENT '匹配关键字或正则表达式',
@@ -15,22 +16,23 @@ CREATE TABLE IF NOT EXISTS `t_filter_rule` (
     `priority`    INT          NOT NULL DEFAULT 0 COMMENT '优先级（同类型内排序）',
     `create_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    KEY `idx_filter_agent` (`agent_id`)
 );
 
 -- 初始示例数据
-INSERT INTO `t_filter_rule` (`rule_type`, `rule_name`, `keyword`, `match_mode`, `enabled`, `priority`)
+INSERT INTO `t_filter_rule` (`agent_id`, `rule_type`, `rule_name`, `keyword`, `match_mode`, `enabled`, `priority`)
 VALUES
-    ('CRITICAL', '第三方接口超时',     '调用第三方接口超时',   'CONTAINS', 1, 10),
-    ('CRITICAL', '数据库连接失败',     '数据库连接失败',       'CONTAINS', 1, 20),
-    ('EXCLUDE',  '正常心跳日志',       'HealthCheck OK',       'CONTAINS', 1, 10),
-    ('EXCLUDE',  '定时任务执行完成',   '定时任务执行完成',     'CONTAINS', 1, 20),
-    ('BASIC',    'ERROR级别日志',       'ERROR',                'CONTAINS', 1, 10),
-    ('BASIC',    '异常堆栈',           'Exception',            'CONTAINS', 1, 20),
-    ('BASIC',    'FATAL级别日志',       'FATAL',                'CONTAINS', 1, 30),
-    ('BASIC',    '堆栈跟踪',           'Stacktrace',           'CONTAINS', 1, 40),
-    ('BASIC',    '空指针异常',         'NullPointerException', 'CONTAINS', 1, 50),
-    ('BASIC',    '内存溢出',           'OutOfMemoryError',     'CONTAINS', 1, 60);
+    ('*', 'CRITICAL', '第三方接口超时',     '调用第三方接口超时',   'CONTAINS', 1, 10),
+    ('*', 'CRITICAL', '数据库连接失败',     '数据库连接失败',       'CONTAINS', 1, 20),
+    ('*', 'EXCLUDE',  '正常心跳日志',       'HealthCheck OK',       'CONTAINS', 1, 10),
+    ('*', 'EXCLUDE',  '定时任务执行完成',   '定时任务执行完成',     'CONTAINS', 1, 20),
+    ('*', 'BASIC',    'ERROR级别日志',       'ERROR',                'CONTAINS', 1, 10),
+    ('*', 'BASIC',    '异常堆栈',           'Exception',            'CONTAINS', 1, 20),
+    ('*', 'BASIC',    'FATAL级别日志',       'FATAL',                'CONTAINS', 1, 30),
+    ('*', 'BASIC',    '堆栈跟踪',           'Stacktrace',           'CONTAINS', 1, 40),
+    ('*', 'BASIC',    '空指针异常',         'NullPointerException', 'CONTAINS', 1, 50),
+    ('*', 'BASIC',    '内存溢出',           'OutOfMemoryError',     'CONTAINS', 1, 60);
 
 -- 远程指令记录表
 CREATE TABLE IF NOT EXISTS `t_command_record` (
