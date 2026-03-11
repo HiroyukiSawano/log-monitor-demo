@@ -29,11 +29,6 @@
         </router-link>
       </nav>
 
-      <div class="ml-auto flex items-center gap-4">
-        <a href="https://github.com/zzh" target="_blank" class="text-xs text-blue opacity-80 hover:opacity-100 transition-opacity flex items-center gap-1">
-          <el-icon><Link /></el-icon> GitHub
-        </a>
-      </div>
     </header>
 
     <!-- Main Content Area -->
