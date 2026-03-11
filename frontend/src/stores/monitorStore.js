@@ -138,7 +138,7 @@ export const useMonitorStore = defineStore('monitor', () => {
                             running: p.status === '正常',
                             pid: p.processName // using name as pid fallback
                         })) || [],
-                        logs: []
+                        logs: agents.value.get(agent.agentId)?.logs || []
                     }
                     newMap.set(a.id, a)
                 })
@@ -155,6 +155,9 @@ export const useMonitorStore = defineStore('monitor', () => {
 
     // Call init fetch immediately
     loadDashboard()
+
+    // Auto-refresh every 15 seconds to sync alerts and metrics
+    setInterval(loadDashboard, 15000)
 
     return {
         agents,
