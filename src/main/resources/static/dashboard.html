@@ -1430,7 +1430,7 @@
                             const items = (g.items || []).map(c => {
                                 const tl = TL[c.metricType] || c.metricType;
                                 const tgt = c.targetName ? `[${escapeHtml(c.targetName)}]` : '';
-                                const dur = c.durationSec > 0 ? `(持续≥${c.durationSec}s)` : '';
+                                const dur = c.durationSec > 0 ? `(持续≥${c.durationSec}s${c.durationSec < 60 ? '⚠️' : ''})` : '';
                                 if (NN.includes(c.metricType)) return `${tl}${tgt}${dur}`;
                                 const op = OL[c.operator] || c.operator;
                                 const unit = (c.metricType || '').includes('USAGE') ? '%' : '';
@@ -1446,7 +1446,7 @@
                         <span class="alert-level-tag ${r.alertLevel}" style="flex-shrink:0">${r.alertLevel}</span>
                         <div class="rule-info">
                             <div class="rule-name">${escapeHtml(r.ruleName)}${scope}</div>
-                            <div class="rule-desc">${exprStr} · 冷却${r.cooldownSec}s · ${r.enabled ? '✅' : '❌'}</div>
+                            <div class="rule-desc">${exprStr} · 冷却${r.cooldownSec}s${r.cooldownSec < 60 ? ' ⚠️' : ''} · ${r.enabled ? '✅' : '❌'}</div>
                         </div>
                         ${r.agentId !== '*' ? `<button class="btn-del" onclick="deleteRule(${r.id})" title="删除">🗑</button>` : ''}
                     </div>`;
@@ -1478,7 +1478,7 @@
         function showAddRuleForm() {
             document.getElementById('addRuleForm').style.display = 'block';
             document.getElementById('newRuleName').value = '';
-            document.getElementById('newCooldown').value = '300';
+            document.getElementById('newCooldown').value = '60';
             document.getElementById('groupsContainer').innerHTML = '';
             topLogic = 'AND';
             groupCounter = 0;
@@ -1579,8 +1579,8 @@
                     ${opOpts}
                 </select>
                 <input class="cond-threshold" type="number" value="80" style="width:55px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;">
-                <input class="cond-duration" type="number" placeholder="持续(秒)" value="0" min="0" title="持续时间(秒)，0=瞬时判定" style="width:65px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;">
-                <input class="cond-target" placeholder="目标" style="width:70px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;">
+                <input class="cond-duration" type="number" placeholder="持续(秒)≥60" value="0" min="0" title="持续时间(秒)，0=瞬时判定。&#10;注意：检测间隔取决于Agent上报频率(约60s)，&#10;小于60s的值实际精度等于上报间隔。" style="width:75px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;">
+                <input class="cond-target" placeholder="目标" style="display:none;width:70px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;">
                 <button onclick="removeCondRow(this)" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:12px;padding:0 3px;" title="删除">✕</button>`;
             itemsContainer.appendChild(row);
         }
@@ -1590,26 +1590,52 @@
             const metric = select.value;
             const mo = METRIC_OPTIONS.find(m => m.value === metric);
             const isNumeric = mo ? mo.numeric : true;
+            const needsTarget = (metric === 'DISK_PARTITION' || metric === 'PROCESS_ABNORMAL');
+            const isLogHit = (metric === 'LOG_HIT_CRITICAL' || metric === 'LOG_HIT_TOTAL');
+
+            // 操作符/阈值：非数值类型隐藏
             const opEl = row.querySelector('.cond-op');
             const thEl = row.querySelector('.cond-threshold');
+            opEl.style.display = isNumeric ? '' : 'none';
+            thEl.style.display = isNumeric ? '' : 'none';
             opEl.disabled = !isNumeric;
             thEl.disabled = !isNumeric;
-            opEl.style.opacity = isNumeric ? '1' : '0.4';
-            thEl.style.opacity = isNumeric ? '1' : '0.4';
-            // 磁盘分区 → 目标改为下拉
+
+            // 持续时间：日志命中类型用作"时间窗口"，其他类型用作"持续时间"
+            const durEl = row.querySelector('.cond-duration');
+            if (isLogHit) {
+                durEl.placeholder = '窗口(秒)';
+                durEl.title = '统计时间窗口(秒)，在此窗口内累计命中数。\n默认300秒(5分钟)。';
+                durEl.value = durEl.value === '0' ? '300' : durEl.value;
+            } else {
+                durEl.placeholder = '持续(秒)≥60';
+                durEl.title = '持续时间(秒)，0=瞬时判定。\n注意：检测间隔取决于Agent上报频率(约60s)，\n小于60s的值实际精度等于上报间隔。';
+            }
+
+            // 目标字段：仅 DISK_PARTITION / PROCESS_ABNORMAL 显示
             const oldTarget = row.querySelector('.cond-target');
-            if (metric === 'DISK_PARTITION' && cachedPartitions.length > 0) {
-                const sel = document.createElement('select');
-                sel.className = 'cond-target';
-                sel.style.cssText = oldTarget.style.cssText;
-                sel.innerHTML = cachedPartitions.map(p => `<option value="${p}">${p}:</option>`).join('');
-                oldTarget.replaceWith(sel);
-            } else if (oldTarget.tagName === 'SELECT') {
-                const inp = document.createElement('input');
-                inp.className = 'cond-target';
-                inp.placeholder = '目标';
-                inp.style.cssText = oldTarget.style.cssText;
-                oldTarget.replaceWith(inp);
+            if (needsTarget) {
+                if (metric === 'DISK_PARTITION' && cachedPartitions.length > 0) {
+                    const sel = document.createElement('select');
+                    sel.className = 'cond-target';
+                    sel.style.cssText = 'display:inline-block;width:70px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;';
+                    sel.innerHTML = cachedPartitions.map(p => `<option value="${p}">${p}:</option>`).join('');
+                    oldTarget.replaceWith(sel);
+                } else {
+                    if (oldTarget.tagName === 'SELECT') {
+                        const inp = document.createElement('input');
+                        inp.className = 'cond-target';
+                        inp.placeholder = metric === 'PROCESS_ABNORMAL' ? '进程名' : '目标';
+                        inp.style.cssText = 'display:inline-block;width:70px;padding:3px 5px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px;';
+                        oldTarget.replaceWith(inp);
+                    } else {
+                        oldTarget.style.display = 'inline-block';
+                        oldTarget.placeholder = metric === 'PROCESS_ABNORMAL' ? '进程名(可选)' : '目标';
+                    }
+                }
+            } else {
+                oldTarget.style.display = 'none';
+                oldTarget.value = '';
             }
         }
 
@@ -1642,6 +1668,20 @@
             }).filter(g => g.items.length > 0);
 
             if (groups.length === 0) { alert('条件组内需要至少一个条件'); return; }
+
+            // 智能提醒：检测粒度警告
+            const REPORT_INTERVAL = 60;
+            const cooldownVal = parseInt(document.getElementById('newCooldown').value) || 300;
+            const smallDurations = [];
+            groups.forEach(g => g.items.forEach(c => {
+                if (c.durationSec > 0 && c.durationSec < REPORT_INTERVAL) smallDurations.push(c.durationSec);
+            }));
+            if (cooldownVal > 0 && cooldownVal < REPORT_INTERVAL) {
+                if (!confirm(`冷却时间 ${cooldownVal}s 小于 Agent 上报间隔(${REPORT_INTERVAL}s)，实际冷却效果约等于上报间隔。\n是否继续？`)) return;
+            }
+            if (smallDurations.length > 0) {
+                if (!confirm(`持续时间 ${[...new Set(smallDurations)].join('s, ')}s 小于 Agent 上报间隔(${REPORT_INTERVAL}s)，实际精度受上报间隔约束。\n是否继续？`)) return;
+            }
 
             const expression = { logic: topLogic, groups };
             const rule = {
@@ -1941,6 +1981,10 @@
                 <div class="rule-list" id="ruleListContainer"></div>
                 <button class="btn-add-rule" onclick="showAddRuleForm()">+ 添加新规则</button>
                 <div class="add-rule-form" id="addRuleForm" style="display:none;">
+                    <div style="background:rgba(116,185,255,0.1);border:1px solid rgba(116,185,255,0.3);border-radius:6px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:var(--blue);display:flex;align-items:center;gap:6px;">
+                        <span style="font-size:16px;">⏱</span>
+                        <span>检测间隔说明：告警检测频率取决于 Agent 上报间隔（当前约 60 秒）。持续时间和冷却时间的实际精度受此间隔约束。</span>
+                    </div>
                     <div class="form-row">
                         <div class="form-group"><label>规则名称</label><input id="newRuleName" placeholder="如: 综合告警"></div>
                         <div class="form-group"><label>告警级别</label>
@@ -1949,7 +1993,7 @@
                                 <option value="CRITICAL">🔴 CRITICAL</option>
                             </select>
                         </div>
-                        <div class="form-group"><label>冷却(秒)</label><input id="newCooldown" type="number" value="300">
+                        <div class="form-group"><label>冷却(秒) — 建议 ≥ 60</label><input id="newCooldown" type="number" value="60" min="1">
                         </div>
                     </div>
                     <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">

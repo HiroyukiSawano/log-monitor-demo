@@ -28,7 +28,7 @@
             </div>
             <div class="text-[10px] text-text2 leading-tight">
               {{ formatConditions(rule.conditions) }}
-              · 冷却时间: {{ rule.cooldownSec }}秒 
+              · 冷却时间: {{ rule.cooldownSec }}秒<span v-if="rule.cooldownSec > 0 && rule.cooldownSec < 60"> ⚠️</span> 
               · {{ rule.enabled ? '✅ 已启用' : '❌ 已禁用' }}
             </div>
           </div>
@@ -59,6 +59,11 @@
           <button @click="showAddForm = false" class="text-text2 hover:text-text"><el-icon><Close /></el-icon></button>
         </div>
         
+        <div class="bg-blue/10 border border-blue/30 rounded-md p-2 mb-4 text-[10px] text-blue flex items-start gap-1.5">
+          <span class="text-base leading-none">⏱</span>
+          <span>检测间隔说明：告警检测频率取决于 Agent 上报间隔（当前约 60 秒）。持续时间和冷却时间的实际精度受此间隔约束。</span>
+        </div>
+        
         <div class="flex gap-3 mb-4">
           <div class="flex-1">
             <label class="block text-[10px] text-text2 mb-1">规则名称</label>
@@ -71,9 +76,9 @@
               <option value="WARNING">WARNING</option>
             </select>
           </div>
-          <div class="w-24">
-            <label class="block text-[10px] text-text2 mb-1">冷却时间 (秒)</label>
-            <input v-model.number="form.cooldownSec" type="number" min="0" class="w-full bg-bg border border-border text-xs px-2 py-1.5 rounded focus:border-accent outline-none text-text">
+          <div class="w-32">
+            <label class="block text-[10px] text-text2 mb-1">冷却(秒) — 建议 ≥ 60</label>
+            <input v-model.number="form.cooldownSec" type="number" min="1" class="w-full bg-bg border border-border text-xs px-2 py-1.5 rounded focus:border-accent outline-none text-text">
           </div>
         </div>
 
@@ -112,7 +117,7 @@
                     <select v-if="item.metricType === 'DISK_PARTITION' && cachedPartitions.length" v-model="item.targetName" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-20 text-text">
                       <option v-for="p in cachedPartitions" :key="p" :value="p">{{ p }}</option>
                     </select>
-                    <input v-else-if="!['AGENT_OFFLINE', 'PROCESS_ABNORMAL'].includes(item.metricType)" v-model="item.targetName" placeholder="目标对象" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-16 text-text">
+                    <input v-else-if="['DISK_PARTITION', 'PROCESS_ABNORMAL'].includes(item.metricType)" v-model="item.targetName" :placeholder="item.metricType === 'PROCESS_ABNORMAL' ? '进程名(可选)' : '目标对象'" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-24 text-text">
 
                     <!-- Operator & Threshold -->
                     <template v-if="!['PROCESS_ABNORMAL', 'AGENT_OFFLINE'].includes(item.metricType)">
@@ -123,9 +128,9 @@
                     </template>
 
                     <!-- Duration -->
-                    <div class="flex items-center gap-1 border-l border-border pl-1 ml-1" title="持续时间(0=即时触发)">
+                    <div class="flex items-center gap-1 border-l border-border pl-1 ml-1" :title="['LOG_HIT_CRITICAL', 'LOG_HIT_TOTAL'].includes(item.metricType) ? '统计时间窗口(秒)，在此窗口内累计命中数。\n默认300秒(5分钟)。' : '持续时间(秒)，0=瞬时判定。\n注意：检测间隔取决于Agent上报频率(约60s)，\n小于60s的值实际精度等于上报间隔。'">
                       <el-icon class="text-text2 text-[10px]"><Timer /></el-icon>
-                      <input v-model.number="item.durationSec" type="number" placeholder="秒数" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-12 text-center text-text">
+                      <input v-model.number="item.durationSec" type="number" :placeholder="['LOG_HIT_CRITICAL', 'LOG_HIT_TOTAL'].includes(item.metricType) ? '窗口(秒)' : '持续(秒)≥60'" min="0" class="w-full max-w-[80px] bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none text-center text-text">
                     </div>
 
                     <button @click="removeGroupItem(group, cIdx)" class="text-red hover:text-[#ff8a7a] ml-auto px-1 opacity-50 hover:opacity-100"><el-icon size="12"><Close /></el-icon></button>
@@ -169,7 +174,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { Delete, Plus, Close, Timer } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const props = defineProps(['agentId'])
 const visible = defineModel('visible', { type: Boolean })
@@ -206,7 +211,7 @@ const defaultGroup = () => ({ logic: 'OR', items: [defaultItem()] })
 const form = ref({
   ruleName: '',
   alertLevel: 'CRITICAL',
-  cooldownSec: 300,
+  cooldownSec: 60,
   topLogic: 'AND',
   groups: []
 })
@@ -250,7 +255,7 @@ function openAddForm() {
   form.value = {
     ruleName: '',
     alertLevel: 'CRITICAL',
-    cooldownSec: 300,
+    cooldownSec: 60,
     topLogic: 'AND',
     groups: [defaultGroup()]
   }
@@ -289,6 +294,9 @@ function onMetricChange(item) {
     item.operator = 'EQ'
     item.threshold = 0
   }
+  if (['LOG_HIT_CRITICAL', 'LOG_HIT_TOTAL'].includes(item.metricType)) {
+    if (!item.durationSec) item.durationSec = 300
+  }
   if (item.metricType === 'DISK_PARTITION' && cachedPartitions.value.length) {
     item.targetName = cachedPartitions.value[0]
   } else {
@@ -307,6 +315,40 @@ async function submitRule() {
   if (!validGroups.length) {
     ElMessage.warning('至少需要添加一个判断条件')
     return
+  }
+
+  // 智能提醒：检测粒度警告
+  const REPORT_INTERVAL = 60;
+  const cooldownVal = form.value.cooldownSec;
+  const smallDurations = [];
+  
+  validGroups.forEach(g => {
+    g.items.forEach(c => {
+      if (c.durationSec > 0 && c.durationSec < REPORT_INTERVAL) {
+        smallDurations.push(c.durationSec);
+      }
+    });
+  });
+  
+  try {
+    if (cooldownVal > 0 && cooldownVal < REPORT_INTERVAL) {
+      await ElMessageBox.confirm(
+        `冷却时间 ${cooldownVal}s 小于 Agent 上报间隔(${REPORT_INTERVAL}s)，实际冷却效果约等于上报间隔。\n是否继续？`,
+        '提示',
+        { confirmButtonText: '继续保存', cancelButtonText: '取消', type: 'warning' }
+      );
+    }
+    
+    if (smallDurations.length > 0) {
+      const distinctDurations = [...new Set(smallDurations)].join('s, ') + 's';
+      await ElMessageBox.confirm(
+        `持续时间 ${distinctDurations} 小于 Agent 上报间隔(${REPORT_INTERVAL}s)，实际精度受上报间隔约束。\n是否继续？`,
+        '提示',
+        { confirmButtonText: '继续保存', cancelButtonText: '取消', type: 'warning' }
+      );
+    }
+  } catch (cancel) {
+    return; // User cancelled
   }
 
   saving.value = true
@@ -375,7 +417,8 @@ function formatConditions(jsonStr) {
             const m = labels[c.metricType] || c.metricType
             const tgt = c.targetName ? `[${c.targetName}]` : ''
             const op = ops[c.operator] || c.operator
-            const dur = c.durationSec ? ` (持续${c.durationSec}s)` : ''
+            const durIcon = (c.durationSec > 0 && c.durationSec < 60) ? ' ⚠️' : ''
+            const dur = c.durationSec ? ` (持续≥${c.durationSec}s${durIcon})` : ''
             
             if (['PROCESS_ABNORMAL', 'AGENT_OFFLINE'].includes(c.metricType)) return `${m}${tgt}${dur}`
             

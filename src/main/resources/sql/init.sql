@@ -4,6 +4,7 @@
 -- =============================================================
 
 -- 过滤规则表
+DROP TABLE IF EXISTS `t_filter_rule`;
 CREATE TABLE IF NOT EXISTS `t_filter_rule` (
     `id`          BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键',
     `agent_id`    VARCHAR(100) NOT NULL DEFAULT '*' COMMENT '绑定的采集端 ID (* = 全局)',
@@ -35,6 +36,7 @@ VALUES
     ('*', 'BASIC',    '内存溢出',           'OutOfMemoryError',     'CONTAINS', 1, 60);
 
 -- 远程指令记录表
+DROP TABLE IF EXISTS `t_command_record`;
 CREATE TABLE IF NOT EXISTS `t_command_record` (
     `id`          BIGINT        NOT NULL AUTO_INCREMENT COMMENT '主键',
     `cmd_id`      VARCHAR(36)   NOT NULL COMMENT '指令唯一标识 (UUID)',
@@ -50,6 +52,7 @@ CREATE TABLE IF NOT EXISTS `t_command_record` (
 );
 
 -- 日志命中记录表
+DROP TABLE IF EXISTS `t_log_hit_record`;
 CREATE TABLE IF NOT EXISTS `t_log_hit_record` (
     `id`                BIGINT        NOT NULL AUTO_INCREMENT COMMENT '主键',
     `agent_id`          VARCHAR(100)  NOT NULL COMMENT '来源采集端 ID',
@@ -67,6 +70,7 @@ CREATE TABLE IF NOT EXISTS `t_log_hit_record` (
 );
 
 -- 指标快照主表 (每次 METRICS 上报存一行)
+DROP TABLE IF EXISTS `t_metrics_snapshot`;
 CREATE TABLE IF NOT EXISTS `t_metrics_snapshot` (
     `id`                         BIGINT        NOT NULL AUTO_INCREMENT COMMENT '主键',
     `agent_id`                   VARCHAR(100)  NOT NULL COMMENT '采集端 ID',
@@ -99,6 +103,7 @@ CREATE TABLE IF NOT EXISTS `t_metrics_snapshot` (
 );
 
 -- 磁盘分区子表
+DROP TABLE IF EXISTS `t_disk_partition`;
 CREATE TABLE IF NOT EXISTS `t_disk_partition` (
     `id`                 BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键',
     `snapshot_id`        BIGINT       NOT NULL COMMENT '关联快照 ID',
@@ -110,6 +115,7 @@ CREATE TABLE IF NOT EXISTS `t_disk_partition` (
 );
 
 -- 进程状态子表
+DROP TABLE IF EXISTS `t_process_status`;
 CREATE TABLE IF NOT EXISTS `t_process_status` (
     `id`            BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键',
     `snapshot_id`   BIGINT       NOT NULL COMMENT '关联快照 ID',
@@ -120,6 +126,7 @@ CREATE TABLE IF NOT EXISTS `t_process_status` (
 );
 
 -- 告警规则表 (嵌套条件分组模式)
+DROP TABLE IF EXISTS `t_alert_rule`;
 CREATE TABLE IF NOT EXISTS `t_alert_rule` (
     `id`            BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键',
     `agent_id`      VARCHAR(100) NOT NULL DEFAULT '*' COMMENT '绑定的采集端 ID (* = 全局)',
@@ -135,6 +142,7 @@ CREATE TABLE IF NOT EXISTS `t_alert_rule` (
 );
 
 -- 告警事件记录表
+DROP TABLE IF EXISTS `t_alert_event`;
 CREATE TABLE IF NOT EXISTS `t_alert_event` (
     `id`            BIGINT        NOT NULL AUTO_INCREMENT COMMENT '主键',
     `rule_id`       BIGINT        NOT NULL COMMENT '关联规则 ID',
