@@ -131,6 +131,19 @@
           </div>
         </div>
 
+        <!-- Log Monitors -->
+        <div class="mb-6">
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-text2 mb-3 flex items-center gap-1.5">
+            <el-icon><FolderOpened /></el-icon> 日志监听管理
+          </h3>
+          <button 
+            @click="openLogMonitorModal"
+            class="w-full py-2.5 bg-surface2 border border-dashed border-border text-text2 rounded-lg text-xs hover:border-accent hover:text-text transition-all"
+          >
+            <el-icon class="mr-1"><Setting /></el-icon> 管理日志监听 ({{ agent?.id }})
+          </button>
+        </div>
+
         <!-- Filter Rules -->
         <div class="mb-6">
           <h3 class="text-xs font-semibold uppercase tracking-wide text-text2 mb-3 flex items-center gap-1.5">
@@ -194,14 +207,16 @@
 
   <RuleConfigModal v-model:visible="showRuleModal" :agent-id="agent?.id" />
   <FilterRuleConfigModal v-model:visible="showFilterRuleModal" :agent-id="agent?.id" />
+  <LogMonitorConfigModal v-model:visible="showLogMonitorModal" :agent-id="agent?.id" />
 </template>
 
 <script setup>
 import { computed, ref, watch } from 'vue'
-import { Close, Monitor, Cpu, DataBoard, Document, Setting, Tools, Warning } from '@element-plus/icons-vue'
+import { Close, Monitor, Cpu, DataBoard, Document, Setting, Tools, Warning, FolderOpened } from '@element-plus/icons-vue'
 import { useMonitorStore } from '../../stores/monitorStore'
 import RuleConfigModal from '../alert/RuleConfigModal.vue'
 import FilterRuleConfigModal from '../alert/FilterRuleConfigModal.vue'
+import LogMonitorConfigModal from '../alert/LogMonitorConfigModal.vue'
 
 const store = useMonitorStore()
 
@@ -216,6 +231,7 @@ const agent = computed(() => store.activeAgent)
 
 const showRuleModal = ref(false)
 const showFilterRuleModal = ref(false)
+const showLogMonitorModal = ref(false)
 
 const loading = ref(false)
 const deepDetails = ref(null)
@@ -260,6 +276,10 @@ function openRuleModal() {
 
 function openFilterRuleModal() {
   showFilterRuleModal.value = true
+}
+
+function openLogMonitorModal() {
+  showLogMonitorModal.value = true
 }
 
 function parseMB(str) {

@@ -1277,6 +1277,14 @@
                 </div>`;
             }
 
+            // ---- Log Monitor Button ----
+            html += `<div class="detail-section">
+                <h3>📂 日志监听管理</h3>
+                <button class="btn-add-rule" onclick="openLogMonitorModal('${escapeHtml(d.agentId)}')">
+                    🔧 管理日志监听 (${escapeHtml(d.agentId ? d.agentId.substring(0, 12) + '…' : '')})
+                </button>
+            </div>`;
+
             // ---- Filter Rules Button ----
             html += `<div class="detail-section">
                 <h3>📋 日志过滤规则</h3>
@@ -1741,6 +1749,175 @@
             loadFilterRules(filterRuleModalAgentId);
         }
 
+        // ========== Log Monitor Modal ==========
+        let logMonitorModalAgentId = null;
+
+        async function openLogMonitorModal(agentId) {
+            logMonitorModalAgentId = agentId;
+            document.getElementById('logMonitorModalTitle').textContent = '日志监听管理 — ' + (agentId.length > 12 ? agentId.substring(0, 12) + '…' : agentId);
+            document.getElementById('logMonitorModal').classList.add('show');
+            document.getElementById('addLogMonitorForm').style.display = 'none';
+            loadLogMonitors(agentId);
+        }
+
+        function closeLogMonitorModal() {
+            document.getElementById('logMonitorModal').classList.remove('show');
+            logMonitorModalAgentId = null;
+        }
+
+        async function loadLogMonitors(agentId) {
+            const container = document.getElementById('logMonitorListContainer');
+            container.innerHTML = '<div style="padding:10px;color:var(--text2);font-size:11px;text-align:center;">加载中…</div>';
+            
+            const cmd = {
+                type: "cmd",
+                cmd: {
+                    func: "LogTail/list",
+                    param: [],
+                    cmdID: "list-" + Date.now()
+                }
+            };
+            
+            try {
+                const resp = await fetch(`${getApiBase()}/api/commands/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ agentId, content: JSON.stringify(cmd) })
+                });
+                const result = await resp.json();
+                if (result.code !== 200 || !result.data) {
+                    throw new Error(result.message || '请求失败');
+                }
+                
+                const cmdResp = result.data;
+                if (cmdResp.status !== 'SUCCESS') {
+                    throw new Error('Agent响应错误: ' + cmdResp.status);
+                }
+                
+                const agentResp = JSON.parse(cmdResp.response);
+                if (!agentResp.success) {
+                    throw new Error('获取失败: ' + agentResp.message);
+                }
+                
+                const monitors = agentResp.monitors || [];
+                if (monitors.length === 0) {
+                    container.innerHTML = '<div style="padding:16px;color:var(--text2);font-size:11px;text-align:center;">暂无日志监听，点击下方添加</div>';
+                    return;
+                }
+                
+                container.innerHTML = monitors.map(m => {
+                    const statusClass = m.isRunning ? 'ftag-exclude' : 'ftag-critical';
+                    const statusText = m.isRunning ? '运行中' : '已停止';
+                    return `<div class="rule-item">
+                        <span class="ftag ${statusClass}" style="flex-shrink:0">${statusText}</span>
+                        <div class="rule-info">
+                            <div class="rule-name">${escapeHtml(m.appName || '—')} <span style="font-size:10px;color:var(--text2);font-weight:normal;">(${m.fileCount} 个文件)</span></div>
+                            <div class="rule-desc"><code style="font-size:10px;color:var(--cyan);">${escapeHtml(m.path || '')}</code></div>
+                        </div>
+                        <button class="btn-del" onclick="removeLogMonitor(this.getAttribute('data-path'))" data-path="${escapeHtml(m.path)}" title="移除监听">🗑</button>
+                    </div>`;
+                }).join('');
+            } catch (e) {
+                container.innerHTML = `<div style="padding:10px;color:var(--red);font-size:11px;">加载失败: ${e.message}</div>`;
+            }
+        }
+
+        function showAddLogMonitorForm() {
+            document.getElementById('addLogMonitorForm').style.display = 'block';
+            document.getElementById('lmAppName').value = '';
+            document.getElementById('lmPath').value = '';
+        }
+
+        async function submitNewLogMonitor() {
+            const appName = document.getElementById('lmAppName').value || '未知应用';
+            const path = document.getElementById('lmPath').value.trim();
+            if (!path) { alert('监听路径不能为空'); return; }
+            
+            const btnResult = document.getElementById('addLogMonitorForm').querySelector('.btn-primary');
+            const prevHtml = btnResult.innerHTML;
+            btnResult.disabled = true;
+            btnResult.innerHTML = '添加中...';
+            
+            const cmd = {
+                type: "cmd",
+                cmd: {
+                    func: "LogTail/add",
+                    param: [path, appName, ""],
+                    cmdID: "add-" + Date.now()
+                }
+            };
+            
+            try {
+                const resp = await fetch(`${getApiBase()}/api/commands/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ agentId: logMonitorModalAgentId, content: JSON.stringify(cmd) })
+                });
+                const result = await resp.json();
+                
+                btnResult.disabled = false;
+                btnResult.innerHTML = prevHtml;
+
+                if (result.code !== 200 || !result.data) {
+                    throw new Error(result.message || '请求失败');
+                }
+                
+                const cmdResp = result.data;
+                if (cmdResp.status !== 'SUCCESS') {
+                    throw new Error('Agent响应错误: ' + cmdResp.status);
+                }
+                
+                const agentResp = JSON.parse(cmdResp.response);
+                if (!agentResp.success) {
+                    throw new Error(agentResp.message || '添加失败');
+                }
+                
+                document.getElementById('addLogMonitorForm').style.display = 'none';
+                loadLogMonitors(logMonitorModalAgentId);
+            } catch (e) {
+                btnResult.disabled = false;
+                btnResult.innerHTML = prevHtml;
+                alert('添加失败: ' + e.message);
+            }
+        }
+
+        async function removeLogMonitor(path) {
+            if (!confirm('确定移除对该路径的监听？\\n' + path)) return;
+            
+            const cmd = {
+                type: "cmd",
+                cmd: {
+                    func: "LogTail/remove",
+                    param: [path],
+                    cmdID: "remove-" + Date.now()
+                }
+            };
+            
+            try {
+                const resp = await fetch(`${getApiBase()}/api/commands/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ agentId: logMonitorModalAgentId, content: JSON.stringify(cmd) })
+                });
+                const result = await resp.json();
+                if (result.code !== 200 || !result.data) {
+                    throw new Error(result.message || '请求失败');
+                }
+                
+                const cmdResp = result.data;
+                if (cmdResp.status !== 'SUCCESS') {
+                    throw new Error('Agent响应错误: ' + cmdResp.status);
+                }
+                
+                const agentResp = JSON.parse(cmdResp.response);
+                if (!agentResp.success) {
+                    throw new Error(agentResp.message || '移除失败');
+                }
+                
+                loadLogMonitors(logMonitorModalAgentId);
+            } catch (e) { alert('移除失败: ' + e.message); }
+        }
+
         // ========== Init ==========
         (function () {
             const h = document.getElementById('apiHost');
@@ -1836,6 +2013,32 @@
                     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
                         <button class="btn-secondary" onclick="document.getElementById('addFilterRuleForm').style.display='none'">取消</button>
                         <button class="btn-primary" onclick="submitNewFilterRule()">创建规则</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Monitor Modal -->
+    <div class="modal-overlay" id="logMonitorModal">
+        <div class="modal" style="width: 700px;">
+            <div class="modal-header">
+                <h2 id="logMonitorModalTitle">日志监听管理</h2>
+                <button class="btn-close" onclick="closeLogMonitorModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="rule-list" id="logMonitorListContainer"></div>
+                <button class="btn-add-rule" onclick="showAddLogMonitorForm()">+ 添加日志监听</button>
+                <div class="add-rule-form" id="addLogMonitorForm" style="display:none;">
+                    <div class="form-row">
+                        <div class="form-group"><label>应用名称</label><input id="lmAppName" placeholder="如: 受理系统" autocomplete="off"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>监听路径 (支持通配符)</label><input id="lmPath" placeholder="如: D:\logs\*.log 或 /opt/logs/*.log" style="font-family: monospace;" autocomplete="off"></div>
+                    </div>
+                    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
+                        <button class="btn-secondary" onclick="document.getElementById('addLogMonitorForm').style.display='none'">取消</button>
+                        <button class="btn-primary" onclick="submitNewLogMonitor()">添加监听</button>
                     </div>
                 </div>
             </div>
