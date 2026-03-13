@@ -39,7 +39,7 @@ export const useMonitorStore = defineStore('monitor', () => {
 
     const totalAgents = computed(() => agents.value.size)
     const onlineAgents = computed(() => agentList.value.filter(a => a.online).length)
-    const criticalAlertsCount = computed(() => alerts.value.filter(a => a.level === 'CRITICAL').length)
+    const criticalAlertsCount = computed(() => alerts.value.filter(a => a.alertLevel === 'CRITICAL').length)
 
     // Actions
     function handleSocketMessage(msg) {

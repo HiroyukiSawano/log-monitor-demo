@@ -1,7 +1,5 @@
 <template>
   <div class="flex flex-col h-full bg-bg">
-    <AlertBanner />
-
     <!-- Toolbar -->
     <div class="px-6 py-2.5 border-b border-border bg-surface flex items-center gap-3 shrink-0 auto-cols-auto">
       <label class="text-xs tracking-wider uppercase text-text2 font-semibold">筛选</label>
@@ -15,14 +13,6 @@
       <div v-if="store.activeAgentId" class="text-xs ml-4 flex items-center gap-2">
          <span class="text-text2">节点 ID:</span>
          <span class="font-mono text-text bg-bg px-2 py-0.5 rounded border border-border">{{ store.activeAgentId }}</span>
-      </div>
-
-      <div class="ml-auto text-[11px] text-text2 flex items-center gap-2">
-        <div 
-          class="w-2 h-2 rounded-full"
-          :class="store.status === 'OPEN' ? 'bg-green shadow-[0_0_8px_var(--green)]' : 'bg-red'"
-        ></div>
-        {{ store.status === 'OPEN' ? '已连接(实时数据)' : '未连接' }}
       </div>
     </div>
 
@@ -66,8 +56,11 @@
           :key="agent.id"
           :agent="agent"
           :active="store.activeAgentId === agent.id"
-          :alert-count="getAlertCountForAgent(agent.id)"
+          :critical-alerts="getCriticalAlertsForAgent(agent.id)"
+          :warning-alerts="getWarningAlertsForAgent(agent.id)"
           @click="store.setActiveAgent($event)"
+          @click-alerts="openAgentDrawerForAlerts"
+          @open-logs="openLogsModal"
         />
       </div>
       
@@ -87,6 +80,8 @@
          How was it opened? The header had a button.
          We can move the Agent ID header part into the toolbar. -->
     <RuleConfigModal v-model:visible="showRuleModal" />
+    <AgentAlertsModal v-model:visible="showAlertsModal" :agent-id="selectedAlertAgentId" />
+    <LogTimelineModal v-model:visible="showLogsModal" :agent-id="selectedLogsAgentId" />
   </div>
 </template>
 
@@ -95,15 +90,20 @@ import { ref, computed } from 'vue'
 import { Monitor, CircleCheckFilled, CircleCloseFilled, WarningFilled, Setting } from '@element-plus/icons-vue'
 import { useMonitorStore } from '../stores/monitorStore'
 
-import AlertBanner from '../components/alert/AlertBanner.vue'
 import AgentCard from '../components/agent/AgentCard.vue'
 import DetailDrawer from '../components/agent/DetailDrawer.vue'
 import RuleConfigModal from '../components/alert/RuleConfigModal.vue'
+import AgentAlertsModal from '../components/alert/AgentAlertsModal.vue'
+import LogTimelineModal from '../components/alert/LogTimelineModal.vue'
 
 const store = useMonitorStore()
 
 const searchQuery = ref('')
 const showRuleModal = ref(false)
+const showAlertsModal = ref(false)
+const selectedAlertAgentId = ref(null)
+const showLogsModal = ref(false)
+const selectedLogsAgentId = ref(null)
 
 const filteredAgents = computed(() => {
   const q = searchQuery.value.toLowerCase()
@@ -115,8 +115,22 @@ const filteredAgents = computed(() => {
   })
 })
 
-function getAlertCountForAgent(agentId) {
-  return store.alerts.filter(a => a.agentId === agentId).length
+function getCriticalAlertsForAgent(agentId) {
+  return store.alerts.filter(a => a.agentId === agentId && a.alertLevel === 'CRITICAL').length
+}
+
+function getWarningAlertsForAgent(agentId) {
+  return store.alerts.filter(a => a.agentId === agentId && a.alertLevel !== 'CRITICAL').length
+}
+
+function openAgentDrawerForAlerts(agentId) {
+  selectedAlertAgentId.value = agentId
+  showAlertsModal.value = true
+}
+
+function openLogsModal(agentId) {
+  selectedLogsAgentId.value = agentId
+  showLogsModal.value = true
 }
 
 const alertsCount = computed(() => {

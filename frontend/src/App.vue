@@ -6,7 +6,7 @@
         <div class="w-8 h-8 rounded-lg bg-accent/10 border border-accent/30 flex items-center justify-center text-accent">
           <el-icon :size="18"><Monitor /></el-icon>
         </div>
-        <h1 class="text-lg font-bold tracking-wide text-text">集中监控系统</h1>
+        <h1 class="text-lg font-bold tracking-wide text-text">运维监控系统</h1>
       </div>
       
       <!-- Navigation Tabs -->
@@ -15,15 +15,15 @@
           <el-icon class="mr-2 opacity-70 group-hover:opacity-100 transition-opacity"><DataBoard /></el-icon>
           监控大盘
         </router-link>
-        <router-link to="/command" class="nav-item group" active-class="active">
+        <router-link to="/command" class="nav-item group" active-class="active" v-show="false">
           <el-icon class="mr-2 opacity-70 group-hover:opacity-100 transition-opacity"><Connection /></el-icon>
           远程指令
         </router-link>
-        <router-link to="/debug" class="nav-item group" active-class="active">
+        <router-link to="/debug" class="nav-item group" active-class="active" v-show="false">
           <el-icon class="mr-2 opacity-70 group-hover:opacity-100 transition-opacity"><Setting /></el-icon>
           调试沙箱
         </router-link>
-        <router-link to="/logs" class="nav-item group" active-class="active">
+        <router-link to="/logs" class="nav-item group" active-class="active" v-show="false">
           <el-icon class="mr-2 opacity-70 group-hover:opacity-100 transition-opacity"><Document /></el-icon>
           日志审计
         </router-link>

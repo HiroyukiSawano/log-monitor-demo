@@ -170,36 +170,7 @@
           </button>
         </div>
         
-        <!-- Hit Logs Timeline -->
-        <div class="mb-2">
-          <h3 class="text-xs font-semibold uppercase tracking-wide text-text2 mb-3 flex items-center gap-1.5">
-            <el-icon><Warning /></el-icon> 近期命中日志 (最近50条)
-          </h3>
-          <div class="flex flex-col gap-2 relative">
-             <div v-if="errorLogs.length === 0" class="text-center py-6 text-text2 text-xs border border-border rounded-lg bg-bg/50">
-               暂无命中日志 ✨
-             </div>
-             
-             <div 
-               v-for="log in errorLogs" 
-               :key="log.id"
-               class="px-2.5 py-2 bg-bg border border-border rounded-md shadow-sm text-[11px]"
-             >
-               <div class="flex items-center justify-between mb-1">
-                 <div class="text-[10px] text-text2">{{ formatTime(log.createTime) }}</div>
-               </div>
-               <div class="flex items-center gap-2 mb-1 flex-wrap">
-                 <span class="px-1.5 py-[2px] rounded uppercase font-bold text-[9px]" :class="log.level === 'CRITICAL' ? 'bg-red/20 text-red' : 'bg-yellow/20 text-yellow'">{{ log.level }}</span>
-                 <span class="text-text2 opacity-80" v-if="log.appName">[{{ log.appName }}]</span>
-                 <span class="text-accent ml-1 font-semibold border-b border-accent/30 border-dashed" title="匹配规则名称">{{ log.matchedRuleName }}</span>
-                 <span v-if="log.matchedKeyword" class="text-[10px] text-cyan bg-cyan/10 px-1 rounded ml-1" title="命中关键字">匹配: {{ log.matchedKeyword }}</span>
-               </div>
-               <div class="font-mono text-[10px] break-all max-h-[120px] overflow-y-auto text-text/90 select-text bg-surface2 p-1.5 rounded mt-1.5 border border-border/50">
-                 {{ log.logContent }}
-               </div>
-             </div>
-          </div>
-        </div>
+
 
       </div>
     </div>
@@ -212,7 +183,7 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue'
-import { Close, Monitor, Cpu, DataBoard, Document, Setting, Tools, Warning, FolderOpened } from '@element-plus/icons-vue'
+import { Close, Monitor, Cpu, DataBoard, Document, Setting, Tools, FolderOpened } from '@element-plus/icons-vue'
 import { useMonitorStore } from '../../stores/monitorStore'
 import RuleConfigModal from '../alert/RuleConfigModal.vue'
 import FilterRuleConfigModal from '../alert/FilterRuleConfigModal.vue'
@@ -235,7 +206,6 @@ const showLogMonitorModal = ref(false)
 
 const loading = ref(false)
 const deepDetails = ref(null)
-const errorLogs = ref([])
 
 watch(agent, async (newVal) => {
   if (newVal?.id) {
@@ -249,19 +219,13 @@ watch(agent, async (newVal) => {
 async function loadDetails(agentId) {
   loading.value = true
   try {
-    const [detailResp, logsResp] = await Promise.all([
-        fetch(`/api/dashboard/agents/${encodeURIComponent(agentId)}`),
-        fetch(`/api/dashboard/agents/${encodeURIComponent(agentId)}/logs?limit=50`)
+    const [detailResp] = await Promise.all([
+        fetch(`/api/dashboard/agents/${encodeURIComponent(agentId)}`)
     ])
     
     if (detailResp.ok) {
         const detailsJson = await detailResp.json()
         deepDetails.value = detailsJson.data || {}
-    }
-    
-    if (logsResp.ok) {
-        const logsJson = await logsResp.json()
-        errorLogs.value = logsJson.data || []
     }
   } catch(e) {
     console.error('Failed to load deep details', e)
@@ -352,15 +316,11 @@ function getDiskUsagePercent(disk) {
 
 function getDiskColor(percent) {
   if (percent > 90) return 'bg-red'
-  if (percent > 75) return 'bg-yellow'
+  if (percent > 70) return 'bg-yellow'
   return 'bg-cyan'
 }
 
-function formatTime(ts) {
-  if (!ts) return ''
-  const d = new Date(ts)
-  return d.toLocaleString('zh-CN', { hour12: false })
-}
+
 </script>
 
 <style>

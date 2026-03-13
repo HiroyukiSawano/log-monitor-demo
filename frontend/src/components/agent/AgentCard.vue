@@ -1,10 +1,13 @@
 <template>
   <div 
-    class="agent-card bg-surface border border-border rounded-xl overflow-hidden cursor-pointer transition-all duration-200 relative group"
+    class="agent-card border rounded-xl overflow-hidden cursor-pointer transition-all duration-200 relative group"
     :class="{ 
-      'border-accent ring-2 ring-accent/30': active,
+      'bg-red/10 border-red ring-2 ring-red/30': criticalAlerts > 0,
+      'bg-yellow/10 border-yellow ring-2 ring-yellow/30': criticalAlerts === 0 && warningAlerts > 0,
+      'bg-surface border-border hover:border-accent hover:shadow-[0_4px_20px_rgba(108,92,231,0.15)]': criticalAlerts === 0 && warningAlerts === 0,
+      'ring-2 ring-accent/30': active && criticalAlerts === 0 && warningAlerts === 0,
       'opacity-65 grayscale-[50%]': !agent.online,
-      'hover:border-accent hover:shadow-[0_4px_20px_rgba(108,92,231,0.15)] hover:-translate-y-0.5': true
+      'hover:-translate-y-0.5': true
     }"
     @click="$emit('click', agent.id)"
   >
@@ -17,8 +20,13 @@
       <div class="font-semibold text-sm flex-1 truncate">
         {{ agent.systemInfo?.hostname || agent.id }}
       </div>
-      <div v-if="alertCount > 0" class="bg-red text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
-        {{ alertCount }}
+      <div class="flex items-center gap-1.5 shrink-0" @click.stop="$emit('click-alerts', agent.id)">
+        <div v-if="criticalAlerts > 0" class="bg-red text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center shadow-sm cursor-pointer hover:scale-110 transition-transform" title="紧急告警">
+          {{ criticalAlerts }}
+        </div>
+        <div v-if="warningAlerts > 0" class="bg-yellow text-bg text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center shadow-sm cursor-pointer hover:scale-110 transition-transform" title="警告告警">
+          {{ warningAlerts }}
+        </div>
       </div>
     </div>
     
@@ -68,13 +76,21 @@
 
     <!-- Footer -->
     <div class="px-4 py-1.5 text-[10px] text-text2 border-t border-border bg-surface2 flex items-center gap-2 font-mono opacity-70 truncate">
-      {{ agent.id }}
+      <span class="flex-1 truncate">{{ agent.id }}</span>
+      <button 
+        @click.stop="$emit('open-logs', agent.id)"
+        class="opacity-60 hover:opacity-100 hover:text-accent transition-all p-0.5 rounded" 
+        title="查看命中日志"
+      >
+        <el-icon :size="14"><Document /></el-icon>
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
+import { Document } from '@element-plus/icons-vue'
 
 const props = defineProps({
   agent: {
@@ -85,13 +101,17 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  alertCount: {
+  criticalAlerts: {
+    type: Number,
+    default: 0
+  },
+  warningAlerts: {
     type: Number,
     default: 0
   }
 })
 
-defineEmits(['click'])
+defineEmits(['click', 'click-alerts', 'open-logs'])
 
 const cpuUsage = computed(() => props.agent.systemInfo?.cpuUsage || 0)
 const memUsage = computed(() => {
@@ -114,7 +134,7 @@ const diskUsage = computed(() => {
 
 function getColorClass(val) {
   if (val >= 90) return 'bg-red'
-  if (val >= 75) return 'bg-yellow'
+  if (val >= 70) return 'bg-yellow'
   return 'bg-accent'
 }
 </script>
