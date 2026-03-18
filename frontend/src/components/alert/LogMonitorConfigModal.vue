@@ -89,6 +89,7 @@
 import { ref, watch } from 'vue'
 import { Delete, Plus, Close } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
+import { buildAgentCommand, sendAgentCommand } from '../../utils/agentCommand'
 
 const props = defineProps(['agentId'])
 const visible = defineModel('visible', { type: Boolean })
@@ -115,36 +116,11 @@ async function fetchRules() {
   if (!props.agentId) return
   
   loading.value = true
-  const cmd = {
-    type: "cmd",
-    cmd: {
-      func: "LogTail/list",
-      param: [],
-      cmdID: "list-" + Date.now()
-    }
-  }
-
   try {
-    const res = await fetch(`/api/commands/send`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        agentId: props.agentId,
-        content: JSON.stringify(cmd)
-      })
-    })
-    
-    if (!res.ok) throw new Error('网络请求错误')
-    
-    const json = await res.json()
-    if (json.code !== 200 || !json.data) throw new Error(json.message || '请求失败')
-    
-    const cmdResp = json.data
-    if (cmdResp.status !== 'SUCCESS') throw new Error('Agent响应错误: ' + cmdResp.status)
-    
-    const agentResp = JSON.parse(cmdResp.response)
-    if (!agentResp.success) throw new Error(agentResp.message || '获取失败')
-    
+    const agentResp = await sendAgentCommand(
+      props.agentId,
+      buildAgentCommand('LogTail/list', [], 'logtail-list')
+    )
     rules.value = agentResp.monitors || []
   } catch (e) {
     ElMessage.error('查询日志监听列表失败: ' + e.message)
@@ -171,36 +147,11 @@ async function submitRule() {
   
   saving.value = true
   const appName = form.value.appName || '未知应用'
-  const cmd = {
-    type: "cmd",
-    cmd: {
-      func: "LogTail/add",
-      param: [path, appName, ""],
-      cmdID: "add-" + Date.now()
-    }
-  }
-
   try {
-    const res = await fetch(`/api/commands/send`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        agentId: props.agentId,
-        content: JSON.stringify(cmd)
-      })
-    })
-    
-    if (!res.ok) throw new Error('网络请求错误')
-    
-    const json = await res.json()
-    if (json.code !== 200 || !json.data) throw new Error(json.message || '请求失败')
-    
-    const cmdResp = json.data
-    if (cmdResp.status !== 'SUCCESS') throw new Error('Agent响应错误: ' + cmdResp.status)
-    
-    const agentResp = JSON.parse(cmdResp.response)
-    if (!agentResp.success) throw new Error(agentResp.message || '添加失败')
-    
+    await sendAgentCommand(
+      props.agentId,
+      buildAgentCommand('LogTail/add', [path, appName, ''], 'logtail-add')
+    )
     ElMessage.success('日志监听添加成功')
     showAddForm.value = false
     await fetchRules()
@@ -212,36 +163,11 @@ async function submitRule() {
 }
 
 async function deleteRule(path) {
-  const cmd = {
-    type: "cmd",
-    cmd: {
-      func: "LogTail/remove",
-      param: [path],
-      cmdID: "remove-" + Date.now()
-    }
-  }
-
   try {
-    const res = await fetch(`/api/commands/send`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        agentId: props.agentId,
-        content: JSON.stringify(cmd)
-      })
-    })
-    
-    if (!res.ok) throw new Error('网络请求错误')
-    
-    const json = await res.json()
-    if (json.code !== 200 || !json.data) throw new Error(json.message || '请求失败')
-    
-    const cmdResp = json.data
-    if (cmdResp.status !== 'SUCCESS') throw new Error('Agent响应错误: ' + cmdResp.status)
-    
-    const agentResp = JSON.parse(cmdResp.response)
-    if (!agentResp.success) throw new Error(agentResp.message || '移除失败')
-    
+    await sendAgentCommand(
+      props.agentId,
+      buildAgentCommand('LogTail/remove', [path], 'logtail-remove')
+    )
     ElMessage.success('移除监听成功')
     await fetchRules()
   } catch(e) {

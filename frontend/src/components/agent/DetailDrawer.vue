@@ -144,6 +144,19 @@
           </button>
         </div>
 
+        <!-- TTYD -->
+        <div class="mb-6">
+          <h3 class="text-xs font-semibold uppercase tracking-wide text-text2 mb-3 flex items-center gap-1.5">
+            <el-icon><Monitor /></el-icon> TTYD 管理
+          </h3>
+          <button 
+            @click="openTtydModal"
+            class="w-full py-2.5 bg-surface2 border border-dashed border-border text-text2 rounded-lg text-xs hover:border-accent hover:text-text transition-all"
+          >
+            <el-icon class="mr-1"><Tools /></el-icon> 管理 TTYD ({{ agent?.id }})
+          </button>
+        </div>
+
         <!-- Filter Rules -->
         <div class="mb-6">
           <h3 class="text-xs font-semibold uppercase tracking-wide text-text2 mb-3 flex items-center gap-1.5">
@@ -179,15 +192,17 @@
   <RuleConfigModal v-model:visible="showRuleModal" :agent-id="agent?.id" />
   <FilterRuleConfigModal v-model:visible="showFilterRuleModal" :agent-id="agent?.id" />
   <LogMonitorConfigModal v-model:visible="showLogMonitorModal" :agent-id="agent?.id" />
+  <TtydConfigModal v-model:visible="showTtydModal" :agent-id="agent?.id" />
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onUpdated, ref, watch } from 'vue'
 import { Close, Monitor, Cpu, DataBoard, Document, Setting, Tools, FolderOpened } from '@element-plus/icons-vue'
 import { useMonitorStore } from '../../stores/monitorStore'
 import RuleConfigModal from '../alert/RuleConfigModal.vue'
 import FilterRuleConfigModal from '../alert/FilterRuleConfigModal.vue'
 import LogMonitorConfigModal from '../alert/LogMonitorConfigModal.vue'
+import TtydConfigModal from '../alert/TtydConfigModal.vue'
 
 const store = useMonitorStore()
 
@@ -203,16 +218,22 @@ const agent = computed(() => store.activeAgent)
 const showRuleModal = ref(false)
 const showFilterRuleModal = ref(false)
 const showLogMonitorModal = ref(false)
+const showTtydModal = ref(false)
 
 const loading = ref(false)
 const deepDetails = ref(null)
 
-watch(agent, async (newVal) => {
-  if (newVal?.id) {
-    loadDetails(newVal.id)
+if (import.meta.env.DEV) {
+  onUpdated(() => {
+    console.count('[render] DetailDrawer')
+  })
+}
+
+watch(() => store.activeAgentId, async (newId) => {
+  if (newId) {
+    loadDetails(newId)
   } else {
     deepDetails.value = null
-    errorLogs.value = []
   }
 })
 
@@ -244,6 +265,10 @@ function openFilterRuleModal() {
 
 function openLogMonitorModal() {
   showLogMonitorModal.value = true
+}
+
+function openTtydModal() {
+  showTtydModal.value = true
 }
 
 function parseMB(str) {

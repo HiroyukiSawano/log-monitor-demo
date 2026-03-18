@@ -7,182 +7,47 @@
     destroy-on-close
   >
     <div v-loading="loading">
-      <!-- Existing Rules List -->
-      <div class="flex flex-col gap-2 mb-4 max-h-[250px] overflow-y-auto pr-2 scrollbar-thin">
-        <div 
-          v-for="rule in rules" 
-          :key="rule.id"
-          class="flex items-start gap-3 p-3 bg-bg border border-border rounded-md shadow-sm"
-        >
-          <span 
-            class="text-[9px] font-bold px-1.5 py-[2px] rounded uppercase shrink-0 mt-0.5"
-            :class="rule.alertLevel === 'CRITICAL' ? 'bg-red/10 text-red border border-red/20' : 'bg-yellow/10 text-yellow border border-yellow/20'"
-          >
-            {{ rule.alertLevel || 'WARNING' }}
-          </span>
-          
-          <div class="flex-1 min-w-0">
-            <div class="text-xs font-bold text-text flex items-center gap-2 mb-1">
-              <span class="truncate">{{ rule.ruleName }}</span>
-              <span v-if="rule.agentId === '*'" class="text-[9px] font-normal text-text2 bg-surface2 px-1 rounded">全局</span>
-            </div>
-            <div class="text-[10px] text-text2 leading-tight">
-              {{ formatConditions(rule.conditions) }}
-              · 冷却时间: {{ rule.cooldownSec }}秒<span v-if="rule.cooldownSec > 0 && rule.cooldownSec < 60"> ⚠️</span> 
-              · {{ rule.enabled ? '✅ 已启用' : '❌ 已禁用' }}
-            </div>
-          </div>
+      <AlertRuleList :rules="rules" @delete="deleteRule" />
 
-          <button v-if="rule.agentId !== '*'" @click="deleteRule(rule.id)" class="text-text2 hover:text-red transition-colors shrink-0 p-1">
-            <el-icon><Delete /></el-icon>
-          </button>
-        </div>
-        
-        <div v-if="!rules.length" class="text-center py-6 text-text2 text-xs border border-dashed border-border rounded-md">
-          未配置任何规则，请点击下方创建。
-        </div>
-      </div>
-
-      <!-- Add Rule Toggle -->
-      <button 
-        v-if="!showAddForm" 
+      <button
+        v-if="!showAddForm"
         @click="openAddForm"
-        class="w-full py-2 bg-surface2 border border-dashed border-border text-accent rounded-lg text-xs hover:border-accent hover:bg-accent/5 transition-all"
+        class="w-full rounded-lg border border-dashed border-border bg-surface2 py-2 text-xs text-accent transition-all hover:border-accent hover:bg-accent/5"
       >
         <el-icon class="mr-1"><Plus /></el-icon> 创建新规则
       </button>
 
-      <!-- New Rule Form -->
-      <div v-else class="bg-surface2 p-4 rounded-lg border border-border shadow-sm">
-        <div class="flex items-center justify-between mb-3 text-text">
-          <div class="text-xs font-bold uppercase tracking-wide text-text2">新规则定义</div>
-          <button @click="showAddForm = false" class="text-text2 hover:text-text"><el-icon><Close /></el-icon></button>
-        </div>
-        
-        <div class="bg-blue/10 border border-blue/30 rounded-md p-2 mb-4 text-[10px] text-blue flex items-start gap-1.5">
-          <span class="text-base leading-none">⏱</span>
-          <span>检测间隔说明：告警检测频率取决于 Agent 上报间隔（当前约 60 秒）。持续时间和冷却时间的实际精度受此间隔约束。</span>
-        </div>
-        
-        <div class="flex gap-3 mb-4">
-          <div class="flex-1">
-            <label class="block text-[10px] text-text2 mb-1">规则名称</label>
-            <input v-model="form.ruleName" type="text" placeholder="例如：高CPU且低内存" class="w-full bg-bg border border-border text-xs px-2 py-1.5 rounded focus:border-accent outline-none text-text">
-          </div>
-          <div class="w-24">
-            <label class="block text-[10px] text-text2 mb-1">告警级别</label>
-            <select v-model="form.alertLevel" class="w-full bg-bg border border-border text-xs px-2 py-1.5 rounded focus:border-accent outline-none text-text">
-              <option value="CRITICAL">CRITICAL</option>
-              <option value="WARNING">WARNING</option>
-            </select>
-          </div>
-          <div class="w-32">
-            <label class="block text-[10px] text-text2 mb-1">冷却(秒) — 建议 ≥ 60</label>
-            <input v-model.number="form.cooldownSec" type="number" min="1" class="w-full bg-bg border border-border text-xs px-2 py-1.5 rounded focus:border-accent outline-none text-text">
-          </div>
-        </div>
-
-        <!-- Groups Builder -->
-        <div class="border border-border rounded-lg bg-bg p-3 mb-4">
-          <div class="flex items-center justify-between mb-2 pb-2 border-b border-border/50">
-            <span class="text-[10px] font-bold text-text">条件组配置</span>
-            <button @click="toggleTopLogic" class="text-[10px] px-2 py-0.5 rounded border transition-colors font-bold" :class="form.topLogic === 'AND' ? 'bg-accent/10 border-accent text-accent' : 'bg-surface border-border text-text2'">
-              组间逻辑：{{ form.topLogic === 'AND' ? '条件全满足 (AND)' : '任一满足 (OR)' }}
-            </button>
-          </div>
-
-          <div class="flex flex-col gap-2">
-            <div v-for="(group, gIdx) in form.groups" :key="gIdx" class="border border-accent/30 rounded p-2 bg-surface2 relative">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-[10px] font-bold text-accent">条件组 {{ gIdx + 1 }}</span>
-                <div class="flex items-center gap-2">
-                  <button @click="toggleGroupLogic(group)" class="text-[9px] px-1.5 py-0.5 rounded border transition-colors" :class="group.logic === 'AND' ? 'bg-cyan/10 border-cyan text-cyan' : 'bg-surface border-border text-text2'">
-                    组内逻辑：{{ group.logic === 'AND' ? '全满足(AND)' : '任一满足(OR)' }}
-                  </button>
-                  <button @click="addGroupItem(group)" class="text-[10px] text-cyan hover:text-[#00aaaa] px-1">+ 加条件</button>
-                  <button @click="removeGroup(gIdx)" class="text-red hover:text-[#ff8a7a] ml-1"><el-icon><Close /></el-icon></button>
-                </div>
-              </div>
-
-              <!-- Conditions in Group -->
-              <div class="flex flex-col gap-1.5 align-middle relative">
-                <template v-for="(item, cIdx) in group.items" :key="cIdx">
-                  <div class="flex flex-wrap items-center gap-1 bg-surface border border-border rounded p-1.5 shadow-sm relative z-10 w-fit">
-                    <!-- Metric -->
-                    <select v-model="item.metricType" @change="onMetricChange(item)" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded min-w-[100px] outline-none text-text">
-                      <option v-for="opt in metricOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-                    </select>
-                    
-                    <!-- Target (e.g. Partition Name) -->
-                    <select v-if="item.metricType === 'DISK_PARTITION' && cachedPartitions.length" v-model="item.targetName" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-20 text-text">
-                      <option v-for="p in cachedPartitions" :key="p" :value="p">{{ p }}</option>
-                    </select>
-                    <input v-else-if="['DISK_PARTITION', 'PROCESS_ABNORMAL'].includes(item.metricType)" v-model="item.targetName" :placeholder="item.metricType === 'PROCESS_ABNORMAL' ? '进程名(可选)' : '目标对象'" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-24 text-text">
-
-                    <!-- Operator & Threshold -->
-                    <template v-if="!['PROCESS_ABNORMAL', 'AGENT_OFFLINE'].includes(item.metricType)">
-                      <select v-model="item.operator" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-14 text-text">
-                        <option v-for="op in opOptions" :key="op.value" :value="op.value">{{ op.label }}</option>
-                      </select>
-                      <input v-model.number="item.threshold" type="number" class="bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none w-14 text-text">
-                    </template>
-
-                    <!-- Duration -->
-                    <div class="flex items-center gap-1 border-l border-border pl-1 ml-1" :title="['LOG_HIT_CRITICAL', 'LOG_HIT_TOTAL'].includes(item.metricType) ? '统计时间窗口(秒)，在此窗口内累计命中数。\n默认300秒(5分钟)。' : '持续时间(秒)，0=瞬时判定。\n注意：检测间隔取决于Agent上报频率(约60s)，\n小于60s的值实际精度等于上报间隔。'">
-                      <el-icon class="text-text2 text-[10px]"><Timer /></el-icon>
-                      <input v-model.number="item.durationSec" type="number" :placeholder="['LOG_HIT_CRITICAL', 'LOG_HIT_TOTAL'].includes(item.metricType) ? '窗口(秒)' : '持续(秒)≥60'" min="0" class="w-full max-w-[80px] bg-bg border border-border text-[10px] px-1.5 py-0.5 rounded outline-none text-center text-text">
-                    </div>
-
-                    <button @click="removeGroupItem(group, cIdx)" class="text-red hover:text-[#ff8a7a] ml-auto px-1 opacity-50 hover:opacity-100"><el-icon size="12"><Close /></el-icon></button>
-                  </div>
-
-                  <!-- Logical Operator Separator -->
-                  <div 
-                    v-if="cIdx < group.items.length - 1" 
-                    class="ml-6 -my-1.5 z-0 flex items-center gap-2"
-                  >
-                    <div class="w-px h-5 bg-border"></div>
-                    <span class="text-[9px] font-bold px-1.5 py-[1px] rounded border border-border bg-surface text-cyan opacity-80 shadow-sm leading-none flex items-center justify-center">
-                      {{ group.logic === 'AND' ? 'AND' : 'OR' }}
-                    </span>
-                  </div>
-                </template>
-              </div>
-
-              <!-- Group Divider visual -->
-              <div v-if="gIdx < form.groups.length - 1" class="absolute -bottom-3 left-1/2 -translate-x-1/2 z-10 px-2 bg-surface text-[9px] font-bold rounded-full border border-border text-accent">
-                {{ form.topLogic === 'AND' ? 'AND' : 'OR' }}
-              </div>
-            </div>
-          </div>
-          <button @click="addGroup" class="mt-3 w-full border border-dashed border-cyan text-cyan hover:bg-cyan/5 rounded py-1 text-[10px] font-semibold transition-colors">
-            + 添加条件组
-          </button>
-        </div>
-
-        <div class="flex justify-end gap-2 mt-2">
-          <button @click="showAddForm = false" class="px-4 py-1.5 rounded bg-surface border border-border text-text2 hover:text-text text-xs transition-colors">取消</button>
-          <button @click="submitRule" :disabled="saving" class="px-4 py-1.5 rounded bg-accent text-white hover:bg-opacity-90 font-semibold text-xs transition-colors shadow">
-            {{ saving ? '保存中...' : '保存规则' }}
-          </button>
-        </div>
-      </div>
+      <RuleConditionEditor
+        v-else
+        :draft="form"
+        :cached-partitions="cachedPartitions"
+        :metric-options="metricOptions"
+        :op-options="opOptions"
+        :saving="saving"
+        :create-group-draft="createGroupDraft"
+        :create-item-draft="createItemDraft"
+        @cancel="showAddForm = false"
+        @submit="submitRule"
+      />
     </div>
   </el-dialog>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
-import { Delete, Plus, Close, Timer } from '@element-plus/icons-vue'
+import { onBeforeUnmount, ref, watch } from 'vue'
+import { Plus } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useMonitorStore } from '../../stores/monitorStore'
+import AlertRuleList from './AlertRuleList.vue'
+import RuleConditionEditor from './RuleConditionEditor.vue'
 
 const props = defineProps(['agentId'])
 const visible = defineModel('visible', { type: Boolean })
+const store = useMonitorStore()
 
 const loading = ref(false)
 const saving = ref(false)
 const rules = ref([])
-
 const showAddForm = ref(false)
 const cachedPartitions = ref([])
 
@@ -205,24 +70,64 @@ const opOptions = [
   { value: 'EQ', label: '=' }
 ]
 
-const defaultItem = () => ({ metricType: 'CPU_USAGE', operator: 'GT', threshold: 80, targetName: '', durationSec: 0 })
-const defaultGroup = () => ({ logic: 'OR', items: [defaultItem()] })
+let draftId = 0
+const form = ref(createEmptyDraft())
 
-const form = ref({
-  ruleName: '',
-  alertLevel: 'CRITICAL',
-  cooldownSec: 60,
-  topLogic: 'AND',
-  groups: []
-})
-
-watch(visible, async (newVal) => {
-  if (newVal && props.agentId) {
+watch(visible, async (newVal, oldVal) => {
+  if (newVal) {
+    store.pauseAutoRefresh()
     showAddForm.value = false
-    await fetchRules()
-    await prefetchPartitions()
+    await Promise.all([fetchRules(), prefetchPartitions()])
+    return
+  }
+
+  if (oldVal) {
+    showAddForm.value = false
+    store.resumeAutoRefresh()
   }
 })
+
+onBeforeUnmount(() => {
+  if (visible.value) {
+    store.resumeAutoRefresh()
+  }
+})
+
+function createEmptyDraft() {
+  return {
+    ruleName: '',
+    alertLevel: 'CRITICAL',
+    cooldownSec: 60,
+    topLogic: 'AND',
+    groups: []
+  }
+}
+
+function nextDraftId() {
+  draftId += 1
+  return `draft-${draftId}`
+}
+
+function createItemDraft(overrides = {}) {
+  return {
+    id: nextDraftId(),
+    metricType: 'CPU_USAGE',
+    operator: 'GT',
+    threshold: 80,
+    targetName: '',
+    durationSec: 0,
+    ...overrides
+  }
+}
+
+function createGroupDraft(overrides = {}) {
+  const sourceItems = overrides.items?.length ? overrides.items : [createItemDraft()]
+  return {
+    id: nextDraftId(),
+    logic: overrides.logic || 'OR',
+    items: sourceItems.map((item) => createItemDraft(item))
+  }
+}
 
 async function fetchRules() {
   loading.value = true
@@ -230,7 +135,10 @@ async function fetchRules() {
     const res = await fetch(`/api/alert/rules/applicable?agentId=${encodeURIComponent(props.agentId)}`)
     if (res.ok) {
       const json = await res.json()
-      rules.value = json.data || []
+      rules.value = (json.data || []).map((rule) => ({
+        ...rule,
+        formattedConditions: formatConditions(rule.conditions)
+      }))
     }
   } catch (e) {
     ElMessage.error('Failed to fetch rules')
@@ -244,7 +152,7 @@ async function prefetchPartitions() {
     const res = await fetch(`/api/dashboard/agents/${encodeURIComponent(props.agentId)}`)
     if (res.ok) {
       const json = await res.json()
-      cachedPartitions.value = (json.data?.parts || []).map(p => p.mountPoint)
+      cachedPartitions.value = (json.data?.parts || []).map((part) => part.mountPoint)
     }
   } catch (e) {
     cachedPartitions.value = []
@@ -252,56 +160,9 @@ async function prefetchPartitions() {
 }
 
 function openAddForm() {
-  form.value = {
-    ruleName: '',
-    alertLevel: 'CRITICAL',
-    cooldownSec: 60,
-    topLogic: 'AND',
-    groups: [defaultGroup()]
-  }
+  form.value = createEmptyDraft()
+  form.value.groups = [createGroupDraft()]
   showAddForm.value = true
-}
-
-// Logic Toggles
-function toggleTopLogic() {
-  form.value.topLogic = form.value.topLogic === 'AND' ? 'OR' : 'AND'
-}
-function toggleGroupLogic(grp) {
-  grp.logic = grp.logic === 'AND' ? 'OR' : 'AND'
-}
-
-// Add/Remove
-function addGroup() {
-  form.value.groups.push(defaultGroup())
-}
-function removeGroup(idx) {
-  form.value.groups.splice(idx, 1)
-}
-function addGroupItem(grp) {
-  grp.items.push(defaultItem())
-}
-function removeGroupItem(grp, idx) {
-  grp.items.splice(idx, 1)
-  if (grp.items.length === 0) {
-    const gIdx = form.value.groups.indexOf(grp)
-    if (gIdx > -1) removeGroup(gIdx)
-  }
-}
-
-function onMetricChange(item) {
-  const opt = metricOptions.find(o => o.value === item.metricType)
-  if (!opt?.numeric) {
-    item.operator = 'EQ'
-    item.threshold = 0
-  }
-  if (['LOG_HIT_CRITICAL', 'LOG_HIT_TOTAL'].includes(item.metricType)) {
-    if (!item.durationSec) item.durationSec = 300
-  }
-  if (item.metricType === 'DISK_PARTITION' && cachedPartitions.value.length) {
-    item.targetName = cachedPartitions.value[0]
-  } else {
-    item.targetName = ''
-  }
 }
 
 async function submitRule() {
@@ -309,70 +170,66 @@ async function submitRule() {
     ElMessage.warning('请输入规则名称')
     return
   }
-  
-  // Clean empty groups
-  const validGroups = form.value.groups.filter(g => g.items.length > 0)
+
+  const validGroups = sanitizeGroups(form.value.groups)
   if (!validGroups.length) {
     ElMessage.warning('至少需要添加一个判断条件')
     return
   }
 
-  // 智能提醒：检测粒度警告
-  const REPORT_INTERVAL = 60;
-  const cooldownVal = form.value.cooldownSec;
-  const smallDurations = [];
-  
-  validGroups.forEach(g => {
-    g.items.forEach(c => {
-      if (c.durationSec > 0 && c.durationSec < REPORT_INTERVAL) {
-        smallDurations.push(c.durationSec);
+  const REPORT_INTERVAL = 60
+  const cooldownVal = form.value.cooldownSec
+  const smallDurations = []
+
+  validGroups.forEach((group) => {
+    group.items.forEach((item) => {
+      if (item.durationSec > 0 && item.durationSec < REPORT_INTERVAL) {
+        smallDurations.push(item.durationSec)
       }
-    });
-  });
-  
+    })
+  })
+
   try {
     if (cooldownVal > 0 && cooldownVal < REPORT_INTERVAL) {
       await ElMessageBox.confirm(
         `冷却时间 ${cooldownVal}s 小于 Agent 上报间隔(${REPORT_INTERVAL}s)，实际冷却效果约等于上报间隔。\n是否继续？`,
         '提示',
         { confirmButtonText: '继续保存', cancelButtonText: '取消', type: 'warning' }
-      );
+      )
     }
-    
+
     if (smallDurations.length > 0) {
-      const distinctDurations = [...new Set(smallDurations)].join('s, ') + 's';
+      const distinctDurations = [...new Set(smallDurations)].join('s, ') + 's'
       await ElMessageBox.confirm(
         `持续时间 ${distinctDurations} 小于 Agent 上报间隔(${REPORT_INTERVAL}s)，实际精度受上报间隔约束。\n是否继续？`,
         '提示',
         { confirmButtonText: '继续保存', cancelButtonText: '取消', type: 'warning' }
-      );
+      )
     }
-  } catch (cancel) {
-    return; // User cancelled
+  } catch (_) {
+    return
   }
 
   saving.value = true
   try {
-    const expression = {
-        logic: form.value.topLogic,
-        groups: validGroups
-    }
-    
     const payload = {
       agentId: props.agentId,
       ruleName: form.value.ruleName,
       alertLevel: form.value.alertLevel,
       cooldownSec: form.value.cooldownSec,
       enabled: true,
-      conditions: JSON.stringify(expression)
+      conditions: JSON.stringify({
+        logic: form.value.topLogic,
+        groups: validGroups
+      })
     }
-    
+
     const res = await fetch(`/api/alert/rules`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     })
-    
+
     if (res.ok) {
       ElMessage.success('规则创建成功')
       showAddForm.value = false
@@ -392,44 +249,62 @@ async function deleteRule(id) {
     const res = await fetch(`/api/alert/rules/${id}`, { method: 'DELETE' })
     if (res.ok) {
       ElMessage.success('Rule deleted')
-      rules.value = rules.value.filter(r => r.id !== id)
+      rules.value = rules.value.filter((rule) => rule.id !== id)
     }
-  } catch(e) {
+  } catch (e) {
     ElMessage.error(e.message)
   }
+}
+
+function sanitizeGroups(groups) {
+  return groups
+    .filter((group) => group.items.length > 0)
+    .map(({ id, items, ...group }) => ({
+      ...group,
+      items: items.map(({ id: itemId, ...item }) => item)
+    }))
 }
 
 function formatConditions(jsonStr) {
   if (!jsonStr) return '无条件配置'
   try {
     const expr = JSON.parse(jsonStr)
-    const tl = expr.logic === 'AND' ? ' AND ' : ' OR '
+    const topLogic = expr.logic === 'AND' ? ' AND ' : ' OR '
     const groups = expr.groups || []
-    
+
     const labels = {
-        CPU_USAGE: 'CPU', RAM_USAGE: '内存', DISK_USAGE: '磁盘', DISK_PARTITION: '分区', PROCESS_ABNORMAL: '进程异常', AGENT_OFFLINE: '离线', LOG_HIT_CRITICAL: 'CRITICAL命中', LOG_HIT_TOTAL: '命中总数'
+      CPU_USAGE: 'CPU',
+      RAM_USAGE: '内存',
+      DISK_USAGE: '磁盘',
+      DISK_PARTITION: '分区',
+      PROCESS_ABNORMAL: '进程异常',
+      AGENT_OFFLINE: '离线',
+      LOG_HIT_CRITICAL: 'CRITICAL命中',
+      LOG_HIT_TOTAL: '命中总数'
     }
     const ops = { GT: '>', GTE: '>=', LT: '<', LTE: '<=', EQ: '=' }
-    
-    const gStrs = groups.map(g => {
-        const gl = g.logic === 'AND' ? ' && ' : ' || '
-        const items = (g.items || []).map(c => {
-            const m = labels[c.metricType] || c.metricType
-            const tgt = c.targetName ? `[${c.targetName}]` : ''
-            const op = ops[c.operator] || c.operator
-            const durIcon = (c.durationSec > 0 && c.durationSec < 60) ? ' ⚠️' : ''
-            const dur = c.durationSec ? ` (持续≥${c.durationSec}s${durIcon})` : ''
-            
-            if (['PROCESS_ABNORMAL', 'AGENT_OFFLINE'].includes(c.metricType)) return `${m}${tgt}${dur}`
-            
-            const unit = c.metricType.includes('USAGE') ? '%' : ''
-            return `${m}${tgt}${op}${c.threshold}${unit}${dur}`
-        })
-        return items.length > 1 ? `(${items.join(gl)})` : items[0]
+
+    const groupStrings = groups.map((group) => {
+      const groupLogic = group.logic === 'AND' ? ' && ' : ' || '
+      const items = (group.items || []).map((item) => {
+        const metric = labels[item.metricType] || item.metricType
+        const target = item.targetName ? `[${item.targetName}]` : ''
+        const operator = ops[item.operator] || item.operator
+        const durationIcon = item.durationSec > 0 && item.durationSec < 60 ? ' ⚠️' : ''
+        const duration = item.durationSec ? ` (持续≥${item.durationSec}s${durationIcon})` : ''
+
+        if (['PROCESS_ABNORMAL', 'AGENT_OFFLINE'].includes(item.metricType)) {
+          return `${metric}${target}${duration}`
+        }
+
+        const unit = item.metricType.includes('USAGE') ? '%' : ''
+        return `${metric}${target}${operator}${item.threshold}${unit}${duration}`
+      })
+      return items.length > 1 ? `(${items.join(groupLogic)})` : items[0]
     })
-    
-    return gStrs.join(tl)
-  } catch(e) {
+
+    return groupStrings.join(topLogic)
+  } catch (e) {
     return '无效规则格式'
   }
 }

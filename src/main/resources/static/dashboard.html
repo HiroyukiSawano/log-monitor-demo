@@ -830,6 +830,89 @@
             opacity: 1;
         }
 
+        .rule-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .btn-action,
+        .btn-open {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            font-size: 10px;
+            text-decoration: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-action:hover,
+        .btn-open:hover {
+            border-color: var(--accent);
+            color: var(--text);
+        }
+
+        .btn-action.danger {
+            color: var(--red);
+        }
+
+        .btn-action.danger:hover {
+            border-color: var(--red);
+        }
+
+        .btn-open {
+            color: var(--blue);
+        }
+
+        .inline-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 34px;
+            padding: 0 10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        .inline-check input {
+            width: auto;
+        }
+
+        .notice-card {
+            margin-bottom: 10px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .notice-card.success {
+            border-color: rgba(0, 184, 148, 0.35);
+            color: var(--green);
+        }
+
+        .notice-card.error {
+            border-color: rgba(225, 112, 85, 0.35);
+            color: var(--red);
+        }
+
+        .notice-card a {
+            color: var(--blue);
+            text-decoration: underline;
+        }
+
         .btn-add-rule {
             width: 100%;
             padding: 8px;
@@ -991,6 +1074,7 @@
 
         function getApiBase() { return `http://${document.getElementById('apiHost').value}`; }
         function escapeHtml(s) { return s ? s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') : ''; }
+        function escapeAttr(s) { return s ? escapeHtml(s).replace(/"/g, '&quot;').replace(/'/g, '&#39;') : ''; }
 
         // ========== Color Helpers ==========
         function usageColor(pct) {
@@ -1282,6 +1366,13 @@
                 <h3>📂 日志监听管理</h3>
                 <button class="btn-add-rule" onclick="openLogMonitorModal('${escapeHtml(d.agentId)}')">
                     🔧 管理日志监听 (${escapeHtml(d.agentId ? d.agentId.substring(0, 12) + '…' : '')})
+                </button>
+            </div>`;
+
+            html += `<div class="detail-section">
+                <h3>🖥️ TTYD 管理</h3>
+                <button class="btn-add-rule" onclick="openTtydModal('${escapeHtml(d.agentId)}')">
+                    🔧 管理 TTYD (${escapeHtml(d.agentId ? d.agentId.substring(0, 12) + '…' : '')})
                 </button>
             </div>`;
 
@@ -1958,6 +2049,238 @@
             } catch (e) { alert('移除失败: ' + e.message); }
         }
 
+        // ========== TTYD Modal ==========
+        let ttydModalAgentId = null;
+
+        function setTtydMessage(type, html) {
+            const box = document.getElementById('ttydActionMessage');
+            if (!box) return;
+            if (!html) {
+                box.innerHTML = '';
+                box.style.display = 'none';
+                return;
+            }
+            box.className = `notice-card ${type}`;
+            box.innerHTML = html;
+            box.style.display = 'block';
+        }
+
+        function resolveTtydUrl(agentResp) {
+            if (agentResp && agentResp.url) return agentResp.url;
+            if (agentResp && agentResp.port) return `http://localhost:${agentResp.port}`;
+            return '';
+        }
+
+        async function parseAgentCommandResult(resp) {
+            const result = await resp.json();
+            if (result.code !== 200 || !result.data) {
+                throw new Error(result.message || '请求失败');
+            }
+
+            const cmdResp = result.data;
+            if (cmdResp.status !== 'SUCCESS') {
+                throw new Error('Agent 响应错误: ' + cmdResp.status);
+            }
+
+            let agentResp;
+            try {
+                agentResp = JSON.parse(cmdResp.response);
+            } catch (_) {
+                throw new Error('Agent 响应不是有效 JSON');
+            }
+
+            if (!agentResp.success) {
+                throw new Error(agentResp.message || '操作失败');
+            }
+
+            return agentResp;
+        }
+
+        async function openTtydModal(agentId) {
+            ttydModalAgentId = agentId;
+            document.getElementById('ttydModalTitle').textContent = 'TTYD 管理 - ' + (agentId.length > 12 ? agentId.substring(0, 12) + '…' : agentId);
+            document.getElementById('ttydModal').classList.add('show');
+            setTtydMessage('', '');
+            showAddTtydForm(false);
+            await loadTtydServices(agentId);
+        }
+
+        function closeTtydModal() {
+            document.getElementById('ttydModal').classList.remove('show');
+            ttydModalAgentId = null;
+            setTtydMessage('', '');
+        }
+
+        async function loadTtydServices(agentId) {
+            const container = document.getElementById('ttydListContainer');
+            container.innerHTML = '<div style="padding:10px;color:var(--text2);font-size:11px;text-align:center;">加载中...</div>';
+
+            const cmd = {
+                type: "cmd",
+                cmd: {
+                    func: "TtydService/list",
+                    param: "[]",
+                    cmdID: "ttyd-list-" + Date.now()
+                }
+            };
+
+            try {
+                const resp = await fetch(`${getApiBase()}/api/commands/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ agentId, content: JSON.stringify(cmd) })
+                });
+                const agentResp = await parseAgentCommandResult(resp);
+                const services = agentResp.services || [];
+
+                if (services.length === 0) {
+                    container.innerHTML = '<div style="padding:16px;color:var(--text2);font-size:11px;text-align:center;">当前没有运行中的 TTYD 服务。</div>';
+                    return;
+                }
+
+                container.innerHTML = services.map(s => {
+                    const statusClass = s.isRunning ? 'ftag-exclude' : 'ftag-critical';
+                    const statusText = s.isRunning ? '运行中' : '已停止';
+                    const ttydUrl = resolveTtydUrl(s);
+                    return `<div class="rule-item">
+                        <span class="ftag ${statusClass}" style="flex-shrink:0">${statusText}</span>
+                        <div class="rule-info">
+                            <div class="rule-name">Port ${escapeHtml(String(s.port || '-'))} <span style="font-size:10px;color:var(--text2);font-weight:normal;">${escapeHtml(s.command || 'bash')}</span></div>
+                            <div class="rule-desc"><code style="font-size:10px;color:var(--cyan);">${escapeHtml(ttydUrl || 'http://localhost')}</code></div>
+                            <div class="rule-desc">Writable: ${s.writable ? 'true' : 'false'} | Workdir: ${escapeHtml(s.workingDirectory || '/')}</div>
+                        </div>
+                        <div class="rule-actions">
+                            ${ttydUrl ? `<a class="btn-open" href="${escapeAttr(ttydUrl)}" target="_blank" rel="noopener noreferrer">打开</a>` : ''}
+                            <button class="btn-action danger" onclick="stopTtydService(${Number(s.port)})">停止</button>
+                        </div>
+                    </div>`;
+                }).join('');
+            } catch (e) {
+                container.innerHTML = `<div style="padding:10px;color:var(--red);font-size:11px;">加载失败: ${escapeHtml(e.message)}</div>`;
+            }
+        }
+
+        function showAddTtydForm(shouldShow = true) {
+            const form = document.getElementById('addTtydForm');
+            form.style.display = shouldShow ? 'block' : 'none';
+            if (!shouldShow) return;
+            document.getElementById('ttydPort').value = '7681';
+            document.getElementById('ttydUsername').value = 'admin';
+            document.getElementById('ttydPassword').value = 'password';
+            document.getElementById('ttydWritable').checked = true;
+        }
+
+        async function submitNewTtydService() {
+            const portVal = document.getElementById('ttydPort').value.trim();
+            const username = document.getElementById('ttydUsername').value.trim();
+            const password = document.getElementById('ttydPassword').value;
+            const writable = document.getElementById('ttydWritable').checked;
+            const port = Number(portVal);
+            if (!Number.isInteger(port) || port < 1 || port > 65535) {
+                alert('端口必须是 1-65535 之间的整数');
+                return;
+            }
+            if (!username) {
+                alert('账号不能为空');
+                return;
+            }
+            if (!password) {
+                alert('密码不能为空');
+                return;
+            }
+            const credential = `${username}:${password}`;
+
+            setTtydMessage('', '');
+            const btn = document.getElementById('btnStartTtyd');
+            const prevHtml = btn.innerHTML;
+            let popup = null;
+
+            try {
+                popup = window.open('about:blank', '_blank');
+                if (popup && popup.document) {
+                    popup.document.title = '正在打开 TTYD...';
+                    popup.document.body.innerHTML = '<div style="font-family:Segoe UI,sans-serif;padding:24px;color:#303133;">TTYD 启动中，正在打开终端...</div>';
+                }
+            } catch (_) {
+                popup = null;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '启动中...';
+
+            const cmd = {
+                type: "cmd",
+                cmd: {
+                    func: "TtydService/start",
+                    param: [JSON.stringify({ Port: port, Credential: credential, Writable: writable })],
+                    cmdID: "ttyd-start-" + Date.now()
+                }
+            };
+
+            try {
+                const resp = await fetch(`${getApiBase()}/api/commands/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ agentId: ttydModalAgentId, content: JSON.stringify(cmd) })
+                });
+                const agentResp = await parseAgentCommandResult(resp);
+                const ttydUrl = resolveTtydUrl(agentResp);
+
+                if (!ttydUrl) {
+                    throw new Error('TTYD 已启动，但未返回可访问地址');
+                }
+
+                if (popup) {
+                    popup.location.href = ttydUrl;
+                } else {
+                    setTtydMessage('success', `TTYD 已启动。${escapeHtml(agentResp.message || '')}<br><a href="${escapeAttr(ttydUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(ttydUrl)}</a><br>浏览器可能拦截了新窗口，请点击上方链接手动打开。`);
+                }
+
+                if (popup && popup.document) {
+                    setTtydMessage('success', `TTYD 已启动。${escapeHtml(agentResp.message || '')}<br><a href="${escapeAttr(ttydUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(ttydUrl)}</a>`);
+                }
+
+                document.getElementById('addTtydForm').style.display = 'none';
+                await loadTtydServices(ttydModalAgentId);
+            } catch (e) {
+                if (popup && !popup.closed) {
+                    popup.close();
+                }
+                setTtydMessage('error', `启动失败: ${escapeHtml(e.message)}`);
+                alert('启动 TTYD 失败: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = prevHtml;
+            }
+        }
+
+        async function stopTtydService(port) {
+            if (!confirm('确定停止该 TTYD 服务？\n端口: ' + port)) return;
+
+            const cmd = {
+                type: "cmd",
+                cmd: {
+                    func: "TtydService/stopByPort",
+                    param: [port],
+                    cmdID: "ttyd-stop-" + Date.now()
+                }
+            };
+
+            try {
+                const resp = await fetch(`${getApiBase()}/api/commands/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ agentId: ttydModalAgentId, content: JSON.stringify(cmd) })
+                });
+                const agentResp = await parseAgentCommandResult(resp);
+                setTtydMessage('success', `已停止端口 ${escapeHtml(String(port))}<br>${escapeHtml(agentResp.message || '')}`);
+                await loadTtydServices(ttydModalAgentId);
+            } catch (e) {
+                setTtydMessage('error', `停止失败: ${escapeHtml(e.message)}`);
+                alert('停止 TTYD 失败: ' + e.message);
+            }
+        }
+
         // ========== Init ==========
         (function () {
             const h = document.getElementById('apiHost');
@@ -2083,6 +2406,47 @@
                     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
                         <button class="btn-secondary" onclick="document.getElementById('addLogMonitorForm').style.display='none'">取消</button>
                         <button class="btn-primary" onclick="submitNewLogMonitor()">添加监听</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- TTYD Modal -->
+    <div class="modal-overlay" id="ttydModal">
+        <div class="modal" style="width: 760px;">
+            <div class="modal-header">
+                <h2 id="ttydModalTitle">TTYD 管理</h2>
+                <button class="btn-close" onclick="closeTtydModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="ttydActionMessage" class="notice-card" style="display:none;"></div>
+                <div class="rule-list" id="ttydListContainer"></div>
+                <button class="btn-add-rule" onclick="showAddTtydForm()">+ 启动 TTYD</button>
+                <div class="add-rule-form" id="addTtydForm" style="display:none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Port</label>
+                            <input id="ttydPort" type="number" min="1" max="65535" value="7681" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label>Writable</label>
+                            <label class="inline-check"><input id="ttydWritable" type="checkbox" checked> 允许终端写入</label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>账号</label>
+                            <input id="ttydUsername" value="admin" placeholder="请输入账号" style="font-family: monospace;" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label>密码</label>
+                            <input id="ttydPassword" type="password" value="password" placeholder="请输入密码" style="font-family: monospace;" autocomplete="off">
+                        </div>
+                    </div>
+                    <div style="font-size:11px;color:var(--text2);margin-top:-2px;margin-bottom:8px;">启动成功后会立即打开 TTYD 地址，认证由浏览器和 TTYD Basic Auth 处理。</div>
+                    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px;">
+                        <button class="btn-secondary" onclick="showAddTtydForm(false)">取消</button>
+                        <button class="btn-primary" id="btnStartTtyd" onclick="submitNewTtydService()">启动并打开</button>
                     </div>
                 </div>
             </div>

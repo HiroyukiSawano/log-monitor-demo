@@ -3,14 +3,14 @@ import { ref, computed } from 'vue'
 import { useWebSocket } from '@vueuse/core'
 
 export const useMonitorStore = defineStore('monitor', () => {
-    // State
-    const agents = ref(new Map()) // agentId -> agent data
+    const agents = ref(new Map())
     const alerts = ref([])
     const activeAgentId = ref(null)
+    const autoRefreshPauseCount = ref(0)
+    const refreshInFlight = ref(false)
 
-    // WebSocket Connection
     const wsUrl = `ws://${location.host}/ws/monitor`
-    const { status, data, send, close } = useWebSocket(wsUrl, {
+    const { status, send } = useWebSocket(wsUrl, {
         autoReconnect: {
             retries: 5,
             delay: 5000,
@@ -25,10 +25,9 @@ export const useMonitorStore = defineStore('monitor', () => {
         }
     })
 
-    // Getters
-    const activeAgent = computed(() => {
-        return activeAgentId.value ? agents.value.get(activeAgentId.value) : null
-    })
+    const activeAgent = computed(() => (
+        activeAgentId.value ? agents.value.get(activeAgentId.value) : null
+    ))
 
     const agentList = computed(() => {
         return Array.from(agents.value.values()).sort((a, b) => {
@@ -38,17 +37,13 @@ export const useMonitorStore = defineStore('monitor', () => {
     })
 
     const totalAgents = computed(() => agents.value.size)
-    const onlineAgents = computed(() => agentList.value.filter(a => a.online).length)
-    const criticalAlertsCount = computed(() => alerts.value.filter(a => a.alertLevel === 'CRITICAL').length)
+    const onlineAgents = computed(() => agentList.value.filter((agent) => agent.online).length)
+    const criticalAlertsCount = computed(() => alerts.value.filter((alert) => alert.alertLevel === 'CRITICAL').length)
 
-    // Actions
     function handleSocketMessage(msg) {
         switch (msg.type) {
             case 'FULL_SYNC':
-                // Initialize agents map
-                const newMap = new Map()
-                msg.data.forEach(agent => newMap.set(agent.id, agent))
-                agents.value = newMap
+                reconcileFullSync(msg.data || [])
                 break
 
             case 'AGENT_ONLINE':
@@ -64,11 +59,11 @@ export const useMonitorStore = defineStore('monitor', () => {
                     else if (msg.type === 'LOG_EVENT') {
                         if (!agent.logs) agent.logs = []
                         agent.logs.unshift(msg.data)
-                        if (agent.logs.length > 50) agent.logs.pop() // keep last 50
+                        if (agent.logs.length > 50) agent.logs.pop()
+                    } else if (msg.type === 'PROCESS_UPDATE') {
+                        agent.processes = msg.data
                     }
-                    else if (msg.type === 'PROCESS_UPDATE') agent.processes = msg.data
 
-                    // trigger reactivity for Map
                     agents.value.set(msg.agentId, agent)
                 }
                 break
@@ -83,10 +78,18 @@ export const useMonitorStore = defineStore('monitor', () => {
         activeAgentId.value = agentId
     }
 
+    function pauseAutoRefresh() {
+        autoRefreshPauseCount.value += 1
+    }
+
+    function resumeAutoRefresh() {
+        autoRefreshPauseCount.value = Math.max(0, autoRefreshPauseCount.value - 1)
+    }
+
     async function ackAlert(id) {
         try {
             await fetch(`/api/alert/events/${id}/ack`, { method: 'POST' })
-            alerts.value = alerts.value.filter(a => a.id !== id)
+            alerts.value = alerts.value.filter((alert) => alert.id !== id)
         } catch (e) {
             console.error('Failed to ack alert', e)
         }
@@ -102,6 +105,11 @@ export const useMonitorStore = defineStore('monitor', () => {
     }
 
     async function loadDashboard() {
+        if (autoRefreshPauseCount.value > 0 || refreshInFlight.value) {
+            return
+        }
+
+        refreshInFlight.value = true
         try {
             const [agentResp, alertResp] = await Promise.all([
                 fetch(`/api/dashboard/agents`),
@@ -111,38 +119,7 @@ export const useMonitorStore = defineStore('monitor', () => {
             const alertResult = await alertResp.json()
 
             if (agentResult.code === 200 && agentResult.data) {
-                const newMap = new Map()
-                agentResult.data.forEach(agent => {
-                    // Normalize data structure from backend to match frontend expectations
-                    const a = {
-                        id: agent.agentId,
-                        online: agent.online,
-                        systemInfo: {
-                            hostname: agent.mainframeName,
-                            osName: agent.osName,
-                            osVersion: agent.osVersion,
-                            osType: agent.osType,
-                            cpuType: agent.cpuType,
-                            cpuUsage: agent.cpuUsage ? parseFloat(agent.cpuUsage) : 0,
-                            totalMemory: agent.ramCapacity ? parseFloat(agent.ramCapacity) : 0,
-                            freeMemory: agent.ramAvailable ? parseFloat(agent.ramAvailable) : 0,
-                            availableProcessors: agent.cpuCores,
-                            disks: (agent.parts || []).map(p => ({
-                                mountPoint: p.mountPoint,
-                                totalSpace: p.capacity ? parseFloat(p.capacity) : 0,
-                                usableSpace: p.availableCapacity ? parseFloat(p.availableCapacity) : 0
-                            }))
-                        },
-                        processes: agent.processStatusList?.map(p => ({
-                            name: p.processName,
-                            running: p.status === '正常',
-                            pid: p.processName // using name as pid fallback
-                        })) || [],
-                        logs: agents.value.get(agent.agentId)?.logs || []
-                    }
-                    newMap.set(a.id, a)
-                })
-                agents.value = newMap
+                reconcileDashboardAgents(agentResult.data)
             }
 
             if (alertResult.code === 200 && alertResult.data) {
@@ -150,13 +127,61 @@ export const useMonitorStore = defineStore('monitor', () => {
             }
         } catch (e) {
             console.error('Failed to load initial dashboard data:', e)
+        } finally {
+            refreshInFlight.value = false
         }
     }
 
-    // Call init fetch immediately
-    loadDashboard()
+    function reconcileFullSync(agentListPayload) {
+        const seenIds = new Set()
 
-    // Auto-refresh every 15 seconds to sync alerts and metrics
+        agentListPayload.forEach((agent) => {
+            seenIds.add(agent.id)
+            const existing = agents.value.get(agent.id)
+            if (existing) {
+                Object.assign(existing, agent)
+                agents.value.set(agent.id, existing)
+            } else {
+                agents.value.set(agent.id, agent)
+            }
+        })
+
+        Array.from(agents.value.keys()).forEach((id) => {
+            if (!seenIds.has(id)) {
+                agents.value.delete(id)
+            }
+        })
+    }
+
+    function reconcileDashboardAgents(agentListPayload) {
+        const seenIds = new Set()
+
+        agentListPayload.forEach((agentPayload) => {
+            const normalized = normalizeDashboardAgent(agentPayload, agents.value.get(agentPayload.agentId)?.logs || [])
+            seenIds.add(normalized.id)
+
+            const existing = agents.value.get(normalized.id)
+            if (existing) {
+                existing.online = normalized.online
+                existing.systemInfo = existing.systemInfo || {}
+                Object.assign(existing.systemInfo, normalized.systemInfo)
+                existing.systemInfo.disks = normalized.systemInfo.disks
+                existing.processes = normalized.processes
+                existing.logs = existing.logs || normalized.logs
+                agents.value.set(normalized.id, existing)
+            } else {
+                agents.value.set(normalized.id, normalized)
+            }
+        })
+
+        Array.from(agents.value.keys()).forEach((id) => {
+            if (!seenIds.has(id)) {
+                agents.value.delete(id)
+            }
+        })
+    }
+
+    loadDashboard()
     setInterval(loadDashboard, 15000)
 
     return {
@@ -168,10 +193,41 @@ export const useMonitorStore = defineStore('monitor', () => {
         totalAgents,
         onlineAgents,
         criticalAlertsCount,
+        pauseAutoRefresh,
+        resumeAutoRefresh,
         status,
         setActiveAgent,
         ackAlert,
         ackAllAlerts,
-        send // expose raw WS send if needed
+        send
     }
 })
+
+function normalizeDashboardAgent(agent, existingLogs = []) {
+    return {
+        id: agent.agentId,
+        online: agent.online,
+        systemInfo: {
+            hostname: agent.mainframeName,
+            osName: agent.osName,
+            osVersion: agent.osVersion,
+            osType: agent.osType,
+            cpuType: agent.cpuType,
+            cpuUsage: agent.cpuUsage ? parseFloat(agent.cpuUsage) : 0,
+            totalMemory: agent.ramCapacity ? parseFloat(agent.ramCapacity) : 0,
+            freeMemory: agent.ramAvailable ? parseFloat(agent.ramAvailable) : 0,
+            availableProcessors: agent.cpuCores,
+            disks: (agent.parts || []).map((part) => ({
+                mountPoint: part.mountPoint,
+                totalSpace: part.capacity ? parseFloat(part.capacity) : 0,
+                usableSpace: part.availableCapacity ? parseFloat(part.availableCapacity) : 0
+            }))
+        },
+        processes: agent.processStatusList?.map((process) => ({
+            name: process.processName,
+            running: process.status === '正常',
+            pid: process.processName
+        })) || [],
+        logs: existingLogs
+    }
+}
