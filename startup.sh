@@ -42,16 +42,17 @@ if [ -f "$PID_FILE" ]; then
 fi
 
 # 构造启动命令参数
-JAVA_OPTS=""
+JVM_OPTS="-Dfile.encoding=UTF-8"
+APP_ARGS=""
 if [ -n "$PORT" ]; then
-    JAVA_OPTS="--server.port=$PORT"
+    APP_ARGS="--server.port=$PORT"
     echo "Starting application $APP_NAME on port $PORT..."
 else
     echo "Starting application $APP_NAME on default port..."
 fi
 
 # 使用 nohup 后台运行应用，并将 PID 保存到 app.pid 文件中
-nohup java -jar "$APP_PATH" $JAVA_OPTS > "$LOG_FILE" 2>&1 &
+nohup java $JVM_OPTS -jar "$APP_PATH" $APP_ARGS > "$LOG_FILE" 2>&1 &
 echo $! > "$PID_FILE"
 
 echo "Application started!"
