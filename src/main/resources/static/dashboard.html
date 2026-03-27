@@ -2065,10 +2065,24 @@
             box.style.display = 'block';
         }
 
-        function resolveTtydUrl(agentResp) {
-            if (agentResp && agentResp.url) return agentResp.url;
-            if (agentResp && agentResp.port) return `http://localhost:${agentResp.port}`;
-            return '';
+        function resolveTtydUrl(agentResp, credential) {
+            if (!ttydModalAgentId) return '';
+            let port = null;
+            if (agentResp && agentResp.port) {
+                port = agentResp.port;
+            } else if (agentResp && agentResp.url) {
+                try {
+                    port = new URL(agentResp.url).port;
+                } catch (e) {
+                    return agentResp.url;
+                }
+            }
+            if (!port) return '';
+            let url = `${location.protocol}//${location.host}/api/proxy/ttyd/${ttydModalAgentId}/${port}/`;
+            if (credential) {
+                url += '?credential=' + encodeURIComponent(btoa(credential));
+            }
+            return url;
         }
 
         async function parseAgentCommandResult(resp) {
@@ -2224,7 +2238,7 @@
                     body: JSON.stringify({ agentId: ttydModalAgentId, content: JSON.stringify(cmd) })
                 });
                 const agentResp = await parseAgentCommandResult(resp);
-                const ttydUrl = resolveTtydUrl(agentResp);
+                const ttydUrl = resolveTtydUrl(agentResp, credential);
 
                 if (!ttydUrl) {
                     throw new Error('TTYD 已启动，但未返回可访问地址');

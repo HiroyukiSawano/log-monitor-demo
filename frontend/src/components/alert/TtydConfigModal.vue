@@ -237,7 +237,7 @@ function openAddForm() {
 }
 
 function getServiceUrl(service) {
-  return resolveTtydUrl(service)
+  return resolveTtydUrl(service, props.agentId)
 }
 
 async function fetchServices() {
@@ -263,6 +263,7 @@ async function startService() {
   const port = Number(form.port)
   const username = form.username.trim()
   const password = form.password
+  const credential = `${username}:${password}`
 
   if (!Number.isInteger(port) || port < 1 || port > 65535) {
     ElMessage.warning('端口必须是 1-65535 之间的整数')
@@ -296,12 +297,12 @@ async function startService() {
       props.agentId,
       buildAgentCommand(
         'TtydService/start',
-        [JSON.stringify({ Port: port, Credential: `${username}:${password}`, Writable: form.writable })],
+        [JSON.stringify({ Port: port, Credential: credential, Writable: form.writable })],
         'ttyd-start'
       )
     )
 
-    const ttydUrl = resolveTtydUrl(agentResp)
+    const ttydUrl = resolveTtydUrl(agentResp, props.agentId, credential)
     if (!ttydUrl) {
       throw new Error('TTYD 已启动，但未返回可访问地址')
     }

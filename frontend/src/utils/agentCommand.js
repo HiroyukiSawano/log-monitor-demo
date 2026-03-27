@@ -13,9 +13,23 @@ export function buildAgentCommand(func, param, cmdIdPrefix = 'cmd') {
   }
 }
 
-export function resolveTtydUrl(agentResp) {
-  if (agentResp?.url) return agentResp.url
-  if (agentResp?.port) return `http://localhost:${agentResp.port}`
+export function resolveTtydUrl(agentResp, agentId, credential = '') {
+  if (!agentId) return '' // Needs agentId for proxy path
+  const query = credential ? `?credential=${encodeURIComponent(window.btoa(credential))}` : ''
+  // If agent returns a direct IP URL or a port, we route it through our backend proxy
+  if (agentResp?.port) {
+    return `${window.location.protocol}//${window.location.host}/api/proxy/ttyd/${agentId}/${agentResp.port}/${query}`
+  }
+  // If agent returned a full URL instead of just port, extract the port from it
+  if (agentResp?.url) {
+    try {
+      const parsed = new URL(agentResp.url)
+      return `${window.location.protocol}//${window.location.host}/api/proxy/ttyd/${agentId}/${parsed.port}/${query}`
+    } catch (e) {
+      console.warn('Failed to parse TTYD URL:', agentResp.url)
+      return agentResp.url
+    }
+  }
   return ''
 }
 

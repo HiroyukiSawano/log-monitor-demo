@@ -5,6 +5,7 @@ import com.example.demo.websocket.handler.MonitorWebSocketHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.ServletWebSocketHandlerRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
@@ -19,18 +20,27 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     private final AgentWebSocketHandler agentWebSocketHandler;
     private final MonitorWebSocketHandler monitorWebSocketHandler;
+    private final com.example.demo.websocket.handler.TtydWebSocketProxyHandler ttydWebSocketProxyHandler;
 
     public WebSocketConfig(AgentWebSocketHandler agentWebSocketHandler,
-            MonitorWebSocketHandler monitorWebSocketHandler) {
+            MonitorWebSocketHandler monitorWebSocketHandler,
+            com.example.demo.websocket.handler.TtydWebSocketProxyHandler ttydWebSocketProxyHandler) {
         this.agentWebSocketHandler = agentWebSocketHandler;
         this.monitorWebSocketHandler = monitorWebSocketHandler;
+        this.ttydWebSocketProxyHandler = ttydWebSocketProxyHandler;
     }
 
     @Override
     public void registerWebSocketHandlers(@NonNull WebSocketHandlerRegistry registry) {
+        if (registry instanceof ServletWebSocketHandlerRegistry) {
+            ((ServletWebSocketHandlerRegistry) registry).setOrder(-1);
+        }
+
         registry.addHandler(agentWebSocketHandler, "/ws/agent")
                 .setAllowedOrigins("*");
         registry.addHandler(monitorWebSocketHandler, "/ws/monitor")
+                .setAllowedOrigins("*");
+        registry.addHandler(ttydWebSocketProxyHandler, "/api/proxy/ttyd/*/*/ws")
                 .setAllowedOrigins("*");
     }
 

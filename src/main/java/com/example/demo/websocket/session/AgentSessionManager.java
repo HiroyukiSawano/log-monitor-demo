@@ -66,6 +66,19 @@ public class AgentSessionManager {
     }
 
     /**
+     * 获取 Agent 的远程 IP 地址
+     */
+    public String getAgentIp(String agentId) {
+        WebSocketSession session = sessions.get(agentId);
+        if (session != null) {
+            java.net.InetSocketAddress address = session.getRemoteAddress();
+            if (address != null && address.getAddress() != null) {
+                return address.getAddress().getHostAddress();
+            }
+        }
+        return null;
+    }
+    /**
      * 获取所有在线 Agent 的不可变视图
      */
     public Map<String, WebSocketSession> getAllSessions() {
